@@ -308,6 +308,7 @@ namespace ArcherTools_0._0._1
             {
                 ReceivingConfig configInstance = ConfigData.getInstance();
                 string excelDirectory = configInstance.getExcelFilePath();
+                Process.Start("explorer.exe", excelDirectory);
             }
         }
 
@@ -317,7 +318,7 @@ namespace ArcherTools_0._0._1
             var filePath = string.Empty;
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
+                openFileDialog.Filter = "Excel files (*.xlsx,*.xls)|*.xlsx;*.xls|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.Multiselect = false;
                 openFileDialog.RestoreDirectory = true;
@@ -337,7 +338,7 @@ namespace ArcherTools_0._0._1
 
         private void nextPageRCV_btn_Click(object sender, EventArgs e)
         {
-           ScreenImageHandler.DetectImage("C:\\Users\\lipal\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\edit.png");
+           ScreenImageHandler.DetectImage("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\testimg2.png");
            
         }
     }
