@@ -34,8 +34,10 @@ namespace ArcherTools_0._0._1
 
                 if (maxVal > threshold)
                 {
+#if DEBUG
                     Debug.WriteLine($"Target image found at location: {maxLoc.X}, {maxLoc.Y}");
                     MouseHandler.SetCursorPos(maxLoc.X, maxLoc.Y);
+#endif
                 }
                 else
                 {
@@ -50,8 +52,10 @@ namespace ArcherTools_0._0._1
 
                         if (maxVal > threshold)
                         {
+#if DEBUG
                             Debug.WriteLine($"Target image found at location: {maxLoc.X}, {maxLoc.Y}");
-                            MouseHandler.SetCursorPos(maxLoc.X, maxLoc.Y);
+                            MouseHandler.SetCursorPos(maxLoc.X + Screen.PrimaryScreen.Bounds.Width, maxLoc.Y);
+#endif
                         }
                         else { Debug.WriteLine("Target image not found in any monitor."); }
                     }
