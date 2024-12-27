@@ -338,7 +338,7 @@ namespace ArcherTools_0._0._1
 
         private void nextPageRCV_btn_Click(object sender, EventArgs e)
         {
-           ScreenImageHandler.DetectImage("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\testimg2.png");
+           
            
         }
     }

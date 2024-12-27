@@ -114,6 +114,7 @@
             receiveBtn.TabIndex = 2;
             receiveBtn.Text = "Receiving";
             receiveBtn.UseVisualStyleBackColor = false;
+            receiveBtn.Click += receiveBtn_Click_1;
             // 
             // ToolsListPanel
             // 

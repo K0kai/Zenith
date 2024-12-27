@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.excel;
 
 namespace ArcherTools_0._0._1
 {
@@ -23,6 +25,7 @@ namespace ArcherTools_0._0._1
             introlabel.Click += introlabel_Click;
             copyrights.LinkClicked += copyrights_LinkClicked_1;
             CenterControl(introlabel);
+            ConfigData.UnserializeConfig();
         }
 
         private void copyrights_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
@@ -99,7 +102,17 @@ namespace ArcherTools_0._0._1
                 );
             }
             _pageHandler.LoadUserControl(new ReceiveProperties());
+
+        }
+
+        private void receiveBtn_Click_1(object sender, EventArgs e)
+        {
+            ScreenImageHandler.DetectImage("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\item_search.png");
             
+            ReceivingConfig config = ConfigData.getInstance();
+            String excelPath = config.ExcelFilePath;
+            ExcelHandler excelHandler = new ExcelHandler(excelPath);
+            MessageBox.Show(excelHandler.ReadCell("TEST CHECK", 13, 4));
         }
     }
 }
