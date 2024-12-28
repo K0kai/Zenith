@@ -11,23 +11,35 @@ namespace ArcherTools_0._0._1.controllers
     internal class MouseTracker
     {
         Form _form;
+        Form _labelForm;
         Label _labelCoordinates;
 
         public MouseTracker(Form form)
         {
             _form = form;
+            _labelForm = new Form
+            {
+                FormBorderStyle = FormBorderStyle.None,
+                StartPosition = FormStartPosition.Manual,
+                TopMost = true,
+                ShowInTaskbar = false,
+                BackColor = Color.Black,
+                TransparencyKey = Color.Black,
+                Opacity = 0.8,
+                Width = 100,
+                Height = 25,                
+                AutoSize = true,
+            };
             _labelCoordinates = new Label
             {
                 AutoSize = true,
-                BackColor = System.Drawing.Color.Transparent,
-                ForeColor = System.Drawing.Color.Red,
-                Padding = new Padding(5),
-                Text = "X:0, Y : 0",
-                Font = new System.Drawing.Font("Arial", 12, System.Drawing.FontStyle.Bold),
-                Location = new System.Drawing.Point(0, 0),
-                Visible = true
+                ForeColor = Color.Red,
+                BackColor = Color.Transparent,
+                Font = new Font("Arial", 10, FontStyle.Bold),
+                Padding = new Padding(5)
             };
-            _form.Controls.Add(_labelCoordinates);
+            _labelForm.Controls.Add(_labelCoordinates);
+            _labelForm.Show();
             _labelCoordinates.BringToFront();
         }
 
@@ -41,14 +53,24 @@ namespace ArcherTools_0._0._1.controllers
 
                 Point currentPosition = Cursor.Position;
 
-                if (_labelCoordinates.InvokeRequired)
+                if (Control.MouseButtons != MouseButtons.None)
                 {
-                    _labelCoordinates.Invoke(new Action(() =>
-                    {
-                        _labelCoordinates.Location = new System.Drawing.Point(currentPosition.X + 10, currentPosition.Y + 10);
+                    onMouseClick?.Invoke(currentPosition);
+                    break;
+                }
 
+                if (_labelForm.InvokeRequired)
+                {
+                    _labelForm.Invoke(new Action(() =>
+                    {
+                        _labelForm.Location = new Point(currentPosition.X + 10, currentPosition.Y + 10);
                         _labelCoordinates.Text = $"X: {currentPosition.X}, Y: {currentPosition.Y}";
                     }));
+                }
+                else
+                {
+                    _labelForm.Location = new Point(currentPosition.X + 10, currentPosition.Y + 10);
+                    _labelCoordinates.Text = $"X: {currentPosition.X}, Y: {currentPosition.Y}";
                 }
 
 
@@ -62,7 +84,8 @@ namespace ArcherTools_0._0._1.controllers
             }
 
             _form.Invoke(new Action(() => _form.Enabled = true));
-            _labelCoordinates.Dispose();
+            _labelForm.Dispose();
+            _labelForm = null;
             _labelCoordinates = null;
 
 
