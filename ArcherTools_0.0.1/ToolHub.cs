@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.cfg.oldcfg;
 using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.excel;
 
@@ -99,7 +100,7 @@ namespace ArcherTools_0._0._1
                     (currentScreenBounds.Height - mainForm.Height) / 2 + currentScreenBounds.Y
                 );
             }
-            _pageHandler.LoadUserControl(new ReceiveProperties());
+            //_pageHandler.LoadUserControl(new ReceiveProperties());
 
         }
 
@@ -107,7 +108,7 @@ namespace ArcherTools_0._0._1
         {
             //ScreenImageHandler.DetectImage("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\item_search.png");
 
-            ReceivingConfig config = ConfigData.getInstance();
+            cfg.oldcfg.ReceivingConfig config = OldConfigData.getInstance();
             String excelPath = config.ExcelFilePath;
             ExcelHandler excelHandler = new ExcelHandler(excelPath);
             MessageBox.Show(excelHandler.GetCell("TEST CHECK", 13, 4));

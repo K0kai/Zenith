@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace ArcherTools_0._0._1.cfg
+namespace ArcherTools_0._0._1.cfg.oldcfg
 {
     public enum ControlType
     {
@@ -42,14 +42,15 @@ namespace ArcherTools_0._0._1.cfg
             Coordinates = coordinates;
         }
 
-        public List<int> getPositionByType(ControlType type) {
-            if (type == this.ControlType)
+        public List<int> getPositionByType(ControlType type)
+        {
+            if (type == ControlType)
             {
-                return this.Coordinates;
+                return Coordinates;
             }
             else
             {
-                return new List<int> {0,0};
+                return new List<int> { 0, 0 };
             }
         }
     }
@@ -66,7 +67,7 @@ namespace ArcherTools_0._0._1.cfg
 
         public ReceivingConfig() { }
 
-        [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
+        [System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
         public ReceivingConfig(string excelFilePath, string excelSheetName, List<MousePosition> mousePositionList)
         {
             ExcelFilePath = excelFilePath;
@@ -74,22 +75,22 @@ namespace ArcherTools_0._0._1.cfg
             MousePositionList = mousePositionList;
         }
 
-        public List<MousePosition> getMousePositions() { return this.MousePositionList; }
-        public String getExcelFilePath() { return this.ExcelFilePath; }
+        public List<MousePosition> getMousePositions() { return MousePositionList; }
+        public string getExcelFilePath() { return ExcelFilePath; }
 
-        public void setExcelFilePath(string filePath) { this.ExcelFilePath = filePath; }
+        public void setExcelFilePath(string filePath) { ExcelFilePath = filePath; }
 
-        public void setMousePositions (List<MousePosition> mousePositions) { this.MousePositionList = mousePositions; }
-        
-        public void addMousePosition (MousePosition valueToAdd) { this.MousePositionList.Add(valueToAdd); }
+        public void setMousePositions(List<MousePosition> mousePositions) { MousePositionList = mousePositions; }
+
+        public void addMousePosition(MousePosition valueToAdd) { MousePositionList.Add(valueToAdd); }
 
     }
 
-    public class ConfigData
+    public class OldConfigData
     {
-       public static ReceivingConfig _receivingConfig;
+        public static ReceivingConfig _receivingConfig;
 
-        public ConfigData(ReceivingConfig receivingConfig)
+        public OldConfigData(ReceivingConfig receivingConfig)
         {
             _receivingConfig = receivingConfig;
         }
@@ -121,15 +122,16 @@ namespace ArcherTools_0._0._1.cfg
                 }
 
             }
-            else {
-               #if NOTDEBUG
+            else
+            {
+#if NOTDEBUG
                 Console.WriteLine($"Configuration data is empty, doing nothing instead.");
-               #else
+#else
                 Debug.WriteLine($"Configuration data is empty, doing nothing instead.");
-               #endif
+#endif
             }
 
-            
+
         }
 
         public static ReceivingConfig getInstance() { return _receivingConfig; }
@@ -150,7 +152,8 @@ namespace ArcherTools_0._0._1.cfg
                         _receivingConfig = (ReceivingConfig)serializer.Deserialize(fileStream);
                     }
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     Console.WriteLine($"Error while deserializing: {ex}");
                 }
             }
