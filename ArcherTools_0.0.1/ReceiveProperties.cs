@@ -1,4 +1,5 @@
-﻿using ArcherTools_0._0._1.cfg;
+﻿/*
+using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.controllers;
 using NPOI.Util;
 using System;
@@ -256,6 +257,7 @@ namespace ArcherTools_0._0._1
                 Console.WriteLine($"Config file {(File.Exists(filePath) ? "updated" : "created")} at {filePath}");
             
         } */
+/*
         }
 
         private void UpdateLabels()
@@ -343,3 +345,4 @@ namespace ArcherTools_0._0._1
         }
     }
 }
+*/

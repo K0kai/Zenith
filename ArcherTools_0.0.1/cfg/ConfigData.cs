@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace ArcherTools_0._0._1.cfg.oldcfg
+namespace ArcherTools_0._0._1.cfg
 {
     public enum ControlType
     {
@@ -100,18 +100,18 @@ namespace ArcherTools_0._0._1.cfg.oldcfg
 
     }
 
-    public class OldConfigData
+    public class ConfigData
     {
         public static ReceivingConfig _receivingConfig;
         public static UserConfig _userConfig;
 
-        public OldConfigData(ReceivingConfig receivingConfig, UserConfig userConfig = null)
+        public ConfigData(ReceivingConfig receivingConfig, UserConfig userConfig = null)
         {
             _receivingConfig = receivingConfig;
             _userConfig = userConfig;
         }
 
-        public OldConfigData() { }
+        public ConfigData() { }
 
         public static void SerializeConfig()
         {
@@ -135,7 +135,7 @@ namespace ArcherTools_0._0._1.cfg.oldcfg
             var serializer = new XmlSerializer(typeof(ConfigData));
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                serializer.Serialize(fileStream, new OldConfigData(_receivingConfig, _userConfig));
+                serializer.Serialize(fileStream, new ConfigData(_receivingConfig, _userConfig));
                 Console.WriteLine($"Config file {(File.Exists(filePath) ? "updated" : "created")} at {filePath}");
             }
         }
