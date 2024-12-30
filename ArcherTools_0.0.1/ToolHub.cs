@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.excel;
+
 
 namespace ArcherTools_0._0._1
 {
@@ -49,11 +52,6 @@ namespace ArcherTools_0._0._1
             Process.Start(psi);
             copyrights.LinkVisited = true;
 
-        }
-
-        private void receiveBtn_Click(object sender, EventArgs e)
-        {
-            Receiving.MainCall(["uau"]);
         }
 
         /*
@@ -107,12 +105,78 @@ namespace ArcherTools_0._0._1
 
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
-            ScreenImageHandler.DetectImage("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\item_search.png");
-            
+            //ScreenImageHandler.DetectImage("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\item_search.png");
+
             ReceivingConfig config = ConfigData.getInstance();
             String excelPath = config.ExcelFilePath;
             ExcelHandler excelHandler = new ExcelHandler(excelPath);
-            MessageBox.Show(excelHandler.ReadCell("TEST CHECK", 13, 4));
+            MessageBox.Show(excelHandler.GetCell("TEST CHECK", 13, 4));
+            Debug.WriteLine(excelHandler.GetColumn("TEST CHECK", 4)[2]);
+            Debug.WriteLine(excelHandler.GetRow("TEST CHECK", 13)[2]);
+        }
+
+        private async void vpnConnect_btn_Click(object sender, EventArgs e)
+        {
+            // Sys Methods
+            [DllImport("user32.dll")]
+            static extern bool SetForegroundWindow(IntPtr hWnd);
+
+            
+            // Sys Methods
+
+ 
+
+            String vpnPath = "C:\\Program Files\\SonicWall\\Global VPN Client";
+            String vpnShortcutName = "SWGVC.exe";
+            String vpnShortcutPath = Path.Combine(vpnPath, vpnShortcutName);
+            try
+            {
+                Process[] processes = Process.GetProcessesByName(vpnShortcutName);
+                if (processes.Length <= 0)
+                {
+                    Process.Start(vpnShortcutPath);
+                    Thread.Sleep(500);
+                    processes = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(vpnShortcutName));
+
+                }
+                IntPtr hWnd = new IntPtr(IntPtr.Zero);
+                while (hWnd == IntPtr.Zero && !processes[0].HasExited)
+                {
+                    Thread.Sleep(100);
+                    hWnd = processes[0].MainWindowHandle;
+                }
+                Thread.Sleep(500);
+                SetForegroundWindow(hWnd);
+                Rectangle rect = WindowHandler.GetWindowRectFromHandle(hWnd);
+                Debug.WriteLine(rect.Y);
+                Thread.Sleep(1000);
+                Point findIp = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_ip.png", rect, 0.95);
+                if (findIp != new Point(0,0))
+                {
+                    MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
+                    MouseHandler.MouseClick();
+                    MouseHandler.MouseClick();
+                }
+                else
+                {
+                    findIp = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_ipActivated.png", rect, 0.95);
+                    MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
+                    MouseHandler.MouseClick();
+                    MouseHandler.MouseClick();
+                }
+                
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            finally { 
+                            
+            }
+            
         }
     }
 }

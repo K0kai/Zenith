@@ -2,7 +2,7 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace ArcherTools_0._0._1.cfg
+namespace ArcherTools_0._0._1.cfg.oldcfg
 {
     public enum ControlType
     {
@@ -42,17 +42,32 @@ namespace ArcherTools_0._0._1.cfg
             Coordinates = coordinates;
         }
 
-        public List<int> getPositionByType(ControlType type) {
-            if (type == this.ControlType)
+        public List<int> getPositionByType(ControlType type)
+        {
+            if (type == ControlType)
             {
-                return this.Coordinates;
+                return Coordinates;
             }
             else
             {
-                return new List<int> {0,0};
+                return new List<int> { 0, 0 };
             }
         }
     }
+
+    [Serializable]
+    public class UserConfig
+    {
+        public required string vpnUsername { get; set; }
+        public required string vpnPassword { get; set; }
+
+        public UserConfig(string vpnUsername, string vpnPassword)
+        {
+            this.vpnUsername = vpnUsername;
+            this.vpnPassword = vpnPassword;
+        }
+    }
+
 
     [Serializable]
     public class ReceivingConfig
@@ -66,7 +81,7 @@ namespace ArcherTools_0._0._1.cfg
 
         public ReceivingConfig() { }
 
-        [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
+        [System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
         public ReceivingConfig(string excelFilePath, string excelSheetName, List<MousePosition> mousePositionList)
         {
             ExcelFilePath = excelFilePath;
@@ -74,87 +89,79 @@ namespace ArcherTools_0._0._1.cfg
             MousePositionList = mousePositionList;
         }
 
-        public List<MousePosition> getMousePositions() { return this.MousePositionList; }
-        public String getExcelFilePath() { return this.ExcelFilePath; }
+        public List<MousePosition> getMousePositions() { return MousePositionList; }
+        public string getExcelFilePath() { return ExcelFilePath; }
 
-        public void setExcelFilePath(string filePath) { this.ExcelFilePath = filePath; }
+        public void setExcelFilePath(string filePath) { ExcelFilePath = filePath; }
 
-        public void setMousePositions (List<MousePosition> mousePositions) { this.MousePositionList = mousePositions; }
-        
-        public void addMousePosition (MousePosition valueToAdd) { this.MousePositionList.Add(valueToAdd); }
+        public void setMousePositions(List<MousePosition> mousePositions) { MousePositionList = mousePositions; }
+
+        public void addMousePosition(MousePosition valueToAdd) { MousePositionList.Add(valueToAdd); }
 
     }
 
-    public class ConfigData
+    public class OldConfigData
     {
-       public static ReceivingConfig _receivingConfig;
+        public static ReceivingConfig _receivingConfig;
+        public static UserConfig _userConfig;
 
-        public ConfigData(ReceivingConfig receivingConfig)
+        public OldConfigData(ReceivingConfig receivingConfig, UserConfig userConfig = null)
         {
             _receivingConfig = receivingConfig;
+            _userConfig = userConfig;
         }
+
+        public OldConfigData() { }
 
         public static void SerializeConfig()
-        {
-            var configData = _receivingConfig;
-            if (configData != null)
-            {
-                string directoryPath = AppDomain.CurrentDomain.BaseDirectory;
-                string fileName = "Config.xml";
-                string filePath = Path.Combine(directoryPath, fileName);
-                try
-                {
-                    if (Directory.Exists(directoryPath))
-                    {
-                        Process.Start("explorer.exe", directoryPath);
-                    }
-                }
-                catch (Exception ex)
-                {
-                }
-
-                var serializer = new XmlSerializer(typeof(ReceivingConfig));
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    serializer.Serialize(fileStream, configData);
-                    Console.WriteLine($"Config file {(File.Exists(filePath) ? "updated" : "created")} at {filePath}");
-                }
-
-            }
-            else {
-               #if NOTDEBUG
-                Console.WriteLine($"Configuration data is empty, doing nothing instead.");
-               #else
-                Debug.WriteLine($"Configuration data is empty, doing nothing instead.");
-               #endif
-            }
-
-            
-        }
-
-        public static ReceivingConfig getInstance() { return _receivingConfig; }
-
-        public static void UnserializeConfig()
         {
             string directoryPath = AppDomain.CurrentDomain.BaseDirectory;
             string fileName = "Config.xml";
             string filePath = Path.Combine(directoryPath, fileName);
 
-            if (File.Exists(filePath))
+            try
             {
-                try
+                if (Directory.Exists(directoryPath))
                 {
-                    var serializer = new XmlSerializer(typeof(ReceivingConfig));
-                    using (var fileStream = new FileStream(filePath, FileMode.Open))
-                    {
-                        _receivingConfig = (ReceivingConfig)serializer.Deserialize(fileStream);
-                    }
-                }
-                catch (Exception ex) {
-                    Console.WriteLine($"Error while deserializing: {ex}");
+                    Process.Start("explorer.exe", directoryPath);
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to open directory: {ex.Message}");
+            }
 
+            // Serialize the entire ConfigData class
+            var serializer = new XmlSerializer(typeof(ConfigData));
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                serializer.Serialize(fileStream, new OldConfigData(_receivingConfig, _userConfig));
+                Console.WriteLine($"Config file {(File.Exists(filePath) ? "updated" : "created")} at {filePath}");
+            }
+        }
+
+        public static ReceivingConfig getRcvCfgInstance() { return _receivingConfig; }
+        public static UserConfig getUserCfgInstance() { return _userConfig; }
+
+        public static ConfigData UnserializeConfig()
+        {
+            // File setup
+            string directoryPath = AppDomain.CurrentDomain.BaseDirectory;
+            string fileName = "Config.xml";
+            string filePath = Path.Combine(directoryPath, fileName);
+
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("Config file not found.");
+                return null;
+            }
+
+            // Deserialize the ConfigData class
+            var serializer = new XmlSerializer(typeof(ConfigData));
+            using (var fileStream = new FileStream(filePath, FileMode.Open))
+            {
+                return (ConfigData)serializer.Deserialize(fileStream);
+            }
         }
     }
 }

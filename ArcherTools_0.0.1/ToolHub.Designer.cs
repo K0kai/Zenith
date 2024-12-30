@@ -35,6 +35,7 @@
             receiveBtn = new Button();
             ToolsListPanel = new FlowLayoutPanel();
             receiveconfig_btn = new Button();
+            vpnConnect_btn = new Button();
             panel1.SuspendLayout();
             ToolsListPanel.SuspendLayout();
             SuspendLayout();
@@ -121,6 +122,7 @@
             ToolsListPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             ToolsListPanel.Controls.Add(receiveBtn);
             ToolsListPanel.Controls.Add(receiveconfig_btn);
+            ToolsListPanel.Controls.Add(vpnConnect_btn);
             ToolsListPanel.FlowDirection = FlowDirection.TopDown;
             ToolsListPanel.Location = new Point(218, 188);
             ToolsListPanel.Name = "ToolsListPanel";
@@ -147,6 +149,26 @@
             receiveconfig_btn.UseVisualStyleBackColor = false;
             receiveconfig_btn.Click += receiveconfig_btn_Click;
             // 
+            // vpnConnect_btn
+            // 
+            vpnConnect_btn.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            vpnConnect_btn.BackColor = SystemColors.ControlDarkDark;
+            vpnConnect_btn.BackgroundImageLayout = ImageLayout.None;
+            vpnConnect_btn.Cursor = Cursors.Hand;
+            vpnConnect_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            vpnConnect_btn.FlatAppearance.BorderSize = 0;
+            vpnConnect_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            vpnConnect_btn.FlatStyle = FlatStyle.Flat;
+            vpnConnect_btn.ForeColor = SystemColors.ButtonFace;
+            vpnConnect_btn.Location = new Point(45, 74);
+            vpnConnect_btn.Margin = new Padding(25, 3, 25, 3);
+            vpnConnect_btn.Name = "vpnConnect_btn";
+            vpnConnect_btn.Size = new Size(126, 25);
+            vpnConnect_btn.TabIndex = 4;
+            vpnConnect_btn.Text = "Connect to VPN";
+            vpnConnect_btn.UseVisualStyleBackColor = false;
+            vpnConnect_btn.Click += vpnConnect_btn_Click;
+            // 
             // ToolHub
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -171,5 +193,6 @@
         private Button receiveBtn;
         private FlowLayoutPanel ToolsListPanel;
         private Button receiveconfig_btn;
+        private Button vpnConnect_btn;
     }
 }

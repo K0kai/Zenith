@@ -12,57 +12,139 @@ namespace ArcherTools_0._0._1
 {
     internal class ScreenImageHandler
     {
-  
-            private static Mat reusableGrayscaleScreenshot = new Mat();
 
-        public static void DetectImage(string targetImagePath)
+        private static Mat reusableFirstGrayScreenshot = new Mat();
+        private static Mat reusableSecondGrayScreenshot = new Mat();
+
+
+        public static Point SearchImageOnScreen(string targetImagePath, double threshold)
+        {
+            Point screenPoint = new Point(0, 0);
+            var taskFirstScreen = Task.Run(() =>
             {
+                screenPoint = DetectImage(targetImagePath, threshold);
+            });
+            var taskSecondScreen = Task.Run(() =>
+            {
+                screenPoint = DetectImageOther(targetImagePath, threshold);
+            });
+            Task.WhenAny(taskFirstScreen, taskSecondScreen).Wait();
+            return screenPoint;
+
+
+        }
+
+        public static Point SearchImageOnRegion(string sourceImagePath, Rectangle roi, double threshold)
+        {
+            using (Mat screenRegion = CaptureScreenRegion(roi))
+            {
+                using (Mat grayScreenRegion = new Mat())
+                {
+                    CvInvoke.CvtColor(screenRegion, grayScreenRegion, ColorConversion.Bgr2Gray);
+
+                    using (Mat templateImage = new Mat(sourceImagePath, ImreadModes.Grayscale))
+                    {
+                        using (Mat result = new Mat())
+                        {
+                            CvInvoke.MatchTemplate(grayScreenRegion, templateImage, result, TemplateMatchingType.CcoeffNormed);
+                            
+                            Point minLoc = new Point(0, 0), maxLoc = new Point(0, 0);
+                            double minVal = 0, maxVal = 0;
+                            CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+
+                            if (maxVal >= threshold)
+                            {
+                                return new Point(maxLoc.X + roi.X, maxLoc.Y + roi.Y);
+                            }
+
+                            return Point.Empty;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static Mat CaptureScreenRegion(Rectangle roi)
+        {
+            Bitmap screenshot = new Bitmap(roi.Width, roi.Height);
+            using (Graphics g = Graphics.FromImage(screenshot))
+            {
+                // Capture the screen within the specified ROI (Region of Interest)
+                g.CopyFromScreen(roi.Location, Point.Empty, roi.Size);
+            }
+
+            // Convert the captured image to a Mat (EmguCV format)
+            return screenshot.ToMat() ;
+        }
+       
+
+        
+        private static Point DetectImage(string targetImagePath, double threshold)
+        {
             using (Bitmap screenshotFirst = CaptureFirstScreen())
             using (Mat screenshotFirstMat = BitmapToMat(screenshotFirst))
             using (Mat targetImage = CvInvoke.Imread(targetImagePath, ImreadModes.Grayscale))
             using (Mat result = new Mat())
             {
-                
-                CvInvoke.CvtColor(screenshotFirstMat, reusableGrayscaleScreenshot, ColorConversion.Bgr2Gray);
 
-                CvInvoke.MatchTemplate(reusableGrayscaleScreenshot, targetImage, result, TemplateMatchingType.CcoeffNormed);
+                CvInvoke.CvtColor(screenshotFirstMat, reusableFirstGrayScreenshot, ColorConversion.Bgr2Gray);
+
+                CvInvoke.MatchTemplate(reusableFirstGrayScreenshot, targetImage, result, TemplateMatchingType.CcoeffNormed);
                 double minVal = 0.0, maxVal = 0.0;
                 Point minLoc = new Point(), maxLoc = new Point();
                 CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
 
-                double threshold = 0.8;
+
 
                 if (maxVal > threshold)
                 {
 #if DEBUG
                     Debug.WriteLine($"Target image found at location: {maxLoc.X}, {maxLoc.Y}");
-                    MouseHandler.SetCursorPos(maxLoc.X, maxLoc.Y);
 #endif
+                    return new Point(maxLoc.X, maxLoc.Y);
                 }
                 else
                 {
-                    Debug.WriteLine("Target image not found, trying second monitor.");
-                    using (Bitmap screenshotSecond = CaptureSecondScreen())                    
-                    using (Mat screenshotSecondMat = BitmapToMat(screenshotSecond))                    
-                    {                        
-                        CvInvoke.CvtColor(screenshotSecondMat, reusableGrayscaleScreenshot, ColorConversion.Bgr2Gray);
+                    return new Point(0, 0);
 
-                        CvInvoke.MatchTemplate(reusableGrayscaleScreenshot, targetImage, result, TemplateMatchingType.CcoeffNormed);
-                        CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
-
-                        if (maxVal > threshold)
-                        {
-#if DEBUG
-                            Debug.WriteLine($"Target image found at location: {maxLoc.X}, {maxLoc.Y}");
-                            MouseHandler.SetCursorPos(maxLoc.X + Screen.PrimaryScreen.Bounds.Width, maxLoc.Y);
-#endif
-                        }
-                        else { Debug.WriteLine("Target image not found in any monitor."); }
-                    }
-                            
                 }
             }
         }
+
+        private static Point DetectImageOther(string targetImagePath, double threshold)
+        {
+            {
+                using (Bitmap screenshot = CaptureSecondScreen())
+                using (Mat screenshotMat = BitmapToMat(screenshot))
+                using (Mat targetImage = CvInvoke.Imread(targetImagePath, ImreadModes.Grayscale))
+                using (Mat result = new Mat())
+                {
+
+                    CvInvoke.CvtColor(screenshotMat, reusableSecondGrayScreenshot, ColorConversion.Bgr2Gray);
+
+                    CvInvoke.MatchTemplate(reusableSecondGrayScreenshot, targetImage, result, TemplateMatchingType.CcoeffNormed);
+                    double minVal = 0.0, maxVal = 0.0;
+                    Point minLoc = new Point(), maxLoc = new Point();
+                    CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
+
+
+
+                    if (maxVal > threshold)
+                    {
+#if DEBUG
+                        Debug.WriteLine($"Target image found at location: {maxLoc.X + Screen.PrimaryScreen.Bounds.Width}, {maxLoc.Y}");
+#endif
+                        return new Point(maxLoc.X + Screen.PrimaryScreen.Bounds.Width, maxLoc.Y);
+                    }
+                    else
+                    {
+                        return new Point(0, 0);
+                    }
+
+                }
+            }
+        }
+
 
 
         static Bitmap CaptureFirstScreen()
@@ -101,4 +183,4 @@ namespace ArcherTools_0._0._1
             return bitmap.ToMat();
         }
     }
-    }
+}
