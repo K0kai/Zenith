@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +13,13 @@ namespace ArcherTools_0._0._1.excel
     {
         public string _filePath { get; set; }
 
-        public ExcelHandler(string filePath) {
+        public ExcelHandler(string filePath)
+        {
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            if (!File.Exists(filePath)) {
+            if (!File.Exists(filePath))
+            {
                 throw new FileNotFoundException("The Excel file does not exist in the specified path.");
             }
             this._filePath = filePath;
@@ -120,9 +123,15 @@ namespace ArcherTools_0._0._1.excel
                         columnData.Add(cellValue);
                     }
                 }
+<<<<<<< Updated upstream
                 return columnData;                    
                 }
             }
+=======
+                return columnData;
+            }
+        }
+>>>>>>> Stashed changes
 
         public List<String> GetRow(string worksheetName, int row)
         {
@@ -152,6 +161,36 @@ namespace ArcherTools_0._0._1.excel
             }
         }
 
+<<<<<<< Updated upstream
+=======
+        public static List<string> GetWorksheetNames(string excelPath)
+        {
+            List<String> nameList = new List<String>();
+            if (File.Exists(excelPath))
+            {
+                try
+                {                    
+                    using (ExcelPackage package = new ExcelPackage(excelPath))
+                    {
+                        ExcelWorkbook workbook = package.Workbook;
+                        ExcelWorksheets worksheets = workbook.Worksheets;
+                        foreach (var sheet in worksheets)
+                        {
+                            nameList.Add(sheet.Name);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error getting worksheet names.\n Error message: {ex.Message}");
+                }
+
+            }
+            return nameList;
+
+        }
+
+>>>>>>> Stashed changes
         public void SaveExcel(ExcelPackage package)
         {
             if (package == null)
@@ -193,4 +232,3 @@ namespace ArcherTools_0._0._1.excel
     }
 
 */
-

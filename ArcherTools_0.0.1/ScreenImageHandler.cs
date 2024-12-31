@@ -47,7 +47,11 @@ namespace ArcherTools_0._0._1
                         using (Mat result = new Mat())
                         {
                             CvInvoke.MatchTemplate(grayScreenRegion, templateImage, result, TemplateMatchingType.CcoeffNormed);
+<<<<<<< Updated upstream
                             
+=======
+
+>>>>>>> Stashed changes
                             Point minLoc = new Point(0, 0), maxLoc = new Point(0, 0);
                             double minVal = 0, maxVal = 0;
                             CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
@@ -74,11 +78,19 @@ namespace ArcherTools_0._0._1
             }
 
             // Convert the captured image to a Mat (EmguCV format)
+<<<<<<< Updated upstream
             return screenshot.ToMat() ;
         }
        
 
         
+=======
+            return screenshot.ToMat();
+        }
+
+
+
+>>>>>>> Stashed changes
         private static Point DetectImage(string targetImagePath, double threshold)
         {
             using (Bitmap screenshotFirst = CaptureFirstScreen())

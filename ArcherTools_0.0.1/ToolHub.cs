@@ -1,5 +1,9 @@
 ﻿using System.Diagnostics;
+<<<<<<< Updated upstream
 using System.Runtime.InteropServices;
+=======
+using ArcherTools_0._0._1.boxes;
+>>>>>>> Stashed changes
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.cfg.oldcfg;
 using ArcherTools_0._0._1.controllers;
@@ -29,7 +33,16 @@ namespace ArcherTools_0._0._1
             introlabel.Click += introlabel_Click;
             copyrights.LinkClicked += copyrights_LinkClicked_1;
             CenterControl(introlabel);
-            ConfigData.UnserializeConfig();
+            try
+            {
+                ConfigData? config = ConfigData.DeserializeConfigData();
+                config?.PostDeserialization();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to deserialize ConfigData: {ex.ToString()}");
+            }
         }
 
         private void copyrights_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
@@ -106,6 +119,7 @@ namespace ArcherTools_0._0._1
 
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
+<<<<<<< Updated upstream
             //ScreenImageHandler.DetectImage("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\item_search.png");
 
             cfg.oldcfg.ReceivingConfig config = OldConfigData.getInstance();
@@ -178,6 +192,39 @@ namespace ArcherTools_0._0._1
                             
             }
             
+=======
+            ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\item_search.png", 0.95);
+
+            ReceivingConfig? config = ConfigData._receivingConfig;
+            if (config != null)
+            {
+                String excelPath = config.ExcelFilePath;
+                ExcelHandler excelHandler = new ExcelHandler(excelPath);
+                MessageBox.Show(excelHandler.GetCell("TEST CHECK", 13, 4));
+            }
+            else
+            {
+                Debug.WriteLine("Receiving config is empty.");
+            }
+
+        }
+
+        private void vpnConnect_btn_Click(object sender, EventArgs e)
+        {
+            if (ConfigData._userConfig == null)
+            {
+                MessageBox.Show("Seems like you haven't set up your VPN Configurations yet, so we'll begin with that");
+                Form mainForm = this.FindForm();
+                mainForm.Enabled = false;
+                List<string> boxNames = new List<string>
+                {
+                    "VPN Username",
+                    "VPN Password"
+                };
+                var UserInputs = DynamicInputBoxForm.Show("Enter these values:", boxNames);
+                mainForm.Enabled = true;
+            }
+>>>>>>> Stashed changes
         }
     }
 }

@@ -38,7 +38,6 @@
             itemConfig_btn = new Button();
             label4 = new Label();
             receiveSaveCfg_btn = new Button();
-            nextPageRCV_btn = new Button();
             panel1 = new Panel();
             cfgexcel_Link = new LinkLabel();
             excelPath_RCV = new Button();
@@ -55,7 +54,7 @@
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
             label1.ForeColor = SystemColors.Menu;
-            label1.Location = new Point(14, 173);
+            label1.Location = new Point(27, 173);
             label1.Name = "label1";
             label1.Size = new Size(116, 15);
             label1.TabIndex = 1;
@@ -72,7 +71,7 @@
             itemSearch_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
             itemSearch_btn.FlatStyle = FlatStyle.Flat;
             itemSearch_btn.ForeColor = SystemColors.ButtonFace;
-            itemSearch_btn.Location = new Point(28, 191);
+            itemSearch_btn.Location = new Point(37, 191);
             itemSearch_btn.Margin = new Padding(25, 3, 25, 3);
             itemSearch_btn.Name = "itemSearch_btn";
             itemSearch_btn.Size = new Size(82, 27);
@@ -87,7 +86,7 @@
             pagelabel.AutoSize = true;
             pagelabel.Font = new Font("Franklin Gothic Medium Cond", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             pagelabel.ForeColor = Color.Lavender;
-            pagelabel.Location = new Point(158, 0);
+            pagelabel.Location = new Point(280, 0);
             pagelabel.Name = "pagelabel";
             pagelabel.Size = new Size(169, 24);
             pagelabel.TabIndex = 4;
@@ -105,7 +104,7 @@
             firstLine_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
             firstLine_btn.FlatStyle = FlatStyle.Flat;
             firstLine_btn.ForeColor = SystemColors.ButtonFace;
-            firstLine_btn.Location = new Point(28, 123);
+            firstLine_btn.Location = new Point(37, 123);
             firstLine_btn.Margin = new Padding(25, 3, 25, 3);
             firstLine_btn.Name = "firstLine_btn";
             firstLine_btn.Size = new Size(82, 27);
@@ -119,7 +118,7 @@
             label2.Anchor = AnchorStyles.None;
             label2.AutoSize = true;
             label2.ForeColor = SystemColors.Menu;
-            label2.Location = new Point(16, 105);
+            label2.Location = new Point(34, 105);
             label2.Name = "label2";
             label2.Size = new Size(109, 15);
             label2.TabIndex = 5;
@@ -136,7 +135,7 @@
             itemMaint_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
             itemMaint_btn.FlatStyle = FlatStyle.Flat;
             itemMaint_btn.ForeColor = SystemColors.ButtonFace;
-            itemMaint_btn.Location = new Point(333, 123);
+            itemMaint_btn.Location = new Point(192, 123);
             itemMaint_btn.Margin = new Padding(25, 3, 25, 3);
             itemMaint_btn.Name = "itemMaint_btn";
             itemMaint_btn.Size = new Size(82, 27);
@@ -150,7 +149,7 @@
             label3.Anchor = AnchorStyles.None;
             label3.AutoSize = true;
             label3.ForeColor = SystemColors.Menu;
-            label3.Location = new Point(319, 105);
+            label3.Location = new Point(168, 105);
             label3.Name = "label3";
             label3.Size = new Size(129, 15);
             label3.TabIndex = 7;
@@ -167,7 +166,7 @@
             itemConfig_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
             itemConfig_btn.FlatStyle = FlatStyle.Flat;
             itemConfig_btn.ForeColor = SystemColors.ButtonFace;
-            itemConfig_btn.Location = new Point(333, 191);
+            itemConfig_btn.Location = new Point(192, 191);
             itemConfig_btn.Margin = new Padding(25, 3, 25, 3);
             itemConfig_btn.Name = "itemConfig_btn";
             itemConfig_btn.Size = new Size(82, 27);
@@ -181,7 +180,7 @@
             label4.Anchor = AnchorStyles.None;
             label4.AutoSize = true;
             label4.ForeColor = SystemColors.Menu;
-            label4.Location = new Point(319, 173);
+            label4.Location = new Point(178, 173);
             label4.Name = "label4";
             label4.Size = new Size(96, 15);
             label4.TabIndex = 9;
@@ -198,7 +197,7 @@
             receiveSaveCfg_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
             receiveSaveCfg_btn.FlatStyle = FlatStyle.Flat;
             receiveSaveCfg_btn.ForeColor = SystemColors.ButtonFace;
-            receiveSaveCfg_btn.Location = new Point(158, 397);
+            receiveSaveCfg_btn.Location = new Point(272, 397);
             receiveSaveCfg_btn.Margin = new Padding(25, 3, 25, 3);
             receiveSaveCfg_btn.Name = "receiveSaveCfg_btn";
             receiveSaveCfg_btn.Size = new Size(158, 27);
@@ -206,26 +205,6 @@
             receiveSaveCfg_btn.Text = "Save Config";
             receiveSaveCfg_btn.UseVisualStyleBackColor = false;
             receiveSaveCfg_btn.Click += receiveSaveCfg_btn_Click;
-            // 
-            // nextPageRCV_btn
-            // 
-            nextPageRCV_btn.Anchor = AnchorStyles.None;
-            nextPageRCV_btn.BackColor = SystemColors.ControlDarkDark;
-            nextPageRCV_btn.BackgroundImageLayout = ImageLayout.None;
-            nextPageRCV_btn.Cursor = Cursors.Hand;
-            nextPageRCV_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
-            nextPageRCV_btn.FlatAppearance.BorderSize = 0;
-            nextPageRCV_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
-            nextPageRCV_btn.FlatStyle = FlatStyle.Flat;
-            nextPageRCV_btn.ForeColor = SystemColors.ButtonFace;
-            nextPageRCV_btn.Location = new Point(387, 445);
-            nextPageRCV_btn.Margin = new Padding(25, 3, 25, 3);
-            nextPageRCV_btn.Name = "nextPageRCV_btn";
-            nextPageRCV_btn.Size = new Size(90, 24);
-            nextPageRCV_btn.TabIndex = 12;
-            nextPageRCV_btn.Text = "Next Page";
-            nextPageRCV_btn.UseVisualStyleBackColor = false;
-            nextPageRCV_btn.Click += nextPageRCV_btn_Click;
             // 
             // panel1
             // 
@@ -237,7 +216,6 @@
             panel1.Controls.Add(fln_Label);
             panel1.Controls.Add(goBackRCV_btn);
             panel1.Controls.Add(itemSearch_btn);
-            panel1.Controls.Add(nextPageRCV_btn);
             panel1.Controls.Add(label1);
             panel1.Controls.Add(pagelabel);
             panel1.Controls.Add(receiveSaveCfg_btn);
@@ -250,19 +228,20 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(480, 473);
+            panel1.Size = new Size(725, 473);
             panel1.TabIndex = 13;
             // 
             // cfgexcel_Link
             // 
+            cfgexcel_Link.Anchor = AnchorStyles.None;
             cfgexcel_Link.AutoSize = true;
             cfgexcel_Link.LinkColor = Color.IndianRed;
-            cfgexcel_Link.Location = new Point(198, 153);
+            cfgexcel_Link.Location = new Point(322, 361);
             cfgexcel_Link.Name = "cfgexcel_Link";
-            cfgexcel_Link.Size = new Size(63, 15);
+            cfgexcel_Link.Size = new Size(60, 15);
             cfgexcel_Link.TabIndex = 19;
             cfgexcel_Link.TabStop = true;
-            cfgexcel_Link.Text = "Show Path";
+            cfgexcel_Link.Text = "Open Test";
             cfgexcel_Link.TextAlign = ContentAlignment.MiddleCenter;
             cfgexcel_Link.VisitedLinkColor = Color.Brown;
             cfgexcel_Link.LinkClicked += cfgexcel_Link_LinkClicked;
@@ -278,7 +257,7 @@
             excelPath_RCV.FlatAppearance.MouseOverBackColor = Color.Indigo;
             excelPath_RCV.FlatStyle = FlatStyle.Flat;
             excelPath_RCV.ForeColor = SystemColors.ButtonFace;
-            excelPath_RCV.Location = new Point(168, 123);
+            excelPath_RCV.Location = new Point(292, 331);
             excelPath_RCV.Margin = new Padding(25, 3, 25, 3);
             excelPath_RCV.Name = "excelPath_RCV";
             excelPath_RCV.Size = new Size(118, 27);
@@ -291,7 +270,7 @@
             // 
             itsearch_Label.Anchor = AnchorStyles.None;
             itsearch_Label.ForeColor = Color.IndianRed;
-            itsearch_Label.Location = new Point(5, 221);
+            itsearch_Label.Location = new Point(23, 221);
             itsearch_Label.Name = "itsearch_Label";
             itsearch_Label.Size = new Size(120, 20);
             itsearch_Label.TabIndex = 17;
@@ -302,7 +281,7 @@
             // 
             itcfg_Label.Anchor = AnchorStyles.None;
             itcfg_Label.ForeColor = Color.IndianRed;
-            itcfg_Label.Location = new Point(310, 221);
+            itcfg_Label.Location = new Point(168, 221);
             itcfg_Label.Name = "itcfg_Label";
             itcfg_Label.Size = new Size(120, 20);
             itcfg_Label.TabIndex = 16;
@@ -313,7 +292,7 @@
             // 
             itmtn_Label.Anchor = AnchorStyles.None;
             itmtn_Label.ForeColor = Color.IndianRed;
-            itmtn_Label.Location = new Point(310, 153);
+            itmtn_Label.Location = new Point(168, 153);
             itmtn_Label.Name = "itmtn_Label";
             itmtn_Label.Size = new Size(120, 20);
             itmtn_Label.TabIndex = 15;
@@ -324,7 +303,7 @@
             // 
             fln_Label.Anchor = AnchorStyles.None;
             fln_Label.ForeColor = Color.IndianRed;
-            fln_Label.Location = new Point(5, 153);
+            fln_Label.Location = new Point(23, 153);
             fln_Label.Name = "fln_Label";
             fln_Label.Size = new Size(120, 20);
             fln_Label.TabIndex = 14;
@@ -342,7 +321,7 @@
             goBackRCV_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
             goBackRCV_btn.FlatStyle = FlatStyle.Flat;
             goBackRCV_btn.ForeColor = SystemColors.ButtonFace;
-            goBackRCV_btn.Location = new Point(3, 445);
+            goBackRCV_btn.Location = new Point(308, 446);
             goBackRCV_btn.Margin = new Padding(25, 3, 25, 3);
             goBackRCV_btn.Name = "goBackRCV_btn";
             goBackRCV_btn.Size = new Size(90, 24);
@@ -358,7 +337,7 @@
             BackColor = Color.FromArgb(64, 64, 64);
             Controls.Add(panel1);
             Name = "ReceiveProperties";
-            Size = new Size(480, 473);
+            Size = new Size(725, 473);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
@@ -375,7 +354,6 @@
         private Button itemConfig_btn;
         private Label label4;
         private Button receiveSaveCfg_btn;
-        private Button nextPageRCV_btn;
         private Panel panel1;
         private Button goBackRCV_btn;
         private Label fln_Label;

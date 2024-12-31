@@ -23,7 +23,6 @@ namespace ArcherTools_0._0._1
         {
 
             InitializeComponent();
-            ConfigData.UnserializeConfig();
             UpdateLabels();
 
         }
@@ -222,18 +221,22 @@ namespace ArcherTools_0._0._1
                 new MousePosition(ControlType.ItemConfigurationBox, itcfgCoordinates),
                 new MousePosition(ControlType.ReceiptLineFirstLine, flnCoordinates)
             };
-
-            if (ConfigData.getInstance() == null)
+            ConfigData newCfg = new ConfigData();
+            if (ConfigData._receivingConfig == null)
             {
-                ReceivingConfig receiveConfig = new ReceivingConfig("aaaaaa", "aaaaaaaaaa", mousePositions);
-                ConfigData cfgData = new ConfigData(receiveConfig);
+                ReceivingConfig receiveConfig = new ReceivingConfig("nullPath", mousePositions);
+                newCfg = new ConfigData(ConfigData._userConfig, receiveConfig);
+                newCfg.PrepareForSerialization();
+                Debug.WriteLine("creating new config");               
             }
             else
             {
-                ReceivingConfig thisInstance = ConfigData.getInstance();
+                ReceivingConfig thisInstance = ConfigData._receivingConfig;
                 thisInstance.setMousePositions(mousePositions);
+                thisInstance.setExcelSheetNames(thisInstance.ExcelFilePath);
             }
-            ConfigData.SerializeConfig();
+            ConfigData.SerializeConfigData();
+
             /*itmtnCoordinates.Add(int.Parse(itmtn_Label.Text.Split(";"));
             
             string directoryPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -262,9 +265,9 @@ namespace ArcherTools_0._0._1
 
         private void UpdateLabels()
         {
-            if (ConfigData.getInstance() != null)
+            if (ConfigData._receivingConfig != null)
             {
-                ReceivingConfig configInstance = ConfigData.getInstance();
+                ReceivingConfig configInstance = ConfigData._receivingConfig;
                 List<MousePosition> mousePositions = configInstance.getMousePositions();
 
                 List<int> flnCoordinates = new List<int> { 0, 0 };
@@ -306,9 +309,9 @@ namespace ArcherTools_0._0._1
 
         private void cfgexcel_Link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            if (ConfigData.getInstance() != null)
+            if (ConfigData._receivingConfig != null)
             {
-                ReceivingConfig configInstance = ConfigData.getInstance();
+                ReceivingConfig configInstance = ConfigData._receivingConfig;
                 string excelDirectory = configInstance.getExcelFilePath();
                 Process.Start("explorer.exe", excelDirectory);
             }
@@ -326,9 +329,9 @@ namespace ArcherTools_0._0._1
                 openFileDialog.RestoreDirectory = true;
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK) { filePath = openFileDialog.FileName; }
-                if (ConfigData.getInstance() != null)
+                if (ConfigData._receivingConfig != null)
                 {
-                    ReceivingConfig configInstance = ConfigData.getInstance();
+                    ReceivingConfig configInstance = ConfigData._receivingConfig;
                     if (configInstance.getExcelFilePath() != filePath)
                     {
                         configInstance.setExcelFilePath(filePath);

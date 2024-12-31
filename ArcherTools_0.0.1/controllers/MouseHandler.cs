@@ -17,7 +17,19 @@ namespace ArcherTools_0._0._1.controllers
             Point curMousePos = Control.MousePosition;
             X += curMousePos.X;
             Y += curMousePos.Y;
-            SetCursorPos(X, Y);            
+            SetCursorPos(X, Y);
+        }
+
+        internal static void MouseClick()
+        {
+            const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+            const uint MOUSEEVENTF_LEFTUP = 0x0004;
+
+            [DllImport("user32.dll", SetLastError = true)]
+            static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, IntPtr dwExtraInfo);
+
+            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, IntPtr.Zero);
+            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, IntPtr.Zero);
         }
 
         internal static void MouseClick()
