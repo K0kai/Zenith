@@ -1,5 +1,4 @@
-﻿/*
-using ArcherTools_0._0._1.cfg;
+﻿using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.controllers;
 using NPOI.Util;
 using System;
@@ -227,7 +226,7 @@ namespace ArcherTools_0._0._1
                 ReceivingConfig receiveConfig = new ReceivingConfig("nullPath", mousePositions);
                 newCfg = new ConfigData(ConfigData._userConfig, receiveConfig);
                 newCfg.PrepareForSerialization();
-                Debug.WriteLine("creating new config");               
+                Debug.WriteLine("creating new config");
             }
             else
             {
@@ -260,7 +259,6 @@ namespace ArcherTools_0._0._1
                 Console.WriteLine($"Config file {(File.Exists(filePath) ? "updated" : "created")} at {filePath}");
             
         } */
-/*
         }
 
         private void UpdateLabels()
@@ -343,9 +341,8 @@ namespace ArcherTools_0._0._1
 
         private void nextPageRCV_btn_Click(object sender, EventArgs e)
         {
-           
-           
+
+
         }
     }
 }
-*/
