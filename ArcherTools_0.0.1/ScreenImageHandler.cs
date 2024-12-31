@@ -114,6 +114,10 @@ namespace ArcherTools_0._0._1
         private static Point DetectImageOther(string targetImagePath, double threshold)
         {
             {
+                if (CaptureSecondScreen() == null)
+                {
+                    return Point.Empty;
+                }
                 using (Bitmap screenshot = CaptureSecondScreen())
                 using (Mat screenshotMat = BitmapToMat(screenshot))
                 using (Mat targetImage = CvInvoke.Imread(targetImagePath, ImreadModes.Grayscale))
@@ -178,9 +182,17 @@ namespace ArcherTools_0._0._1
             }
         }
 
-        private static Mat BitmapToMat(Bitmap bitmap)
+        private static Mat? BitmapToMat(Bitmap bitmap)
         {
-            return bitmap.ToMat();
+            try
+            {
+                return bitmap.ToMat();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return null;
+            }
         }
     }
 }
