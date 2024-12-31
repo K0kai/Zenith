@@ -123,15 +123,9 @@ namespace ArcherTools_0._0._1.excel
                         columnData.Add(cellValue);
                     }
                 }
-<<<<<<< Updated upstream
-                return columnData;                    
-                }
-            }
-=======
                 return columnData;
             }
         }
->>>>>>> Stashed changes
 
         public List<String> GetRow(string worksheetName, int row)
         {
@@ -161,8 +155,6 @@ namespace ArcherTools_0._0._1.excel
             }
         }
 
-<<<<<<< Updated upstream
-=======
         public static List<string> GetWorksheetNames(string excelPath)
         {
             List<String> nameList = new List<String>();
@@ -190,7 +182,6 @@ namespace ArcherTools_0._0._1.excel
 
         }
 
->>>>>>> Stashed changes
         public void SaveExcel(ExcelPackage package)
         {
             if (package == null)

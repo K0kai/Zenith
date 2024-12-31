@@ -102,7 +102,7 @@ namespace ArcherTools_0._0._1
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             if (mainForm != null)
             {
-                mainForm.ClientSize = new Size(480, 473);
+                mainForm.ClientSize = new Size(725, 473);
                 mainForm.StartPosition = FormStartPosition.Manual; // Enable manual positioning
                 Screen currentScreen = Screen.FromControl(mainForm);
                 Rectangle currentScreenBounds = currentScreen.WorkingArea;
