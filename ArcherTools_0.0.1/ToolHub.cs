@@ -2,6 +2,7 @@
 using ArcherTools_0._0._1.boxes;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.excel;
+using ArcherTools_0._0._1.methods;
 
 namespace ArcherTools_0._0._1
 {
@@ -61,11 +62,6 @@ namespace ArcherTools_0._0._1
 
         }
 
-        private void receiveBtn_Click(object sender, EventArgs e)
-        {
-            Receiving.MainCall(["uau"]);
-        }
-
         /*
          private void MouseEnterBtn(object sender, EventArgs e)
          {
@@ -117,19 +113,7 @@ namespace ArcherTools_0._0._1
 
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
-            ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\item_search.png", 0.95);
-
-            ReceivingConfig? config = ConfigData._receivingConfig;
-            if (config != null)
-            {
-                String excelPath = config.ExcelFilePath;
-                ExcelHandler excelHandler = new ExcelHandler(excelPath);
-                MessageBox.Show(excelHandler.GetCell("TEST CHECK", 13, 4));
-            }
-            else
-            {
-                Debug.WriteLine("Receiving config is empty.");
-            }
+            Receiving.MainCall();
 
         }
 
