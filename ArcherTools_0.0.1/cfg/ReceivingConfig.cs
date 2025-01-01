@@ -58,6 +58,8 @@ namespace ArcherTools_0._0._1.cfg
                 return new List<int> { 0, 0 };
             }
         }
+
+        public List<int> getPosition() { return this.Coordinates; }
     }
 
     [Serializable]
@@ -90,6 +92,18 @@ namespace ArcherTools_0._0._1.cfg
         }
 
         public List<MousePosition> getMousePositions() { return this.MousePositionList; }
+
+        public MousePosition? getMousePosByType(ControlType ctrlType)
+        {
+            List<MousePosition> mousePositions = this.getMousePositions();
+            MousePosition? foundPos = null;
+            foreach (var mousePos in mousePositions) {
+                if (mousePos.ControlType == ctrlType) { foundPos = mousePos; }
+                
+            }
+            return foundPos;
+        }
+
         public string? getExcelFilePath() { try { return this.ExcelFilePath; } catch (Exception ex) { Debug.WriteLine($"Excel file path is empty.\n Error Message: {ex.Message}"); return null; } }
 
         public void setExcelFilePath(string filePath) { this.ExcelFilePath = filePath; }

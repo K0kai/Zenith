@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArcherTools_0._0._1
+namespace ArcherTools_0._0._1.controllers
 {
-    internal class ProcessHandler
+    internal class KeystrokeHandler
     {
-
     }
 }
