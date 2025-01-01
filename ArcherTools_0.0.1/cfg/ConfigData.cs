@@ -12,10 +12,10 @@ namespace ArcherTools_0._0._1.cfg
 
 
         //Non serializable variables
-        public static string ConfigVersion { get; set; } = CurrentVersion;
+        public static string  ConfigVersion { get; set; } = CurrentVersion;
         public static UserConfig? _userConfig { get; private set; }
-
         public static ReceivingConfig? _receivingConfig { get; private set; }
+        public static ToolConfig? _toolConfig { get; private set; }
 
 
         //Serializable variables
@@ -25,18 +25,21 @@ namespace ArcherTools_0._0._1.cfg
         public UserConfig? _serializableUserConfig;
         [XmlElement("receivingConfiguration")]
         public ReceivingConfig? _serializableRcvConfig;
+        [XmlElement("toolConfiguration")]
+        public ToolConfig? _serializableToolConfig;
 
 
         public ConfigData() { }
-        public ConfigData(UserConfig userConfig, ReceivingConfig receivingConfig)
+        public ConfigData(UserConfig userConfig, ReceivingConfig receivingConfig, ToolConfig toolConfig)
         {
             ConfigVersion = CurrentVersion;
             _userConfig = userConfig;
             _receivingConfig = receivingConfig;
+            _toolConfig = toolConfig;
             _serializableCfgVersion = ConfigVersion;
             _serializableUserConfig = userConfig;
             _serializableRcvConfig = receivingConfig;
-
+            _serializableToolConfig = toolConfig;
         }
 
         public void PrepareForSerialization()
@@ -44,6 +47,7 @@ namespace ArcherTools_0._0._1.cfg
             _serializableCfgVersion = ConfigVersion;
             _serializableUserConfig = _userConfig;
             _serializableRcvConfig = _receivingConfig;
+            _serializableToolConfig = _toolConfig;
         }
 
         public void PostDeserialization()
@@ -51,6 +55,7 @@ namespace ArcherTools_0._0._1.cfg
             ConfigVersion = _serializableCfgVersion;
             _userConfig = _serializableUserConfig;
             _receivingConfig = _serializableRcvConfig;
+            _toolConfig = _serializableToolConfig;
 
         }
 
@@ -78,7 +83,7 @@ namespace ArcherTools_0._0._1.cfg
             var serializer = new XmlSerializer(typeof(ConfigData));
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                serializer.Serialize(fileStream, new ConfigData(_userConfig, _receivingConfig));
+                serializer.Serialize(fileStream, new ConfigData(_userConfig, _receivingConfig, _toolConfig));
                 Debug.WriteLine($"Serialized config file at path \"{filePath}\".");
 #if DEBUG
                 if (Directory.Exists(directoryPath))

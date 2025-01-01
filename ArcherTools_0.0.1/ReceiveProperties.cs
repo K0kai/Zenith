@@ -224,7 +224,7 @@ namespace ArcherTools_0._0._1
             if (ConfigData._receivingConfig == null)
             {
                 ReceivingConfig receiveConfig = new ReceivingConfig("nullPath", mousePositions);
-                newCfg = new ConfigData(ConfigData._userConfig, receiveConfig);
+                newCfg = new ConfigData(ConfigData._userConfig, receiveConfig, ConfigData._toolConfig);
                 newCfg.PrepareForSerialization();
                 Debug.WriteLine("creating new config");
             }
