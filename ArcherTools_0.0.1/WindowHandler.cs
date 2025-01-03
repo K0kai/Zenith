@@ -25,14 +25,14 @@ namespace ArcherTools_0._0._1
 
         public struct RECT
         {
-            public int left;
-            public int top;
-            public int right;
-            public int bottom;
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
 
             public Rectangle toRect()
             {
-                return new Rectangle(left, top, right - left, bottom - top);
+                return new Rectangle(Left, Top, Right - Left, Bottom - Top);
             }
         }
 
@@ -41,8 +41,7 @@ namespace ArcherTools_0._0._1
             IntPtr hWnd = FindWindow(null, windowTitle);
             if (hWnd != IntPtr.Zero)
             {
-                RECT rect;
-                GetWindowRect(hWnd, out rect);
+                GetWindowRect(hWnd, out RECT rect);
                 return rect.toRect();
             }
             return Rectangle.Empty;
@@ -63,9 +62,8 @@ namespace ArcherTools_0._0._1
         public static Rectangle GetWindowRectFromHandle(IntPtr hWnd)
         {
             if (hWnd != IntPtr.Zero)
-            {
-                RECT rect;
-                GetWindowRect(hWnd, out rect);
+            {                
+                GetWindowRect(hWnd, out RECT rect);
                 return rect.toRect();
             }
             return Rectangle.Empty;

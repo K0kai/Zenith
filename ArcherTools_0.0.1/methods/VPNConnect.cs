@@ -4,6 +4,8 @@ using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.errors;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using static ArcherTools_0._0._1.WindowHandler;
 
 namespace ArcherTools_0._0._1.methods
 {
@@ -19,16 +21,21 @@ namespace ArcherTools_0._0._1.methods
         const string vpnShortcutName = "SWGVC.exe";
         static string vpnShortcutPath = Path.Combine(vpnPath, vpnShortcutName);
 
-        static internal void ConnectToVPN()
+        static internal bool? ConnectToVPN()
         {
             if (ConfigData._userConfig == null)
             {
-                MessageBox.Show("Seems like you haven't set up your VPN Configurations yet, so we'll begin with that");
+               DialogResult message =  MessageBox.Show("Seems like you haven't set up your VPN Configurations yet, so we'll begin with that", "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                if (message == DialogResult.No)
+                {
+                    MessageBox.Show("Sorry, but we cannot continue VPN connection without your credentials first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
+                }
                 var returnCode = SetUpVPNConfig();
                 if (returnCode != (byte)ErrorEnum.ErrorCode.Success)
                 {
                     MessageBox.Show("There was an error setting up your VPN, please try again.", $"{ (ErrorEnum.ErrorCode) returnCode}", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    return false;
                 }
             }
 
@@ -51,21 +58,55 @@ namespace ArcherTools_0._0._1.methods
                 Thread.Sleep(500);
                 SetForegroundWindow(hWnd);
                 Rectangle rect = WindowHandler.GetWindowRectFromHandle(hWnd);
-                Debug.WriteLine(rect.Y);
-                Thread.Sleep(1000);
-                Point findIp = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_ip.png", rect, 0.95);
-                if (findIp != new Point(0, 0))
-                {
-                    MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
-                    MouseHandler.MouseClick(clickType.DoubleLeftClick);
+                Debug.WriteLine(rect);
+                //OverlayForm overlay = new OverlayForm(rect);
+                //overlay.Show();
+                 Point findIp = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_ip.png", rect, 0.50);
+                 Thread.Sleep(1000);
+                 if (findIp != new Point(0, 0))
+                 {
+                    Point checkEnabled = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_enabled.png", rect, 0.50);
+                    if (checkEnabled == new Point(0, 0))
+                    {
+                        Debug.WriteLine("sexo1");
+                        MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
+                        MouseHandler.MouseClick(clickType.DoubleLeftClick);
+                        Thread.Sleep(2000);
+                        var user = ConfigData._userConfig.vpnUsername;
+                        var pas = ConfigData._userConfig.vpnPassword;
+                        KeystrokeHandler.TypeText(user);
+                        KeystrokeHandler.sendKeystroke(enum_things.KeysEnum.SendKey.Tab);
+                        KeystrokeHandler.TypeText(pas);
+                        KeystrokeHandler.sendKeystroke(enum_things.KeysEnum.SendKey.Enter);
+                        return true;
+                    }
+
                 }
-                else
-                {
-                    findIp = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_ipActivated.png", rect, 0.95);
-                    MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
-                    MouseHandler.MouseClick(clickType.DoubleLeftClick);
-                }
-            }
+                 else
+                 {
+                     findIp = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_ipActivated.png", rect, 0.50);
+                    if (findIp != new Point(0, 0))
+                    {
+                        Point checkEnabled = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_enabled.png", rect, 0.50);
+                        if (checkEnabled == new Point(0, 0))
+                        {
+                            Debug.WriteLine("sexo2");
+                            MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
+                            MouseHandler.MouseClick(clickType.DoubleLeftClick);
+                            Thread.Sleep(2000);
+                            var user = ConfigData._userConfig.vpnUsername;
+                            var pas = ConfigData._userConfig.vpnPassword;
+                            KeystrokeHandler.TypeText(user);
+                            KeystrokeHandler.sendKeystroke(enum_things.KeysEnum.SendKey.Tab);
+                            KeystrokeHandler.TypeText(pas);
+                            KeystrokeHandler.sendKeystroke(enum_things.KeysEnum.SendKey.Enter);
+                            return true;
+                        }
+                    }
+                 }           
+                
+            }           
+
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
@@ -73,7 +114,9 @@ namespace ArcherTools_0._0._1.methods
             finally
             {
             }
+            return false;
         }
+             
 
         public static byte SetUpVPNConfig()
         {

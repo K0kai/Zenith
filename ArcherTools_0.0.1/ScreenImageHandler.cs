@@ -23,7 +23,7 @@ namespace ArcherTools_0._0._1
             {
                 screenPoint = DetectImageOther(targetImagePath, threshold);
             });
-            Task.WhenAny(taskFirstScreen, taskSecondScreen).Wait();
+            Task.WhenAll(taskFirstScreen, taskSecondScreen).Wait();
             return screenPoint;
 
 
@@ -31,7 +31,7 @@ namespace ArcherTools_0._0._1
 
         public static Point SearchImageOnRegion(string sourceImagePath, Rectangle roi, double threshold)
         {
-            using (Mat screenRegion = CaptureScreenRegion(roi))
+            using (Mat screenRegion = BitmapToMat(CaptureScreenRegion(roi)))
             {
                 using (Mat grayScreenRegion = new Mat())
                 {
@@ -59,7 +59,7 @@ namespace ArcherTools_0._0._1
             }
         }
 
-        private static Mat CaptureScreenRegion(Rectangle roi)
+        private static Bitmap CaptureScreenRegion(Rectangle roi)
         {
             Bitmap screenshot = new Bitmap(roi.Width, roi.Height);
             using (Graphics g = Graphics.FromImage(screenshot))
@@ -69,7 +69,7 @@ namespace ArcherTools_0._0._1
             }
 
             // Convert the captured image to a Mat (EmguCV format)
-            return screenshot.ToMat();
+            return screenshot;
         }
 
 

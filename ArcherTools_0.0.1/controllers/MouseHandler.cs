@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using InputSimulatorEx;
+using NPOI.SS.Formula.Functions;
 
 namespace ArcherTools_0._0._1.controllers
 {
@@ -7,6 +9,8 @@ namespace ArcherTools_0._0._1.controllers
     public enum clickType
     {
         SingleLeftClick,
+        SingleLeftClickHold,
+        SingleLeftClickRelease,
         SingleRightClick,
         DoubleLeftClick,
         DoubleRightClick,
@@ -26,6 +30,8 @@ namespace ArcherTools_0._0._1.controllers
         [DllImport("user32.dll", SetLastError = true)]
         static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, IntPtr dwExtraInfo);
 
+        static InputSimulator sim = new InputSimulator();
+
         internal static void SetCursorPosRelative(int X, int Y)
         {
             Point curMousePos = Control.MousePosition;
@@ -37,23 +43,25 @@ namespace ArcherTools_0._0._1.controllers
 
 
 
-        internal static void MouseClick(clickType clickType)
+        internal static void MouseClick(clickType clkType = clickType.SingleLeftClick)
         {
-
-
-
-            if (clickType == clickType.SingleLeftClick)
+            switch (clkType)
             {
-                mouse_event((uint)mouseEventKeys.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, IntPtr.Zero);
-                mouse_event((uint)mouseEventKeys.MOUSEEVENTF_LEFTUP, 0, 0, 0, IntPtr.Zero);
-            }
-            else if (clickType == clickType.DoubleLeftClick)
-            {
-                mouse_event((uint)mouseEventKeys.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, IntPtr.Zero);
-                mouse_event((uint)mouseEventKeys.MOUSEEVENTF_LEFTUP, 0, 0, 0, IntPtr.Zero);
-                Thread.Sleep(100);
-                mouse_event((uint)mouseEventKeys.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, IntPtr.Zero);
-                mouse_event((uint)mouseEventKeys.MOUSEEVENTF_LEFTUP, 0, 0, 0, IntPtr.Zero);
+                case clickType.SingleLeftClickHold:
+                    sim.Mouse.LeftButtonDown();                    
+                    break;
+                case clickType.SingleLeftClickRelease:
+                    sim.Mouse.LeftButtonUp();
+                    break;
+                case clickType.DoubleLeftClick:
+                    sim.Mouse.LeftButtonDoubleClick();
+                    break;
+                case clickType.SingleRightClick:
+                    sim.Mouse.RightButtonClick();
+                    break;
+                default:
+                    sim.Mouse.LeftButtonClick();
+                    break;
             }
         }
 
@@ -65,9 +73,10 @@ namespace ArcherTools_0._0._1.controllers
             int endPosY = endPos.Y;
             int stepsX = endPosX - startPosX;
             int stepsY = endPosY - startPosY;
-            int step = 10;
+            int stepX = 10;
+            int stepY = 2;
 
-            mouse_event((uint)mouseEventKeys.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, IntPtr.Zero);
+            MouseClick(clickType.SingleLeftClickHold);
             if (snap)
             {         
                 SetCursorPos(endPosX, endPosY);
@@ -78,8 +87,8 @@ namespace ArcherTools_0._0._1.controllers
             {
                 while (startPosX != endPosX || startPosY != endPosY)
                 {
-                    int nextX = startPosX + Math.Sign(endPosX - startPosX) * Math.Min(step, Math.Abs(endPosX - startPosX));
-                    int nextY = startPosY + Math.Sign(endPosY - startPosY) * Math.Min(step, Math.Abs(endPosY - startPosX));
+                    int nextX = startPosX + Math.Sign(endPosX - startPosX) * Math.Min(stepX, Math.Abs(endPosX - startPosX));
+                    int nextY = startPosY + Math.Sign(endPosY - startPosY) * Math.Min(stepY, Math.Abs(endPosY - startPosX));
                     
                     SetCursorPos(nextX, nextY);
                     
@@ -92,8 +101,9 @@ namespace ArcherTools_0._0._1.controllers
                 }
 
             }
+            MouseClick(clickType.SingleLeftClickRelease);
             Debug.WriteLine("Mouse drag finished.");
-            mouse_event((uint)mouseEventKeys.MOUSEEVENTF_LEFTUP, 0, 0, 0, IntPtr.Zero);
+           
 
         }
     }

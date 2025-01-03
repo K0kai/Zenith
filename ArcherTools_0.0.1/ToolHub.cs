@@ -30,21 +30,22 @@ namespace ArcherTools_0._0._1
             this.Load += userControlLoad;
             CenterControl(introlabel);
 
-            try
-            {
-                ConfigData? config = ConfigData.DeserializeConfigData();
-                config?.PostDeserialization();
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Failed to deserialize ConfigData: {ex.ToString()}");
-            }
+            
         }
 
         private void userControlLoad(object sender, EventArgs e)
         {
             _mainForm = this.FindForm();
+            try
+            {
+                ConfigData? config = ConfigData.DeserializeConfigData();
+                config?.PostDeserialization();
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to deserialize ConfigData: {ex.ToString()}");
+            }
         }
 
         private void copyrights_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
@@ -121,13 +122,15 @@ namespace ArcherTools_0._0._1
 
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
-            KeystrokeHandler.sendKeystroke(KeysEnum.SendKey.Tab, KeysEnum.SendKey.Alt);
+            Receiving.MainCall();
 
         }
 
         private void vpnConnect_btn_Click(object sender, EventArgs e)
         {
-            VPNConnect.ConnectToVPN();
+            this.Enabled = false;                
+            VPNConnect.ConnectToVPN();          
+            this.Enabled = true;
         }
     }
 }

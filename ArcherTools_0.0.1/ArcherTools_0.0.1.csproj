@@ -15,6 +15,8 @@
     <PackageReference Include="Emgu.CV.runtime.windows" Version="4.9.0.5494" />
     <PackageReference Include="Emgu.CV.runtime.windows.cuda" Version="4.4.0.4099" />
     <PackageReference Include="EPPlus" Version="7.5.2" />
+    <PackageReference Include="InputSimulator" Version="1.0.4" />
+    <PackageReference Include="InputSimulatorEx" Version="2.1.1" />
     <PackageReference Include="libpng_static" Version="1.6.39.1" />
     <PackageReference Include="NPOI" Version="2.7.2" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />

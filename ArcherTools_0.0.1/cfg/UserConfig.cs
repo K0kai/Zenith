@@ -11,6 +11,8 @@ namespace ArcherTools_0._0._1.cfg
         public string vpnUsername { get; set; }
         [XmlElement(IsNullable = true)]
         public string vpnPassword { get; set; }
+        [NonSerialized]
+        public bool vpnConnected;
 
         public UserConfig() { }
         public UserConfig(string vpnUsername, string vpnPassword)
