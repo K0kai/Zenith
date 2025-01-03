@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ArcherTools_0._0._1.boxes
+﻿namespace ArcherTools_0._0._1.boxes
 {
     public class DynamicInputBoxForm : Form
     {
@@ -22,12 +16,13 @@ namespace ArcherTools_0._0._1.boxes
             int numberOfBoxes = boxNames.Count;
             userInputs = new List<string>();
 
-
+            BackColor = ToolHub._mainForm.BackColor;
             this.Text = "Input";
             this.ClientSize = new System.Drawing.Size(300, 40 + 45 * numberOfBoxes);
 
             var promptLabel = new Label
             {
+                ForeColor = ToolHub._mainForm.ForeColor,
                 Text = prompt,
                 Location = new System.Drawing.Point(10, 10),
                 Size = new System.Drawing.Size(260, 20)
@@ -43,13 +38,14 @@ namespace ArcherTools_0._0._1.boxes
                     Location = new System.Drawing.Point(10, 40 + i * 30),
                     Width = 260
                 };
-                
+
                 boxes.Add(textBox);
                 this.Controls.Add(textBox);
             }
 
             okButton = new Button
             {
+                ForeColor = ToolHub._mainForm.ForeColor,
                 Text = "OK",
                 Location = new System.Drawing.Point(200, 40 + numberOfBoxes * 30)
             };
@@ -58,6 +54,7 @@ namespace ArcherTools_0._0._1.boxes
 
             cancelButton = new Button
             {
+                ForeColor = ToolHub._mainForm.ForeColor,
                 Text = "Cancel",
                 Location = new System.Drawing.Point(120, 40 + numberOfBoxes * 30)
             };
@@ -83,6 +80,11 @@ namespace ArcherTools_0._0._1.boxes
         {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        private void InitializeComponent()
+        {
+
         }
 
         public static List<string> Show(string prompt, List<string> numberOfInputs)
@@ -163,4 +165,4 @@ namespace ArcherTools_0._0._1.boxes
             }
         }
     }
-    }
+}

@@ -1,12 +1,7 @@
 ﻿using Emgu.CV;
-using Emgu.CV.Structure;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using Emgu.CV.CvEnum;
+using System.Diagnostics;
 using System.Drawing.Imaging;
-using ArcherTools_0._0._1.controllers;
 
 namespace ArcherTools_0._0._1
 {

@@ -52,7 +52,7 @@
             BackColor = Color.FromArgb(64, 64, 64);
             ClientSize = new Size(630, 623);
             Controls.Add(mainPanel);
-            ForeColor = SystemColors.ControlText;
+            ForeColor = Color.Lavender;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainArcherWindow";

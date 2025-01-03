@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace ArcherTools_0._0._1.cfg
 {
@@ -11,7 +6,7 @@ namespace ArcherTools_0._0._1.cfg
     public class UserConfig
     {
         [XmlElement("UserCfgVersion")]
-        public required string ConfigVersion {  get; set; }
+        public string ConfigVersion {  get; set; }
         [XmlElement(IsNullable = true)]
         public string vpnUsername { get; set; }
         [XmlElement(IsNullable = true)]

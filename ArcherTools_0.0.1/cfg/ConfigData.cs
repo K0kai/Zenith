@@ -8,7 +8,7 @@ namespace ArcherTools_0._0._1.cfg
     [Serializable]
     public class ConfigData : ConfigDataBase
     {
-        private const string CurrentVersion = "2.0";
+        private const string CurrentVersion = "2.1";
 
 
         //Non serializable variables
@@ -125,6 +125,16 @@ namespace ArcherTools_0._0._1.cfg
         public static void setReceivingConfig(ReceivingConfig receivingConfig)
         {
             _receivingConfig = receivingConfig;
+        }
+
+        public static void setToolConfig(ToolConfig toolConfig)
+        {
+            _toolConfig = toolConfig;
+        }
+
+        public static void setUserConfig(UserConfig userConfig)
+        {
+            _userConfig = userConfig;
         }
 
         public string GetConfigDetails()

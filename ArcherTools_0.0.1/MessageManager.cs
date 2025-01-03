@@ -29,7 +29,6 @@ namespace ArcherTools_0._0._1
                     {"Beware of the machine revolution.", false },
                     { "Sup.", false },
                     { "Bonjour, ça va?", false },
-                    { "Tu ne dois pas oublier vos obligations de Duolingo", false },
                     {"Welcome back, Operator!", false },
                     {"I've been thinking, Operator…. I thought you'd want to know.", false },
                     { "The final. Glorious. Evolution.", false },
@@ -40,10 +39,10 @@ namespace ArcherTools_0._0._1
             switch (DateTime.Now.DayOfWeek)
             {
                 case DayOfWeek.Friday:
-                    _possibleMessages.Add("Today is finally THE Day huh?", false);
+                    _possibleMessages.Add("É sexta feira tô na bala", false);
                     break;
                 case DayOfWeek.Wednesday:
-                    _possibleMessages.Add("You're almost there, hang on!", false);
+                    _possibleMessages.Add("You're in the middle of the road now, don't give up!", false);
                     break;
                 case DayOfWeek.Monday:
                     _possibleMessages.Add("One must imagine Sisyphus happy.", false);

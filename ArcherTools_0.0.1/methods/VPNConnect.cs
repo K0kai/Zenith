@@ -1,28 +1,36 @@
-﻿using ArcherTools_0._0._1.controllers;
-using System;
-using System.Collections.Generic;
+﻿using ArcherTools_0._0._1.boxes;
+using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.controllers;
+using ArcherTools_0._0._1.errors;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArcherTools_0._0._1.methods
 {
     internal class VPNConnect
     {
-        internal void ConnectToVPN()
+        // Sys Methods
+
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(nint hWnd);
+
+        // VPN Information
+        const string vpnPath = "C:\\Program Files\\SonicWall\\Global VPN Client";
+        const string vpnShortcutName = "SWGVC.exe";
+        static string vpnShortcutPath = Path.Combine(vpnPath, vpnShortcutName);
+
+        static internal void ConnectToVPN()
         {
-            // Sys Methods
-
-            [DllImport("user32.dll")]
-            static extern bool SetForegroundWindow(nint hWnd);
-
-            // VPN Information
-
-            string vpnPath = "C:\\Program Files\\SonicWall\\Global VPN Client";
-            string vpnShortcutName = "SWGVC.exe";
-            string vpnShortcutPath = Path.Combine(vpnPath, vpnShortcutName);
+            if (ConfigData._userConfig == null)
+            {
+                MessageBox.Show("Seems like you haven't set up your VPN Configurations yet, so we'll begin with that");
+                var returnCode = SetUpVPNConfig();
+                if (returnCode != (byte)ErrorEnum.ErrorCode.Success)
+                {
+                    MessageBox.Show("There was an error setting up your VPN, please try again.", $"{ (ErrorEnum.ErrorCode) returnCode}", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
 
             try
             {
@@ -66,5 +74,55 @@ namespace ArcherTools_0._0._1.methods
             {
             }
         }
+
+        public static byte SetUpVPNConfig()
+        {
+            if (ConfigData._userConfig == null)
+            {
+                Form mainForm = ToolHub._mainForm;
+                mainForm.Enabled = false;
+                List<string> boxNames = new List<string>
+                {
+                    "VPN Username",
+                    "VPN Password"
+                };
+                var UserInputs = DynamicInputBoxForm.Show("Enter these values:", boxNames);
+                mainForm.Enabled = true;
+                if (UserInputs != null)
+                {
+                    foreach (var data in UserInputs)
+                    {
+                        if (data.Equals("VPN Username") || data.Equals("VPN Password"))
+                        {
+                            return (byte)ErrorEnum.ErrorCode.InvalidInput;
+                        }
+                    }
+                }
+                if (UserInputs?.Count == 2)
+                {
+                    try
+                    {
+                        UserConfig newUserConfig = new UserConfig(UserInputs[0], UserInputs[1]);
+                        ConfigData.setUserConfig(newUserConfig);
+                        ConfigData configData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
+                        configData.PrepareForSerialization();
+                        ConfigData.SerializeConfigData();
+                        return (byte)ErrorEnum.ErrorCode.Success;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("An error ocurred while setting up VPN Connections...");
+                        Debug.WriteLine(ex.Message);
+                        return (byte)ErrorEnum.ErrorCode.UnknownError;
+
+
+                    }
+                }
+
+            }
+            return (byte)ErrorEnum.ErrorCode.InvalidInput;
+        }
     }
 }
+    
+

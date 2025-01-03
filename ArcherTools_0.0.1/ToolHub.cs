@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
-using ArcherTools_0._0._1.boxes;
-using ArcherTools_0._0._1.cfg;
-using ArcherTools_0._0._1.excel;
+﻿using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.controllers;
+using ArcherTools_0._0._1.enum_things;
 using ArcherTools_0._0._1.methods;
+using System.Diagnostics;
 
 namespace ArcherTools_0._0._1
 {
@@ -10,6 +10,7 @@ namespace ArcherTools_0._0._1
     {
         private MessageManager messageManager;
         private PageHandler _pageHandler = PageHandler.GetInstance();
+        public static Form _mainForm;
 
         private void CenterControl(Control control)
         {
@@ -26,7 +27,9 @@ namespace ArcherTools_0._0._1
             introlabel.Text = messageManager.RandomizeMessage();
             introlabel.Click += introlabel_Click;
             copyrights.LinkClicked += copyrights_LinkClicked_1;
+            this.Load += userControlLoad;
             CenterControl(introlabel);
+
             try
             {
                 ConfigData? config = ConfigData.DeserializeConfigData();
@@ -37,6 +40,11 @@ namespace ArcherTools_0._0._1
             {
                 Debug.WriteLine($"Failed to deserialize ConfigData: {ex.ToString()}");
             }
+        }
+
+        private void userControlLoad(object sender, EventArgs e)
+        {
+            _mainForm = this.FindForm();
         }
 
         private void copyrights_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
@@ -113,25 +121,17 @@ namespace ArcherTools_0._0._1
 
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
-            Receiving.MainCall();
+            KeystrokeHandler.sendKeystroke(KeysEnum.SendKey.Tab, KeysEnum.SendKey.Alt);
 
         }
 
         private void vpnConnect_btn_Click(object sender, EventArgs e)
         {
-            if (ConfigData._userConfig == null)
-            {
-                MessageBox.Show("Seems like you haven't set up your VPN Configurations yet, so we'll begin with that");
-                Form mainForm = this.FindForm();
-                mainForm.Enabled = false;
-                List<string> boxNames = new List<string>
-                {
-                    "VPN Username",
-                    "VPN Password"
-                };
-                var UserInputs = DynamicInputBoxForm.Show("Enter these values:", boxNames);
-                mainForm.Enabled = true;
-            }
+            VPNConnect.ConnectToVPN();
         }
     }
 }
+            
+        
+    
+

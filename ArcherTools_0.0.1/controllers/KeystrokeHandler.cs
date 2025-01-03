@@ -1,12 +1,28 @@
-﻿using System;
+﻿using ArcherTools_0._0._1.enum_things;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ArcherTools_0._0._1.controllers
-{
+{    
     internal class KeystrokeHandler
     {
+        public static void sendKeystroke(KeysEnum.SendKey keyValue, KeysEnum.SendKey modifier1 = KeysEnum.SendKey.Null, KeysEnum.SendKey modifier2 = KeysEnum.SendKey.Null)
+        {
+            if (modifier1 == KeysEnum.SendKey.Null)
+            {
+                SendKeys.Send(keyValue.StringValue());
+            }
+            else if (modifier1 != KeysEnum.SendKey.Null && modifier2 == KeysEnum.SendKey.Null) {
+                SendKeys.Send(modifier1.StringValue() + keyValue.StringValue());
+            
+            }
+            else
+            {
+                SendKeys.Send(modifier1.StringValue() + modifier2.StringValue() + keyValue.StringValue());
+            }
+        }
     }
 }
