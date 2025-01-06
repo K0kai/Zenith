@@ -82,11 +82,6 @@
             this.Close();
         }
 
-        private void InitializeComponent()
-        {
-
-        }
-
         public static List<string> Show(string prompt, List<string> numberOfInputs)
         {
             using (var inputBox = new DynamicInputBoxForm(prompt, numberOfInputs))

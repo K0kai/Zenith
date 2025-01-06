@@ -63,6 +63,7 @@ namespace ArcherTools_0._0._1.controllers
                     sim.Mouse.LeftButtonClick();
                     break;
             }
+            Thread.Sleep(100);
         }
 
         internal static void RelativeMouseDrag(Point startPos, Point endPos, bool snap = false)

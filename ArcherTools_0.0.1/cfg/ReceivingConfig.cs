@@ -8,7 +8,8 @@ namespace ArcherTools_0._0._1.cfg
     {
         ReceiptLineLeftSide,
         ReceiptLineFirstLine,
-        ItemSearchInputBox,
+        ItemSearchWindow,
+        ItemSearchInquiry,
         ItemMaintenanceBox,
         ItemConfigurationBox,
         NumPiecesInputBox,
@@ -54,7 +55,18 @@ namespace ArcherTools_0._0._1.cfg
             }
         }
 
+
+
         public List<int> getPosition() { return this.Coordinates; }
+
+        public int X()
+        {
+            return this.Coordinates[0];
+        }
+        public int Y()
+        {
+            return this.Coordinates[1];
+        }
     }
 
     [Serializable]

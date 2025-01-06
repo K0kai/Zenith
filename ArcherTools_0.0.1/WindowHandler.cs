@@ -13,12 +13,14 @@ namespace ArcherTools_0._0._1
     {
         [DllImport("user32.dll")]
         public static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
-
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
-
         [DllImport("user32.dll")]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(nint hWnd);
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         // Delegate for EnumWindowsProc
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -62,11 +64,30 @@ namespace ArcherTools_0._0._1
         public static Rectangle GetWindowRectFromHandle(IntPtr hWnd)
         {
             if (hWnd != IntPtr.Zero)
-            {                
+            {
                 GetWindowRect(hWnd, out RECT rect);
                 return rect.toRect();
             }
             return Rectangle.Empty;
         }
+
+        public static void WinToFocusByName(string windowName)
+        {
+            var hwnd = FindWindow(null, windowName);
+            ShowWindow(hwnd, 5);
+            SetForegroundWindow(hwnd);
+            if (hwnd == IntPtr.Zero)
+            {
+                var processList = Process.GetProcessesByName(windowName);
+                if (processList.Length > 0)
+                {
+                    hwnd = processList[0].MainWindowHandle;
+                    ShowWindow(hwnd, 5);
+                    SetForegroundWindow(hwnd);
+                    Debug.WriteLine($"Bringing to front: {processList[0].MainWindowTitle}");
+                }
+            }
+        }
     }
 }
+

@@ -65,10 +65,10 @@ namespace ArcherTools_0._0._1.methods
                  Thread.Sleep(1000);
                  if (findIp != new Point(0, 0))
                  {
-                    Point checkEnabled = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_enabled.png", rect, 0.50);
+                    Point checkEnabled = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_enabled.png", rect, 0.80);
                     if (checkEnabled == new Point(0, 0))
                     {
-                        Debug.WriteLine("sexo1");
+    
                         MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
                         MouseHandler.MouseClick(clickType.DoubleLeftClick);
                         Thread.Sleep(2000);
@@ -83,14 +83,14 @@ namespace ArcherTools_0._0._1.methods
 
                 }
                  else
-                 {
-                     findIp = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_ipActivated.png", rect, 0.50);
+                 {                    
+                    findIp = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_ipActivated.png", rect, 0.50);
                     if (findIp != new Point(0, 0))
-                    {
-                        Point checkEnabled = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_enabled.png", rect, 0.50);
+                    {                        
+                        Point checkEnabled = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_enabled.png", rect, 0.80);
+
                         if (checkEnabled == new Point(0, 0))
-                        {
-                            Debug.WriteLine("sexo2");
+                        {                            
                             MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
                             MouseHandler.MouseClick(clickType.DoubleLeftClick);
                             Thread.Sleep(2000);

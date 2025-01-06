@@ -11,37 +11,27 @@ namespace ArcherTools_0._0._1.boxes
     {
         private Point _mouseDownLocation;
 
-        public OverlayForm(Rectangle rect)
+        private static Rectangle _formProperties;
+
+        public OverlayForm(Rectangle rect, string formName = "Rect")
         {
             // Set form properties
-            this.FormBorderStyle = FormBorderStyle.None;
+            this.FormBorderStyle = FormBorderStyle.Sizable;
             this.StartPosition = FormStartPosition.Manual;
             this.BackColor = Color.Red;
             this.Opacity = 0.5; // Semi-transparent
             this.TopMost = true; // Always on top
+            this.Text = formName;
             this.ShowInTaskbar = false;
 
             // Set position and size
             this.Location = new Point(rect.Left, rect.Top);
             this.Size = new Size(rect.Right - rect.Left, rect.Bottom - rect.Top);
 
-            // Add close button
-            Button closeButton = new Button
-            {
-                Text = "X",
-                ForeColor = Color.White,
-                BackColor = Color.Black,
-                FlatStyle = FlatStyle.Flat,
-                Size = new Size(30, 30),
-                Location = new Point(this.Width - 40, 10)
-            };
-            closeButton.FlatAppearance.BorderSize = 0;
-            closeButton.Click += (sender, e) => this.Close();
-            this.Controls.Add(closeButton);
-
             // Enable dragging by capturing mouse events
             this.MouseDown += OverlayForm_MouseDown;
             this.MouseMove += OverlayForm_MouseMove;
+            this.FormClosed += OverlayForm_OnClose;
 
             // Add custom drawing for border
             this.Paint += OverlayForm_Paint;
@@ -64,6 +54,19 @@ namespace ArcherTools_0._0._1.boxes
             }
         }
 
+        private void OverlayForm_OnClose(object sender, EventArgs e)
+        {
+            _formProperties = new Rectangle(this.Location.X, this.Location.Y, this.Size.Width, this.Size.Height);
+        }
+
+        public static Rectangle Show(Rectangle rect, string formName = "")
+        {
+            using (var ovForm = new OverlayForm(rect, formName))
+            {
+                ovForm.ShowDialog();
+                return _formProperties;
+            }
+        }
         private void OverlayForm_Paint(object sender, PaintEventArgs e)
         {
             // Draw a border around the rectangle

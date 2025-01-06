@@ -29,6 +29,7 @@ namespace ArcherTools_0._0._1.controllers
             {
                 SendKeys.Send(modifier1.StringValue() + modifier2.StringValue() + keyValue.StringValue());
             }
+            Thread.Sleep(100);
         }
 
         public static void TypeText(string stringText)
@@ -38,6 +39,7 @@ namespace ArcherTools_0._0._1.controllers
                 sim.Keyboard.KeyUp(VirtualKeyCode.SHIFT);
                 var _ = sim.Keyboard.TextEntry(stringText);
             }
+            Thread.Sleep(100);
         }
     }
 }

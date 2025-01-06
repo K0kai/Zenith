@@ -39,6 +39,9 @@
             label4 = new Label();
             receiveSaveCfg_btn = new Button();
             panel1 = new Panel();
+            itSearchInq_Label = new Label();
+            itsSearchInq_btn = new Button();
+            label6 = new Label();
             cfgexcel_Link = new LinkLabel();
             excelPath_RCV = new Button();
             itsearch_Label = new Label();
@@ -46,6 +49,7 @@
             itmtn_Label = new Label();
             fln_Label = new Label();
             goBackRCV_btn = new Button();
+            editProperties_btn = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -208,6 +212,10 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(editProperties_btn);
+            panel1.Controls.Add(itSearchInq_Label);
+            panel1.Controls.Add(itsSearchInq_btn);
+            panel1.Controls.Add(label6);
             panel1.Controls.Add(cfgexcel_Link);
             panel1.Controls.Add(excelPath_RCV);
             panel1.Controls.Add(itsearch_Label);
@@ -231,12 +239,54 @@
             panel1.Size = new Size(725, 473);
             panel1.TabIndex = 13;
             // 
+            // itSearchInq_Label
+            // 
+            itSearchInq_Label.Anchor = AnchorStyles.None;
+            itSearchInq_Label.ForeColor = Color.IndianRed;
+            itSearchInq_Label.Location = new Point(304, 153);
+            itSearchInq_Label.Name = "itSearchInq_Label";
+            itSearchInq_Label.Size = new Size(120, 20);
+            itSearchInq_Label.TabIndex = 22;
+            itSearchInq_Label.Text = "X: 0 ; Y: 0";
+            itSearchInq_Label.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // itsSearchInq_btn
+            // 
+            itsSearchInq_btn.Anchor = AnchorStyles.None;
+            itsSearchInq_btn.BackColor = SystemColors.ControlDarkDark;
+            itsSearchInq_btn.BackgroundImageLayout = ImageLayout.None;
+            itsSearchInq_btn.Cursor = Cursors.Hand;
+            itsSearchInq_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            itsSearchInq_btn.FlatAppearance.BorderSize = 0;
+            itsSearchInq_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            itsSearchInq_btn.FlatStyle = FlatStyle.Flat;
+            itsSearchInq_btn.ForeColor = SystemColors.ButtonFace;
+            itsSearchInq_btn.Location = new Point(328, 123);
+            itsSearchInq_btn.Margin = new Padding(25, 3, 25, 3);
+            itsSearchInq_btn.Name = "itsSearchInq_btn";
+            itsSearchInq_btn.Size = new Size(82, 27);
+            itsSearchInq_btn.TabIndex = 21;
+            itsSearchInq_btn.Text = "Track Mouse";
+            itsSearchInq_btn.UseVisualStyleBackColor = false;
+            itsSearchInq_btn.Click += itsSearchInq_btn_Click;
+            // 
+            // label6
+            // 
+            label6.Anchor = AnchorStyles.None;
+            label6.AutoSize = true;
+            label6.ForeColor = SystemColors.Menu;
+            label6.Location = new Point(315, 105);
+            label6.Name = "label6";
+            label6.Size = new Size(109, 15);
+            label6.TabIndex = 20;
+            label6.Text = "Item Search Inquiry";
+            // 
             // cfgexcel_Link
             // 
             cfgexcel_Link.Anchor = AnchorStyles.None;
             cfgexcel_Link.AutoSize = true;
             cfgexcel_Link.LinkColor = Color.IndianRed;
-            cfgexcel_Link.Location = new Point(322, 361);
+            cfgexcel_Link.Location = new Point(510, 452);
             cfgexcel_Link.Name = "cfgexcel_Link";
             cfgexcel_Link.Size = new Size(60, 15);
             cfgexcel_Link.TabIndex = 19;
@@ -257,7 +307,7 @@
             excelPath_RCV.FlatAppearance.MouseOverBackColor = Color.Indigo;
             excelPath_RCV.FlatStyle = FlatStyle.Flat;
             excelPath_RCV.ForeColor = SystemColors.ButtonFace;
-            excelPath_RCV.Location = new Point(292, 331);
+            excelPath_RCV.Location = new Point(480, 422);
             excelPath_RCV.Margin = new Padding(25, 3, 25, 3);
             excelPath_RCV.Name = "excelPath_RCV";
             excelPath_RCV.Size = new Size(118, 27);
@@ -330,6 +380,26 @@
             goBackRCV_btn.UseVisualStyleBackColor = false;
             goBackRCV_btn.Click += goBackRCV_btn_Click;
             // 
+            // editProperties_btn
+            // 
+            editProperties_btn.Anchor = AnchorStyles.None;
+            editProperties_btn.BackColor = SystemColors.ControlDarkDark;
+            editProperties_btn.BackgroundImageLayout = ImageLayout.None;
+            editProperties_btn.Cursor = Cursors.Hand;
+            editProperties_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            editProperties_btn.FlatAppearance.BorderSize = 0;
+            editProperties_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            editProperties_btn.FlatStyle = FlatStyle.Flat;
+            editProperties_btn.ForeColor = SystemColors.ButtonFace;
+            editProperties_btn.Location = new Point(304, 352);
+            editProperties_btn.Margin = new Padding(25, 3, 25, 3);
+            editProperties_btn.Name = "editProperties_btn";
+            editProperties_btn.Size = new Size(102, 27);
+            editProperties_btn.TabIndex = 23;
+            editProperties_btn.Text = "Edit Properties";
+            editProperties_btn.UseVisualStyleBackColor = false;
+            editProperties_btn.Click += editProperties_btn_Click;
+            // 
             // ReceiveProperties
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -362,5 +432,9 @@
         private Label itmtn_Label;
         private Button excelPath_RCV;
         private LinkLabel cfgexcel_Link;
+        private Label itSearchInq_Label;
+        private Button itsSearchInq_btn;
+        private Label label6;
+        private Button editProperties_btn;
     }
 }

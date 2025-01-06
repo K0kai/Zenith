@@ -8,9 +8,6 @@ namespace ArcherTools_0._0._1
     internal class ScreenImageHandler
     {
 
-        private static Mat reusableFirstGrayScreenshot = new Mat();
-        private static Mat reusableSecondGrayScreenshot = new Mat();
-
 
         public static Point SearchImageOnScreen(string targetImagePath, double threshold)
         {
@@ -31,15 +28,15 @@ namespace ArcherTools_0._0._1
 
         public static Point SearchImageOnRegion(string sourceImagePath, Rectangle roi, double threshold)
         {
-            using (Mat screenRegion = BitmapToMat(CaptureScreenRegion(roi)))
+            using (var screenRegion = BitmapToMat(CaptureScreenRegion(roi)))
             {
-                using (Mat grayScreenRegion = new Mat())
+                using (var grayScreenRegion = new Mat())
                 {
                     CvInvoke.CvtColor(screenRegion, grayScreenRegion, ColorConversion.Bgr2Gray);
 
-                    using (Mat templateImage = new Mat(sourceImagePath, ImreadModes.Grayscale))
+                    using (var templateImage = new Mat(sourceImagePath, ImreadModes.Grayscale))
                     {
-                        using (Mat result = new Mat())
+                        using (var result = new Mat())
                         {
                             CvInvoke.MatchTemplate(grayScreenRegion, templateImage, result, TemplateMatchingType.CcoeffNormed);
 
@@ -61,8 +58,8 @@ namespace ArcherTools_0._0._1
 
         private static Bitmap CaptureScreenRegion(Rectangle roi)
         {
-            Bitmap screenshot = new Bitmap(roi.Width, roi.Height);
-            using (Graphics g = Graphics.FromImage(screenshot))
+            var screenshot = new Bitmap(roi.Width, roi.Height);
+            using (var g = Graphics.FromImage(screenshot))
             {
                 // Capture the screen within the specified ROI (Region of Interest)
                 g.CopyFromScreen(roi.Location, Point.Empty, roi.Size);
@@ -76,15 +73,16 @@ namespace ArcherTools_0._0._1
 
         private static Point DetectImage(string targetImagePath, double threshold)
         {
-            using (Bitmap screenshotFirst = CaptureFirstScreen())
-            using (Mat screenshotFirstMat = BitmapToMat(screenshotFirst))
-            using (Mat targetImage = CvInvoke.Imread(targetImagePath, ImreadModes.Grayscale))
-            using (Mat result = new Mat())
+            using (var screenshotFirst = CaptureFirstScreen())
+            using (var screenshotFirstMat = BitmapToMat(screenshotFirst))
+            using (var greyScreenshot = new Mat())
+            using (var targetImage = CvInvoke.Imread(targetImagePath, ImreadModes.Grayscale))
+            using (var result = new Mat())
             {
 
-                CvInvoke.CvtColor(screenshotFirstMat, reusableFirstGrayScreenshot, ColorConversion.Bgr2Gray);
+                CvInvoke.CvtColor(screenshotFirstMat, greyScreenshot, ColorConversion.Bgr2Gray);
 
-                CvInvoke.MatchTemplate(reusableFirstGrayScreenshot, targetImage, result, TemplateMatchingType.CcoeffNormed);
+                CvInvoke.MatchTemplate(greyScreenshot, targetImage, result, TemplateMatchingType.CcoeffNormed);
                 double minVal = 0.0, maxVal = 0.0;
                 Point minLoc = new Point(), maxLoc = new Point();
                 CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
@@ -113,15 +111,16 @@ namespace ArcherTools_0._0._1
                 {
                     return Point.Empty;
                 }
-                using (Bitmap screenshot = CaptureSecondScreen())
-                using (Mat screenshotMat = BitmapToMat(screenshot))
-                using (Mat targetImage = CvInvoke.Imread(targetImagePath, ImreadModes.Grayscale))
-                using (Mat result = new Mat())
+                using (var screenshot = CaptureSecondScreen())
+                using (var screenshotMat = BitmapToMat(screenshot))
+                using (var greyScreenshot = new Mat())
+                using (var targetImage = CvInvoke.Imread(targetImagePath, ImreadModes.Grayscale))
+                using (var result = new Mat())
                 {
 
-                    CvInvoke.CvtColor(screenshotMat, reusableSecondGrayScreenshot, ColorConversion.Bgr2Gray);
+                    CvInvoke.CvtColor(screenshotMat, greyScreenshot, ColorConversion.Bgr2Gray);
 
-                    CvInvoke.MatchTemplate(reusableSecondGrayScreenshot, targetImage, result, TemplateMatchingType.CcoeffNormed);
+                    CvInvoke.MatchTemplate(greyScreenshot, targetImage, result, TemplateMatchingType.CcoeffNormed);
                     double minVal = 0.0, maxVal = 0.0;
                     Point minLoc = new Point(), maxLoc = new Point();
                     CvInvoke.MinMaxLoc(result, ref minVal, ref maxVal, ref minLoc, ref maxLoc);
@@ -149,8 +148,8 @@ namespace ArcherTools_0._0._1
         static Bitmap CaptureFirstScreen()
         {
             Rectangle bounds = Screen.PrimaryScreen.Bounds;
-            Bitmap screenshot = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
-            using (Graphics g = Graphics.FromImage(screenshot))
+            var screenshot = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
+            using (var g = Graphics.FromImage(screenshot))
             {
                 g.CopyFromScreen(bounds.Left, bounds.Top, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
             }
@@ -163,8 +162,8 @@ namespace ArcherTools_0._0._1
             if (Screen.AllScreens.Length > 1)
             {
                 Rectangle bounds = Screen.AllScreens[1].Bounds;
-                Bitmap screenshot = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
-                using (Graphics g = Graphics.FromImage(screenshot))
+                var screenshot = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
+                using (var g = Graphics.FromImage(screenshot))
                 {
                     g.CopyFromScreen(bounds.Left, bounds.Top, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
                 }
@@ -186,7 +185,7 @@ namespace ArcherTools_0._0._1
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                return null;
+                return new Mat();
             }
         }
     }

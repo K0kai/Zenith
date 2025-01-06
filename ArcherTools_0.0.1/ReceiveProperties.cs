@@ -1,4 +1,5 @@
-﻿using ArcherTools_0._0._1.cfg;
+﻿using ArcherTools_0._0._1.boxes;
+using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.controllers;
 using NPOI.Util;
 using System;
@@ -47,152 +48,28 @@ namespace ArcherTools_0._0._1
         }
 
         private void firstLine_btn_Click(object sender, EventArgs e)
-        {
-            Point lastClickedPosition = Point.Empty;
+        {           
             Control thisLabel = fln_Label;
-
-            var tracker = new MouseTracker(this.FindForm());
-
-            Thread trackingThread = new Thread(() =>
-                tracker.TrackMouse(coords =>
-                {
-                    lastClickedPosition = coords;
-
-#if DEBUG
-                    Debug.WriteLine($"Coordinates saved for First Line: {lastClickedPosition}");
-#else
-                    Console.WriteLine($"Coordinates saved for First Line: {lastClickedPosition}")
-#endif
-
-                    if (thisLabel.InvokeRequired)
-                    {
-                        thisLabel.Invoke(new Action(() =>
-                        {
-                            thisLabel.Text = $"X: {lastClickedPosition.X} ; Y: {lastClickedPosition.Y}";
-                        }));
-                    }
-                    else
-                    {
-                        thisLabel.Text = $"X: {lastClickedPosition.X} ; Y: {lastClickedPosition.Y}";
-                    }
-
-
-                })
-            );
-            trackingThread.IsBackground = true;
-            trackingThread.Start();
+            setAndTrackPosition(thisLabel);
 
         }
 
         private void itemSearch_btn_Click(object sender, EventArgs e)
-        {
-            Point lastClickedPosition = Point.Empty;
+        {            
             Control thisLabel = itsearch_Label;
-
-            var tracker = new MouseTracker(this.FindForm());
-
-            Thread trackingThread = new Thread(() =>
-                tracker.TrackMouse(coords =>
-                {
-                    lastClickedPosition = coords;
-
-#if DEBUG
-                    Debug.WriteLine($"Coordinates saved for Item Search: {lastClickedPosition}");
-#else
-                    Console.WriteLine($"Coordinates saved for Item Search: {lastClickedPosition}")
-#endif
-
-                    if (thisLabel.InvokeRequired)
-                    {
-                        thisLabel.Invoke(new Action(() =>
-                        {
-                            thisLabel.Text = $"X: {lastClickedPosition.X} ; Y: {lastClickedPosition.Y}";
-                        }));
-                    }
-                    else
-                    {
-                        thisLabel.Text = $"X: {lastClickedPosition.X} ;  Y: {lastClickedPosition.Y}";
-                    }
-
-
-                })
-            );
-            trackingThread.IsBackground = true;
-            trackingThread.Start();
+            setAndTrackPosition(thisLabel);
         }
 
         private void itemMaint_btn_Click(object sender, EventArgs e)
         {
-            Point lastClickedPosition = Point.Empty;
             Control thisLabel = itmtn_Label;
-
-            var tracker = new MouseTracker(this.FindForm());
-
-            Thread trackingThread = new Thread(() =>
-                tracker.TrackMouse(coords =>
-                {
-                    lastClickedPosition = coords;
-
-#if DEBUG
-                    Debug.WriteLine($"Coordinates saved for Item Maintenance: {lastClickedPosition}");
-#else
-                    Console.WriteLine($"Coordinates saved for Item Maintenance: {lastClickedPosition}")
-#endif
-
-                    if (thisLabel.InvokeRequired)
-                    {
-                        thisLabel.Invoke(new Action(() =>
-                        {
-                            thisLabel.Text = $"X: {lastClickedPosition.X} ; Y: {lastClickedPosition.Y}";
-                        }));
-                    }
-                    else
-                    {
-                        thisLabel.Text = $"X: {lastClickedPosition.X} ; Y: {lastClickedPosition.Y}";
-                    }
-
-
-                })
-            );
-            trackingThread.IsBackground = true;
-            trackingThread.Start();
+            setAndTrackPosition(thisLabel);
         }
 
         private void itemConfig_btn_Click(object sender, EventArgs e)
-        {
-            Point lastClickedPosition = Point.Empty;
+        {            
             Control thisLabel = itcfg_Label;
-
-            var tracker = new MouseTracker(this.FindForm());
-
-            Thread trackingThread = new Thread(() =>
-                tracker.TrackMouse(coords =>
-                {
-                    lastClickedPosition = coords;
-
-#if DEBUG
-                    Debug.WriteLine($"Coordinates saved for Item Config: {lastClickedPosition}");
-#else
-                    Console.WriteLine($"Coordinates saved for Item Config: {lastClickedPosition}")
-#endif
-
-                    if (thisLabel.InvokeRequired)
-                    {
-                        thisLabel.Invoke(new Action(() =>
-                        {
-                            thisLabel.Text = $"X: {lastClickedPosition.X} ; Y: {lastClickedPosition.Y}";
-                        }));
-                    }
-                    else
-                    {
-                        thisLabel.Text = $"X: {lastClickedPosition.X} ; Y: {lastClickedPosition.Y}";
-                    }
-
-
-                })
-            );
-            trackingThread.IsBackground = true;
-            trackingThread.Start();
+            setAndTrackPosition(thisLabel);
         }
 
         private void receiveSaveCfg_btn_Click(object sender, EventArgs e)
@@ -200,6 +77,7 @@ namespace ArcherTools_0._0._1
             List<int> itmtnCoordinates = new List<int>();
             List<int> itcfgCoordinates = new List<int>();
             List<int> itsearchCoordinates = new List<int>();
+            List<int> itsearchInqCoordinates = new List<int>();
             List<int> flnCoordinates = new List<int>();
             string[] splitLabel = itmtn_Label.Text.Split(';');
             itmtnCoordinates.Add(((int.Parse(string.Concat(splitLabel[0].Where(Char.IsDigit))))));
@@ -213,10 +91,14 @@ namespace ArcherTools_0._0._1
             splitLabel = fln_Label.Text.Split(";");
             flnCoordinates.Add(((int.Parse(string.Concat(splitLabel[0].Where(Char.IsDigit))))));
             flnCoordinates.Add(((int.Parse(string.Concat(splitLabel[1].Where(Char.IsDigit))))));
+            splitLabel = itSearchInq_Label.Text.Split(";");
+            itsearchInqCoordinates.Add(((int.Parse(string.Concat(splitLabel[0].Where(Char.IsDigit))))));
+            itsearchInqCoordinates.Add(((int.Parse(string.Concat(splitLabel[1].Where(Char.IsDigit))))));
 
             List<MousePosition> mousePositions = new List<MousePosition> {
                 new MousePosition(ControlType.ItemMaintenanceBox, itmtnCoordinates),
-                new MousePosition(ControlType.ItemSearchInputBox, itsearchCoordinates),
+                new MousePosition(ControlType.ItemSearchWindow, itsearchCoordinates),
+                new MousePosition(ControlType.ItemSearchInquiry, itsearchInqCoordinates),
                 new MousePosition(ControlType.ItemConfigurationBox, itcfgCoordinates),
                 new MousePosition(ControlType.ReceiptLineFirstLine, flnCoordinates)
             };
@@ -272,6 +154,7 @@ namespace ArcherTools_0._0._1
                 List<int> itmtnCoordinates = new List<int> { 0, 0 };
                 List<int> itcfgCoordinates = new List<int> { 0, 0 };
                 List<int> itsearchCoordinates = new List<int> { 0, 0 };
+                List<int> itsearchInqCoordinates = new List<int> { 0, 0 };
 
                 foreach (MousePosition mousePosition in mousePositions)
                 {
@@ -280,7 +163,8 @@ namespace ArcherTools_0._0._1
                         if (mousePosition.ControlType == ControlType.ReceiptLineFirstLine) { flnCoordinates = mousePosition.getPositionByType(ControlType.ReceiptLineFirstLine); }
                         if (mousePosition.ControlType == ControlType.ItemMaintenanceBox) { itmtnCoordinates = mousePosition.getPositionByType(ControlType.ItemMaintenanceBox); }
                         if (mousePosition.ControlType == ControlType.ItemConfigurationBox) { itcfgCoordinates = mousePosition.getPositionByType(ControlType.ItemConfigurationBox); }
-                        if (mousePosition.ControlType == ControlType.ItemSearchInputBox) { itsearchCoordinates = mousePosition.getPositionByType(ControlType.ItemSearchInputBox); }
+                        if (mousePosition.ControlType == ControlType.ItemSearchWindow) { itsearchCoordinates = mousePosition.getPositionByType(ControlType.ItemSearchWindow); }
+                        if (mousePosition.ControlType == ControlType.ItemSearchInquiry) { itsearchInqCoordinates = mousePosition.getPositionByType(ControlType.ItemSearchInquiry); }
 
                     }
                 }
@@ -300,6 +184,10 @@ namespace ArcherTools_0._0._1
                 if (itsearchCoordinates != null || itsearchCoordinates.Count > 0)
                 {
                     itsearch_Label.Text = ($"X: {itsearchCoordinates[0]} ; Y: {itsearchCoordinates[1]}");
+                }
+                if (itsearchInqCoordinates != null || itsearchInqCoordinates.Count > 0)
+                {
+                    itSearchInq_Label.Text = ($"X: {itsearchInqCoordinates[0]} ; Y: {itsearchInqCoordinates[1]}");
                 }
 
             }
@@ -341,6 +229,66 @@ namespace ArcherTools_0._0._1
 
         private void nextPageRCV_btn_Click(object sender, EventArgs e)
         {
+
+
+        }
+
+        private void itsSearchInq_btn_Click(object sender, EventArgs e)
+        {            
+            Control thisLabel = itSearchInq_Label;
+            setAndTrackPosition(thisLabel);
+        }
+
+        private void setAndTrackPosition(Control thisLabel)
+        {
+            Point lastClickedPosition = Point.Empty;
+
+            var tracker = new MouseTracker(this.FindForm());
+
+            Thread trackingThread = new Thread(() =>
+                tracker.TrackMouse(coords =>
+                {
+                    lastClickedPosition = coords;
+
+                    Debug.WriteLine($"Coordinates saved for {thisLabel.Name}: {lastClickedPosition}");
+
+                    if (thisLabel.InvokeRequired)
+                    {
+                        thisLabel.Invoke(new Action(() =>
+                        {
+                            thisLabel.Text = $"X: {lastClickedPosition.X} ; Y: {lastClickedPosition.Y}";
+                        }));
+                    }
+                    else
+                    {
+                        thisLabel.Text = $"X: {lastClickedPosition.X} ; Y: {lastClickedPosition.Y}";
+                    }
+
+
+                })
+            );
+            trackingThread.IsBackground = true;
+            trackingThread.Start();
+
+        }
+
+        private void editProperties_btn_Click(object sender, EventArgs e)
+        {
+            Rectangle itSearchRect = new Rectangle();
+            Rectangle itSearchInqRect = new Rectangle();
+
+            Task ItemSearchRect = Task.Run(() =>
+            {
+                itSearchRect = OverlayForm.Show(new Rectangle(0, 0, 300, 300), "Item Search Rect");
+                
+            });
+            Task ItemSearchInqRect = Task.Run(() =>
+            {
+                itSearchInqRect = OverlayForm.Show(new Rectangle(0, 0, 300, 300), "Item Search Inq Rect");
+            });
+            Task.WaitAll(ItemSearchInqRect, ItemSearchRect);
+            Debug.WriteLine(itSearchInqRect.X);
+            Debug.WriteLine(itSearchRect.X);
 
 
         }

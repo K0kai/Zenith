@@ -17,23 +17,17 @@ namespace ArcherTools_0._0._1.methods
             if (ConfigData._receivingConfig != null)
             {
                 ReceivingConfig config = ConfigData._receivingConfig;
-                MousePosition MousePos1 = config.getMousePosByType(ControlType.ReceiptLineFirstLine);
-                MousePosition MousePos2 = config.getMousePosByType(ControlType.ItemSearchInputBox);                
-
-                if (MousePos1 != null)
-                {
-                    List<int> mouseCoords1 = MousePos1.getPosition();
-                    MouseHandler.SetCursorPos(mouseCoords1[0], mouseCoords1[1]);
-                    Thread.Sleep(500);
-                    if (MousePos2 != null)
-                    {
-                        List<int> mouseCoords2 = MousePos2.getPosition();
-                        MouseHandler.MouseClick();
-                        KeystrokeHandler.sendKeystroke(enum_things.KeysEnum.SendKey.Backspace);
-                        KeystrokeHandler.TypeText("Penis");
-
-                    }
-                }
+               
+                MousePosition MousePos1 = config.getMousePosByType(ControlType.ItemSearchInquiry);
+                var MousePos2 = MousePos1.getPosition();
+                Point posToPoint = new Point (MousePos2[0], MousePos2[1] - 10);
+                WindowHandler.WinToFocusByName("mstsc");
+                MouseHandler.SetCursorPos(posToPoint.X, posToPoint.Y);
+                MouseHandler.MouseClick();
+                MouseHandler.SetCursorPos(MousePos1.X(), MousePos1.Y());
+                MouseHandler.MouseClick();
+                                        
+                
             }
             
         }
