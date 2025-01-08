@@ -122,7 +122,7 @@ namespace ArcherTools_0._0._1
 
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
-            Receiving.MainCall();
+            Receiving.TrainCall();
 
         }
 

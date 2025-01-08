@@ -1,4 +1,5 @@
-﻿using ArcherTools_0._0._1.cfg;
+﻿using ArcherTools_0._0._1.boxes;
+using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.controllers;
 using System;
 using System.Collections.Generic;
@@ -18,18 +19,27 @@ namespace ArcherTools_0._0._1.methods
             {
                 ReceivingConfig config = ConfigData._receivingConfig;
                
-                MousePosition MousePos1 = config.getMousePosByType(ControlType.ItemSearchInquiry);
+                PowerHouseRectangles MousePos1 = config.getMousePosByType(ControlType.ItemSearchInquiry);
                 var MousePos2 = MousePos1.getPosition();
-                Point posToPoint = new Point (MousePos2[0], MousePos2[1] - 10);
                 WindowHandler.WinToFocusByName("mstsc");
-                MouseHandler.SetCursorPos(posToPoint.X, posToPoint.Y);
-                MouseHandler.MouseClick();
-                MouseHandler.SetCursorPos(MousePos1.X(), MousePos1.Y());
-                MouseHandler.MouseClick();
+              
                                         
                 
             }
             
+        }
+
+        public static void TrainCall()
+        {
+            WindowHandler.WinToFocusByName("mstsc");
+            Rectangle pwhIcons = new Rectangle();
+            Task pwhIconsTsk = Task.Run(() =>
+            {
+                pwhIcons = OverlayForm.Show(new Rectangle(0, 0, 150, 500), "Powerhouse Icons");
+            });
+            Task.WaitAll(pwhIconsTsk);
+            OverlayForm.Show(pwhIcons, "Powerhouse Icons 2");
+
         }
     }
 }

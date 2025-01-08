@@ -1,4 +1,5 @@
-﻿using ArcherTools_0._0._1.excel;
+﻿using ArcherTools_0._0._1.classes;
+using ArcherTools_0._0._1.excel;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
@@ -26,47 +27,38 @@ namespace ArcherTools_0._0._1.cfg
     }
 
     [Serializable]
-    public class MousePosition
+    public class PowerHouseRectangles
     {
         [XmlElement("ControlType")]
         public ControlType ControlType { get; set; }
 
-        [XmlArray("Coordinates")]
-        [XmlArrayItem("Coordinate")]
-        public List<int> Coordinates { get; set; } = new List<int>();
+        
+        [XmlElement("PositionRectangle")]
+        public SerializableRectangle rect { get; set; } = new SerializableRectangle();
 
-        public MousePosition() { }
+        public PowerHouseRectangles() { }
 
-        public MousePosition(ControlType controlType, List<int> coordinates)
+        public PowerHouseRectangles(ControlType controlType, SerializableRectangle rectangle)
         {
             ControlType = controlType;
-            Coordinates = coordinates;
+            rect = rectangle;
         }
 
-        public List<int> getPositionByType(ControlType type)
+        public Rectangle getRectangleByType(ControlType type)
         {
             if (type == this.ControlType)
             {
-                return this.Coordinates;
+                return this.rect.toRectangle();
             }
             else
             {
-                return new List<int> { 0, 0 };
+                return new Rectangle();
             }
         }
 
 
 
-        public List<int> getPosition() { return this.Coordinates; }
-
-        public int X()
-        {
-            return this.Coordinates[0];
-        }
-        public int Y()
-        {
-            return this.Coordinates[1];
-        }
+        public Rectangle getPosition() { return this.rect.toRectangle(); }
     }
 
     [Serializable]
@@ -81,13 +73,13 @@ namespace ArcherTools_0._0._1.cfg
         public List<string> ExcelSheetNames { get; set; }
 
         [XmlArray("MousePositionList")]
-        [XmlArrayItem("MousePosition")]
-        public List<MousePosition> MousePositionList { get; set; } = new List<MousePosition>();
+        [XmlArrayItem("PowerHouseRectangles")]
+        public List<PowerHouseRectangles> MousePositionList { get; set; } = new List<PowerHouseRectangles>();
 
         public ReceivingConfig() { }
 
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
-        public ReceivingConfig(string excelFilePath, List<MousePosition> mousePositionList)
+        public ReceivingConfig(string excelFilePath, List<PowerHouseRectangles> mousePositionList)
         {
             ExcelFilePath = excelFilePath;
             if (excelFilePath != null && File.Exists(excelFilePath))
@@ -98,12 +90,12 @@ namespace ArcherTools_0._0._1.cfg
             configVersion = ConfigData.ConfigVersion;
         }
 
-        public List<MousePosition> getMousePositions() { return this.MousePositionList; }
+        public List<PowerHouseRectangles> getMousePositions() { return this.MousePositionList; }
 
-        public MousePosition? getMousePosByType(ControlType ctrlType)
+        public PowerHouseRectangles? getMousePosByType(ControlType ctrlType)
         {
-            List<MousePosition> mousePositions = this.getMousePositions();
-            MousePosition? foundPos = null;
+            List<PowerHouseRectangles> mousePositions = this.getMousePositions();
+            PowerHouseRectangles? foundPos = null;
             foreach (var mousePos in mousePositions) {
                 if (mousePos.ControlType == ctrlType) { foundPos = mousePos; }
                 
@@ -121,9 +113,9 @@ namespace ArcherTools_0._0._1.cfg
             this.ExcelSheetNames = ExcelHandler.GetWorksheetNames(filePath);
         }
 
-        public void setMousePositions(List<MousePosition> mousePositions) { this.MousePositionList = mousePositions; }
+        public void setMousePositions(List<PowerHouseRectangles> mousePositions) { this.MousePositionList = mousePositions; }
 
-        public void addMousePosition(MousePosition valueToAdd) { this.MousePositionList.Add(valueToAdd); }
+        public void addMousePosition(PowerHouseRectangles valueToAdd) { this.MousePositionList.Add(valueToAdd); }
     }
 }
 

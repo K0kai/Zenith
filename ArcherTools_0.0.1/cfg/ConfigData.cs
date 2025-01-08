@@ -8,7 +8,7 @@ namespace ArcherTools_0._0._1.cfg
     [Serializable]
     public class ConfigData : ConfigDataBase
     {
-        private const string CurrentVersion = "2.1";
+        private const string CurrentVersion = "2.2";
 
 
         //Non serializable variables
