@@ -21,6 +21,13 @@ namespace ArcherTools_0._0._1
         static extern bool SetForegroundWindow(nint hWnd);
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        [DllImport("user32.dll")]
+        internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
+        [DllImport("user32.dll")]
+        internal static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
+
+        internal const int GWL_EXSTYLE = -20;
+        internal const uint WS_EX_TOPMOST = 0x00000008;
 
         // Delegate for EnumWindowsProc
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -74,7 +81,7 @@ namespace ArcherTools_0._0._1
         public static void WinToFocusByName(string windowName)
         {
             var hwnd = FindWindow(null, windowName);
-            ShowWindow(hwnd, 5);
+            ShowWindow(hwnd, 1);
             SetForegroundWindow(hwnd);
             if (hwnd == IntPtr.Zero)
             {
@@ -82,7 +89,7 @@ namespace ArcherTools_0._0._1
                 if (processList.Length > 0)
                 {
                     hwnd = processList[0].MainWindowHandle;
-                    ShowWindow(hwnd, 5);
+                    ShowWindow(hwnd, 1);
                     SetForegroundWindow(hwnd);
                     Debug.WriteLine($"Bringing to front: {processList[0].MainWindowTitle}");
                 }

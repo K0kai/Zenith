@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using static ArcherTools_0._0._1.WindowHandler;
@@ -21,8 +23,12 @@ namespace ArcherTools_0._0._1.boxes
             this.BackColor = Color.Red;
             this.Opacity = 0.5; // Semi-transparent
             this.TopMost = true; // Always on top
+            this.TopLevel = true;
+            this.WindowState = FormWindowState.Maximized;
+            
             this.Text = formName;
             this.ShowInTaskbar = false;
+            
 
             // Set position and size
             this.Location = new Point(rect.Left, rect.Top);
@@ -63,7 +69,18 @@ namespace ArcherTools_0._0._1.boxes
         {
             using (var ovForm = new OverlayForm(rect, formName))
             {
+                ovForm.Load += (sender, e) =>
+                {
+                    // Set the window as TopMost using native flags
+                    IntPtr handle = ovForm.Handle;
+                    uint extendedStyle = GetWindowLong(handle, GWL_EXSTYLE);
+                    WindowHandler.SetWindowLong(handle, GWL_EXSTYLE, extendedStyle | WS_EX_TOPMOST);
+
+                    // Force focus
+                    ovForm.Activate();
+                };
                 ovForm.ShowDialog();
+                
                 return _formProperties;
             }
         }

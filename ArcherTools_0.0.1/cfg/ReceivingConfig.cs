@@ -23,7 +23,8 @@ namespace ArcherTools_0._0._1.cfg
         CasesWidthInputBox,
         CasesDepthInputBox,
         CasesPerPalletInputBox,
-        CasesPerTierInputBox
+        CasesPerTierInputBox,
+        PowerHouseIcons
     }
 
     [Serializable]
@@ -54,6 +55,11 @@ namespace ArcherTools_0._0._1.cfg
             {
                 return new Rectangle();
             }
+        }
+
+        public Rectangle getRectangle()
+        {
+            return this.rect.toRectangle();
         }
 
 

@@ -1,5 +1,6 @@
 ﻿using ArcherTools_0._0._1.boxes;
 using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.classes;
 using ArcherTools_0._0._1.controllers;
 using System;
 using System.Collections.Generic;
@@ -32,13 +33,28 @@ namespace ArcherTools_0._0._1.methods
         public static void TrainCall()
         {
             WindowHandler.WinToFocusByName("mstsc");
-            Rectangle pwhIcons = new Rectangle();
+            Rectangle pwhIcons = ConfigData._receivingConfig.getMousePosByType(ControlType.PowerHouseIcons).getRectangle();            
+            
+            if (pwhIcons == null || pwhIcons.IsEmpty)
+            {
+                pwhIcons = new Rectangle(0, 0, 150, 150);
+            }
+            
             Task pwhIconsTsk = Task.Run(() =>
             {
-                pwhIcons = OverlayForm.Show(new Rectangle(0, 0, 150, 500), "Powerhouse Icons");
+                pwhIcons = OverlayForm.Show(pwhIcons, "Powerhouse Icons");
+                Debug.WriteLine(pwhIcons.X);
             });
             Task.WaitAll(pwhIconsTsk);
-            OverlayForm.Show(pwhIcons, "Powerhouse Icons 2");
+            Thread.Sleep(10000);
+            return;
+            SerializableRectangle srlzRect = new SerializableRectangle(pwhIcons);
+            PowerHouseRectangles pwhrect = new PowerHouseRectangles(ControlType.PowerHouseIcons, srlzRect);
+            List<PowerHouseRectangles> list = new List<PowerHouseRectangles> { pwhrect };            
+            ConfigData._receivingConfig.setMousePositions(list);
+            ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig );
+            cfgData.PrepareForSerialization();
+            ConfigData.SerializeConfigData();
 
         }
     }
