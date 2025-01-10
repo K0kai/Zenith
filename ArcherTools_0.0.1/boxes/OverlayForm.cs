@@ -37,7 +37,7 @@ namespace ArcherTools_0._0._1.boxes
             this.MouseDown += OverlayForm_MouseDown;
             this.MouseMove += OverlayForm_MouseMove;
             this.FormClosed += OverlayForm_OnClose;
-            this.Deactivate += OverlayForm_Deactivated;
+            this.LostFocus += OverlayForm_Unfocused;
             
 
             // Add custom drawing for border
@@ -52,9 +52,9 @@ namespace ArcherTools_0._0._1.boxes
             }
         }
 
-        private void OverlayForm_Deactivated(object sender, EventArgs e)
+        private void OverlayForm_Unfocused(object sender, EventArgs e)
         {
-            this.Activate();
+            this.Focus();
         }
 
         private void OverlayForm_MouseMove(object sender, MouseEventArgs e)
