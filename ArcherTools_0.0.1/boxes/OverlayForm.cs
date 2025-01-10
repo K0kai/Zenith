@@ -24,7 +24,6 @@ namespace ArcherTools_0._0._1.boxes
             this.Opacity = 0.5; // Semi-transparent
             this.TopMost = true; // Always on top
             this.TopLevel = true;
-            this.WindowState = FormWindowState.Maximized;
             
             this.Text = formName;
             this.ShowInTaskbar = false;
@@ -38,6 +37,8 @@ namespace ArcherTools_0._0._1.boxes
             this.MouseDown += OverlayForm_MouseDown;
             this.MouseMove += OverlayForm_MouseMove;
             this.FormClosed += OverlayForm_OnClose;
+            this.Deactivate += OverlayForm_Deactivated;
+            
 
             // Add custom drawing for border
             this.Paint += OverlayForm_Paint;
@@ -49,6 +50,11 @@ namespace ArcherTools_0._0._1.boxes
             {
                 _mouseDownLocation = e.Location;
             }
+        }
+
+        private void OverlayForm_Deactivated(object sender, EventArgs e)
+        {
+            this.Activate();
         }
 
         private void OverlayForm_MouseMove(object sender, MouseEventArgs e)

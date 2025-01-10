@@ -59,7 +59,11 @@ namespace ArcherTools_0._0._1.cfg
 
         public Rectangle getRectangle()
         {
-            return this.rect.toRectangle();
+            try
+            {
+                return this.rect.toRectangle();
+            }
+            catch (Exception e) { Debug.WriteLine(e.Message); return new Rectangle(0, 0, 100, 100); }
         }
 
 

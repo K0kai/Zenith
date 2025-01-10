@@ -32,8 +32,18 @@ namespace ArcherTools_0._0._1.methods
 
         public static void TrainCall()
         {
+             
             WindowHandler.WinToFocusByName("mstsc");
-            Rectangle pwhIcons = ConfigData._receivingConfig.getMousePosByType(ControlType.PowerHouseIcons).getRectangle();            
+            Rectangle pwhIcons = new Rectangle();
+            try
+            {
+                pwhIcons = ConfigData._receivingConfig.getMousePosByType(ControlType.PowerHouseIcons).getRectangle();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Config not properly set.");
+            }
+            finally { }
             
             if (pwhIcons == null || pwhIcons.IsEmpty)
             {
