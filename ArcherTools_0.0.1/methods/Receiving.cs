@@ -16,55 +16,48 @@ namespace ArcherTools_0._0._1.methods
     {
         public static void MainCall()
         {         
-            if (ConfigData._receivingConfig != null)
-            {
-                ReceivingConfig config = ConfigData._receivingConfig;
-               
-                PowerHouseRectangles MousePos1 = config.getMousePosByType(ControlType.ItemSearchInquiry);
-                var MousePos2 = MousePos1.getPosition();
-                WindowHandler.WinToFocusByName("mstsc");
-              
-                                        
-                
-            }
-            
+                        
         }
 
         public static void TrainCall()
         {
-             
+            ToolConfig toolCfg = ConfigData._toolConfig;
+            byte PwhMonitor = 1;
+            if (toolCfg != null) {
+                try
+                {
+                    if (toolCfg.PowerHouseMonitor != null || toolCfg.PowerHouseMonitor <= 0)
+                    {
+                        PwhMonitor = toolCfg.PowerHouseMonitor;
+                    }
+                }
+                catch { }
+                finally { }
+            }
             WindowHandler.WinToFocusByName("mstsc");
-            Rectangle pwhIcons = new Rectangle();
-            try
+            PowerHouseRectangles pwhRect1 = new PowerHouseRectangles(ControlType.PowerHouseIcons, new SerializableRectangle(new Rectangle(0,0,150,150)));
+            PowerHouseRectangles pwhRect2 = new PowerHouseRectangles(ControlType.ItemSearchWindow, new SerializableRectangle(new Rectangle(300, 500, 150, 150)));
+            ReceivingConfig rcvConfig = ConfigData._receivingConfig;
+            if (rcvConfig.findRectByType(ControlType.ItemSearchWindow) != null && !rcvConfig.findRectByType(ControlType.ItemSearchWindow).getRectangle().IsEmpty) 
             {
-                pwhIcons = ConfigData._receivingConfig.getMousePosByType(ControlType.PowerHouseIcons).getRectangle();
+                pwhRect2 = rcvConfig.findRectByType(ControlType.ItemSearchWindow);
             }
-            catch (Exception e)
+            if (rcvConfig.findRectByType(ControlType.PowerHouseIcons) != null && !rcvConfig.findRectByType(ControlType.PowerHouseIcons).getRectangle().IsEmpty)
             {
-                Debug.WriteLine("Config not properly set.");
+                pwhRect1 = rcvConfig.findRectByType(ControlType.PowerHouseIcons);
             }
-            finally { }
-            
-            if (pwhIcons == null || pwhIcons.IsEmpty)
+            List<PowerHouseRectangles> pwhList = new List<PowerHouseRectangles> { pwhRect1, pwhRect2 };
+            List<PowerHouseRectangles> alteredRects = RectanglesOverlay.Show(pwhList, PwhMonitor);
+
+            Thread.Sleep(1500);            
+            DialogResult saveChanges = MessageBox.Show("Would you like to save your changes?", "Save Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+            if (saveChanges == DialogResult.Yes)
             {
-                pwhIcons = new Rectangle(0, 0, 150, 150);
+                ConfigData._receivingConfig.setMousePositions(alteredRects);
+                ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig );
+                cfgData.PrepareForSerialization();
+                ConfigData.SerializeConfigData();                
             }
-            
-            Task pwhIconsTsk = Task.Run(() =>
-            {
-                pwhIcons = OverlayForm.Show(pwhIcons, "Powerhouse Icons");
-                Debug.WriteLine(pwhIcons.X);
-            });
-            Task.WaitAll(pwhIconsTsk);
-            Thread.Sleep(10000);
-            return;
-            SerializableRectangle srlzRect = new SerializableRectangle(pwhIcons);
-            PowerHouseRectangles pwhrect = new PowerHouseRectangles(ControlType.PowerHouseIcons, srlzRect);
-            List<PowerHouseRectangles> list = new List<PowerHouseRectangles> { pwhrect };            
-            ConfigData._receivingConfig.setMousePositions(list);
-            ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig );
-            cfgData.PrepareForSerialization();
-            ConfigData.SerializeConfigData();
 
         }
     }

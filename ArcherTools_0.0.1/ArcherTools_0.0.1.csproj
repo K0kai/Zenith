@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Emgu.CV" Version="4.9.0.5494" />
-    <PackageReference Include="Emgu.CV.Bitmap" Version="4.9.0.5494" />
-    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.9.0.5494" />
+    <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
+    <PackageReference Include="Emgu.CV.Bitmap" Version="4.10.0.5680" />
+    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.10.0.5680" />
     <PackageReference Include="Emgu.CV.runtime.windows.cuda" Version="4.4.0.4099" />
     <PackageReference Include="EPPlus" Version="7.5.2" />
     <PackageReference Include="InputSimulator" Version="1.0.4" />

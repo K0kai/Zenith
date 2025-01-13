@@ -2,6 +2,7 @@
 using ArcherTools_0._0._1.excel;
 using System.Diagnostics;
 using System.Xml.Serialization;
+using static ArcherTools_0._0._1.WindowHandler;
 
 namespace ArcherTools_0._0._1.cfg
 {
@@ -57,6 +58,18 @@ namespace ArcherTools_0._0._1.cfg
             }
         }
 
+        public PowerHouseRectangles getRawRectByType(ControlType type)
+        {
+            if (type == this.ControlType)
+            {
+                return this;
+            }
+            else
+            {
+                return new PowerHouseRectangles();
+            }
+        }
+
         public Rectangle getRectangle()
         {
             try
@@ -64,6 +77,11 @@ namespace ArcherTools_0._0._1.cfg
                 return this.rect.toRectangle();
             }
             catch (Exception e) { Debug.WriteLine(e.Message); return new Rectangle(0, 0, 100, 100); }
+        }
+
+        public void setRectangle(Rectangle newRect)
+        {
+            this.rect = new SerializableRectangle(newRect);
         }
 
 
@@ -82,35 +100,37 @@ namespace ArcherTools_0._0._1.cfg
         [XmlArrayItem("WorksheetName")]
         public List<string> ExcelSheetNames { get; set; }
 
-        [XmlArray("MousePositionList")]
+        [XmlArray("RectanglePositionList")]
         [XmlArrayItem("PowerHouseRectangles")]
-        public List<PowerHouseRectangles> MousePositionList { get; set; } = new List<PowerHouseRectangles>();
+        public List<PowerHouseRectangles> RectanglePositionList { get; set; } = new List<PowerHouseRectangles>();
 
         public ReceivingConfig() { }
 
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
-        public ReceivingConfig(string excelFilePath, List<PowerHouseRectangles> mousePositionList)
+        public ReceivingConfig(string excelFilePath, List<PowerHouseRectangles> rectPosList)
         {
             ExcelFilePath = excelFilePath;
             if (excelFilePath != null && File.Exists(excelFilePath))
             {
                 setExcelSheetNames(excelFilePath);
             }
-            MousePositionList = mousePositionList;
+            RectanglePositionList = rectPosList;
             configVersion = ConfigData.ConfigVersion;
         }
 
-        public List<PowerHouseRectangles> getMousePositions() { return this.MousePositionList; }
+        public List<PowerHouseRectangles> getRectangles() { return this.RectanglePositionList; }
 
-        public PowerHouseRectangles? getMousePosByType(ControlType ctrlType)
+        public PowerHouseRectangles findRectByType(ControlType ctrlType)
         {
-            List<PowerHouseRectangles> mousePositions = this.getMousePositions();
-            PowerHouseRectangles? foundPos = null;
-            foreach (var mousePos in mousePositions) {
-                if (mousePos.ControlType == ctrlType) { foundPos = mousePos; }
+            var rectReturn = new PowerHouseRectangles();
+            foreach (var rect in this.RectanglePositionList)
+            {
+                if (rect.ControlType == ctrlType) {
+                    rectReturn = rect.getRawRectByType(ctrlType);
+                }
                 
             }
-            return foundPos;
+            return rectReturn;
         }
 
         public string? getExcelFilePath() { try { return this.ExcelFilePath; } catch (Exception ex) { Debug.WriteLine($"Excel file path is empty.\n Error Message: {ex.Message}"); return null; } }
@@ -123,9 +143,9 @@ namespace ArcherTools_0._0._1.cfg
             this.ExcelSheetNames = ExcelHandler.GetWorksheetNames(filePath);
         }
 
-        public void setMousePositions(List<PowerHouseRectangles> mousePositions) { this.MousePositionList = mousePositions; }
+        public void setMousePositions(List<PowerHouseRectangles> mousePositions) { this.RectanglePositionList = mousePositions; }
 
-        public void addMousePosition(PowerHouseRectangles valueToAdd) { this.MousePositionList.Add(valueToAdd); }
+        public void addMousePosition(PowerHouseRectangles valueToAdd) { this.RectanglePositionList.Add(valueToAdd); }
     }
 }
 

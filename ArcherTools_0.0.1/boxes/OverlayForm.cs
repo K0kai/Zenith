@@ -21,7 +21,7 @@ namespace ArcherTools_0._0._1.boxes
             this.FormBorderStyle = FormBorderStyle.Sizable;
             this.StartPosition = FormStartPosition.Manual;
             this.BackColor = Color.Red;
-            this.Opacity = 0.5; // Semi-transparent
+            this.Opacity = 0.7; // Semi-transparent
             this.TopMost = true; // Always on top
             this.TopLevel = true;
             
