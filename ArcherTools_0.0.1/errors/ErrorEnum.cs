@@ -8,6 +8,7 @@
             FileNotFound = 1,
             AccessDenied = 2,
             InvalidInput = 3,
+            WindowNotFound = 4,
             UnknownError = 255
         }
     }

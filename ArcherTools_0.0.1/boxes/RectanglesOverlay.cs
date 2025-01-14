@@ -28,7 +28,8 @@ namespace ArcherTools_0._0._1.boxes
             this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
             this.BackColor = Color.Black;
-            this.Opacity = 0.4;
+            this.TransparencyKey = Color.Black;
+            this.Opacity = 0.6;
             this.TopMost = true;
             this.DoubleBuffered = true;           
 
@@ -85,8 +86,8 @@ namespace ArcherTools_0._0._1.boxes
                     var deltaX = e.X - lastMousePos.X;
                     var deltaY = e.Y - lastMousePos.Y;
 
-                    deltaX = Math.Max(0, Math.Min(selectedPwhRect.getRectangle().X + deltaX, Screen.AllScreens[pwhMonitorAccessible - 1].Bounds.Width - 150));
-                    deltaY = Math.Max(0, Math.Min(selectedPwhRect.getRectangle().Y + deltaY, Screen.AllScreens[pwhMonitorAccessible - 1].Bounds.Height - 150));
+                    deltaX = Math.Max(0, Math.Min(selectedPwhRect.getRectangle().X + deltaX, Screen.AllScreens[pwhMonitorAccessible - 1].Bounds.Width - selectedPwhRect.getRectangle().Width));
+                    deltaY = Math.Max(0, Math.Min(selectedPwhRect.getRectangle().Y + deltaY, Screen.AllScreens[pwhMonitorAccessible - 1].Bounds.Height - selectedPwhRect.getRectangle().Height));
 
                     selectedPwhRect.setRectangle(new Rectangle(deltaX, deltaY, selectedPwhRect.getRectangle().Width, selectedPwhRect.getRectangle().Height));
                 }

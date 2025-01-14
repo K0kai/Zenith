@@ -74,8 +74,27 @@ namespace ArcherTools_0._0._1
             {
                 GetWindowRect(hWnd, out RECT rect);
                 return rect.toRect();
+                
             }
             return Rectangle.Empty;
+        }
+
+        public static Rectangle GetWindowPosition(string windowTitle)
+        {
+            IntPtr hWnd = FindWindow(null, windowTitle);
+            if (hWnd == IntPtr.Zero)
+            {
+                throw new Exception("Window not found!");
+            }
+
+            if (GetWindowRect(hWnd, out RECT rect))
+            {
+                return new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+            }
+            else
+            {
+                throw new Exception("Failed to get window rectangle!");
+            }
         }
 
         public static void WinToFocusByName(string windowName)

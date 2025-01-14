@@ -30,7 +30,7 @@ namespace ArcherTools_0._0._1
             this.Load += userControlLoad;
             CenterControl(introlabel);
 
-            
+
         }
 
         private void userControlLoad(object sender, EventArgs e)
@@ -40,7 +40,7 @@ namespace ArcherTools_0._0._1
             {
                 ConfigData? config = ConfigData.DeserializeConfigData();
                 config?.PostDeserialization();
-                
+
             }
             catch (Exception ex)
             {
@@ -128,9 +128,14 @@ namespace ArcherTools_0._0._1
 
         private void vpnConnect_btn_Click(object sender, EventArgs e)
         {
-            this.Enabled = false;                
-            VPNConnect.ConnectToVPN();          
+            this.Enabled = false;
+            VPNConnect.ConnectToVPN();
             this.Enabled = true;
+        }
+
+        private void settings_Btn_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
