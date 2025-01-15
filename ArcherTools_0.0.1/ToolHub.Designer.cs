@@ -34,7 +34,6 @@
             copyrights = new LinkLabel();
             receiveBtn = new Button();
             ToolsListPanel = new FlowLayoutPanel();
-            receiveconfig_btn = new Button();
             vpnConnect_btn = new Button();
             settings_Btn = new Button();
             panel1.SuspendLayout();
@@ -122,7 +121,6 @@
             // 
             ToolsListPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             ToolsListPanel.Controls.Add(receiveBtn);
-            ToolsListPanel.Controls.Add(receiveconfig_btn);
             ToolsListPanel.Controls.Add(vpnConnect_btn);
             ToolsListPanel.Controls.Add(settings_Btn);
             ToolsListPanel.FlowDirection = FlowDirection.TopDown;
@@ -130,26 +128,6 @@
             ToolsListPanel.Name = "ToolsListPanel";
             ToolsListPanel.Size = new Size(216, 425);
             ToolsListPanel.TabIndex = 6;
-            // 
-            // receiveconfig_btn
-            // 
-            receiveconfig_btn.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
-            receiveconfig_btn.BackColor = SystemColors.ControlDarkDark;
-            receiveconfig_btn.BackgroundImageLayout = ImageLayout.None;
-            receiveconfig_btn.Cursor = Cursors.Hand;
-            receiveconfig_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
-            receiveconfig_btn.FlatAppearance.BorderSize = 0;
-            receiveconfig_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
-            receiveconfig_btn.FlatStyle = FlatStyle.Flat;
-            receiveconfig_btn.ForeColor = SystemColors.ButtonFace;
-            receiveconfig_btn.Location = new Point(45, 43);
-            receiveconfig_btn.Margin = new Padding(25, 3, 25, 3);
-            receiveconfig_btn.Name = "receiveconfig_btn";
-            receiveconfig_btn.Size = new Size(126, 25);
-            receiveconfig_btn.TabIndex = 3;
-            receiveconfig_btn.Text = "Receive Properties";
-            receiveconfig_btn.UseVisualStyleBackColor = false;
-            receiveconfig_btn.Click += receiveconfig_btn_Click;
             // 
             // vpnConnect_btn
             // 
@@ -162,7 +140,7 @@
             vpnConnect_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
             vpnConnect_btn.FlatStyle = FlatStyle.Flat;
             vpnConnect_btn.ForeColor = SystemColors.ButtonFace;
-            vpnConnect_btn.Location = new Point(45, 74);
+            vpnConnect_btn.Location = new Point(45, 43);
             vpnConnect_btn.Margin = new Padding(25, 3, 25, 3);
             vpnConnect_btn.Name = "vpnConnect_btn";
             vpnConnect_btn.Size = new Size(126, 25);
@@ -182,7 +160,7 @@
             settings_Btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
             settings_Btn.FlatStyle = FlatStyle.Flat;
             settings_Btn.ForeColor = SystemColors.ButtonFace;
-            settings_Btn.Location = new Point(45, 105);
+            settings_Btn.Location = new Point(45, 74);
             settings_Btn.Margin = new Padding(25, 3, 25, 3);
             settings_Btn.Name = "settings_Btn";
             settings_Btn.Size = new Size(126, 25);
@@ -214,7 +192,6 @@
         private LinkLabel copyrights;
         private Button receiveBtn;
         private FlowLayoutPanel ToolsListPanel;
-        private Button receiveconfig_btn;
         private Button vpnConnect_btn;
         private Button settings_Btn;
     }

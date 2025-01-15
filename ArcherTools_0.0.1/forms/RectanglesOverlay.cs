@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.controllers;
+using ArcherTools_0._0._1.forms;
 
 namespace ArcherTools_0._0._1.boxes
 {
@@ -17,6 +19,7 @@ namespace ArcherTools_0._0._1.boxes
         private Point lastMousePos;
         private byte pwhMonitorAccessible;
         private ResizeDirection currentResizeDirection = ResizeDirection.None;
+        private static MouseTrackLabel mouseTrackLabel;
 
 
         internal RectanglesOverlay(List<PowerHouseRectangles> importedPwhRects, byte PwhMonitor = 1)
@@ -34,6 +37,8 @@ namespace ArcherTools_0._0._1.boxes
             this.DoubleBuffered = true;           
 
             pwhRects = importedPwhRects;
+
+            mouseTrackLabel = new MouseTrackLabel();
 
             this.MouseDown += GreatOverlay_MouseDown;
             this.MouseUp += GreatOverlay_MouseUp;
@@ -79,8 +84,18 @@ namespace ArcherTools_0._0._1.boxes
 
         private void GreatOverlay_MouseMove(object sender, MouseEventArgs e)
         {
+            var hoverRectangle = pwhRects.FirstOrDefault(r => r.getRectangle().Contains(e.Location));
+            if (hoverRectangle != null)
+            {
+                mouseTrackLabel.UpdateAsync(new Point(e.X - hoverRectangle.getRectangle().Left, e.Y - hoverRectangle.getRectangle().Top));
+            }
+            else
+            {
+                mouseTrackLabel.UpdateAsync(Cursor.Position);
+            }
             if (selectedPwhRect != null)
             {
+                
                 if (currentResizeDirection == ResizeDirection.None && e.Button == MouseButtons.Left)
                 {
                     var deltaX = e.X - lastMousePos.X;
@@ -98,21 +113,13 @@ namespace ArcherTools_0._0._1.boxes
 
                 lastMousePos = e.Location;
                 this.Invalidate();
-            }
-            else
-            {
-                var hoverRectangle = pwhRects.FirstOrDefault(r => r.getRectangle().Contains(e.Location));
-                if (hoverRectangle != null)
-                {
-                    var direction = GetResizeDirection(hoverRectangle.getRectangle(), e.Location);
-                    this.Cursor = GetCursorForDirection(direction);
-                }
+            }            
                 else
                 {
                     this.Cursor = Cursors.Default;
                 }
             }
-        }
+        
 
         private void GreatOverlay_MouseUp(object sender, MouseEventArgs e)
         {
@@ -197,9 +204,9 @@ namespace ArcherTools_0._0._1.boxes
         public static List<PowerHouseRectangles> Show(List<PowerHouseRectangles> importedPwhRects, byte PwhMonitor = 1)
         {
             using (var rectOv = new RectanglesOverlay(importedPwhRects, PwhMonitor))
-            {
+            {     
                 rectOv.ShowDialog();
-
+                mouseTrackLabel.Destroy();
                 return pwhRects;
             }
 

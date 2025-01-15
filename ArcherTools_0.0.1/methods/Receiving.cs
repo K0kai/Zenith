@@ -24,7 +24,7 @@ namespace ArcherTools_0._0._1.methods
         {
             ToolConfig toolCfg = ConfigData._toolConfig;
             byte PwhMonitor = 1;
-            if (WindowHandler.FindWindow(null, "mstsc") != IntPtr.Zero)
+            if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
             {
                 WindowHandler.WinToFocusByName("mstsc");
             }

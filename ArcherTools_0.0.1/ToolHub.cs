@@ -100,26 +100,6 @@ namespace ArcherTools_0._0._1
             }
         }
 
-        private void receiveconfig_btn_Click(object sender, EventArgs e)
-        {
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-            Form mainForm = this.FindForm();
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-            if (mainForm != null)
-            {
-                mainForm.ClientSize = new Size(725, 473);
-                mainForm.StartPosition = FormStartPosition.Manual; // Enable manual positioning
-                Screen currentScreen = Screen.FromControl(mainForm);
-                Rectangle currentScreenBounds = currentScreen.WorkingArea;
-                mainForm.Location = new Point(
-                    (currentScreenBounds.Width - mainForm.Width) / 2 + currentScreenBounds.X,
-                    (currentScreenBounds.Height - mainForm.Height) / 2 + currentScreenBounds.Y
-                );
-            }
-            _pageHandler.LoadUserControl(new ReceiveProperties());
-
-        }
-
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
             Receiving.TrainCall();
