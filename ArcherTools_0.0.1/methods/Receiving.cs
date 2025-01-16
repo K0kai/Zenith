@@ -24,6 +24,7 @@ namespace ArcherTools_0._0._1.methods
         {
             ToolConfig toolCfg = ConfigData._toolConfig;
             byte PwhMonitor = 1;
+#if !DEBUG
             if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
             {
                 WindowHandler.WinToFocusByName("mstsc");
@@ -33,7 +34,8 @@ namespace ArcherTools_0._0._1.methods
                 MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            
+
+
             switch(WindowHandler.GetWindowPosition("10.0.1.29 - Remote Desktop Connection").X)
             {
                 case >= 3840:
@@ -45,8 +47,9 @@ namespace ArcherTools_0._0._1.methods
                 default:
                     PwhMonitor = 1;
                     break;
-            }            
-          
+            }   
+#endif
+
             PowerHouseRectangles pwhRect1 = new PowerHouseRectangles(ControlType.PowerHouseIcons, new SerializableRectangle(new Rectangle(0,0,150,150)));
             PowerHouseRectangles pwhRect2 = new PowerHouseRectangles(ControlType.ItemSearchWindow, new SerializableRectangle(new Rectangle(300, 500, 150, 150)));
             ReceivingConfig rcvConfig = ConfigData._receivingConfig;

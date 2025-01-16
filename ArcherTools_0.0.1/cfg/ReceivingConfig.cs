@@ -58,7 +58,7 @@ namespace ArcherTools_0._0._1.cfg
             }
         }
 
-        public PowerHouseRectangles getRawRectByType(ControlType type)
+        public PowerHouseRectangles getPwhRectByType(ControlType type)
         {
             if (type == this.ControlType)
             {
@@ -126,7 +126,7 @@ namespace ArcherTools_0._0._1.cfg
             foreach (var rect in this.RectanglePositionList)
             {
                 if (rect.ControlType == ctrlType) {
-                    rectReturn = rect.getRawRectByType(ctrlType);
+                    rectReturn = rect.getPwhRectByType(ctrlType);
                 }
                 
             }

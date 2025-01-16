@@ -32,7 +32,11 @@
             pagelabel = new Label();
             label1 = new Label();
             toolsCfg_Panel = new Panel();
+            panel1 = new Panel();
+            label2 = new Label();
+            checkBox1 = new CheckBox();
             toolsCfg_Panel.SuspendLayout();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // rcvSet_Btn
@@ -89,17 +93,53 @@
             toolsCfg_Panel.Size = new Size(136, 357);
             toolsCfg_Panel.TabIndex = 27;
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(checkBox1);
+            panel1.Controls.Add(label2);
+            panel1.Location = new Point(249, 75);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(134, 357);
+            panel1.TabIndex = 28;
+            // 
+            // label2
+            // 
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            label2.AutoSize = true;
+            label2.Font = new Font("Franklin Gothic Medium Cond", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.ForeColor = Color.Lavender;
+            label2.Location = new Point(34, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(68, 24);
+            label2.TabIndex = 27;
+            label2.Text = "Program";
+            label2.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.ForeColor = Color.Lavender;
+            checkBox1.Location = new Point(8, 40);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(116, 19);
+            checkBox1.TabIndex = 28;
+            checkBox1.Text = "Enable Voicelines";
+            checkBox1.UseVisualStyleBackColor = true;
+            // 
             // SettingsUserControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
+            Controls.Add(panel1);
             Controls.Add(toolsCfg_Panel);
             Controls.Add(pagelabel);
             Name = "SettingsUserControl";
             Size = new Size(397, 444);
             toolsCfg_Panel.ResumeLayout(false);
             toolsCfg_Panel.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -110,5 +150,8 @@
         private Label pagelabel;
         private Label label1;
         private Panel toolsCfg_Panel;
+        private Panel panel1;
+        private Label label2;
+        private CheckBox checkBox1;
     }
 }
