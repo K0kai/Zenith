@@ -20,7 +20,7 @@ namespace ArcherTools_0._0._1.forms
             this.TopMost = true;
             this.TopLevel = true;
             this.ShowInTaskbar = false;
-            this.BackColor = Color.White;
+            this.BackColor = Color.Black;
             this.TransparencyKey = BackColor;
             this.Opacity = 1;
             this.Width = 100;
@@ -29,9 +29,9 @@ namespace ArcherTools_0._0._1.forms
 
             mouseLabel = new Label {
                 AutoSize = true,
-                ForeColor = Color.Black,
+                ForeColor = Color.Yellow,
                 BackColor = Color.Transparent,
-                Font = new Font("Arial", 10, FontStyle.Bold),
+                Font = new Font("Arial", (float)9.25, FontStyle.Bold),
                 Padding = new Padding(5)
             };
             this.Controls.Add(mouseLabel);
@@ -43,9 +43,10 @@ namespace ArcherTools_0._0._1.forms
         public async void UpdateAsync(Point mousePos)
         {
             mouseLabel.Location = new Point(Cursor.Position.X + 10, Cursor.Position.Y + 5);
-            mouseLabel.Text = $"X: {mousePos.X}, Y: {mousePos.Y}";
+            mouseLabel.Text = $"X: {mousePos.X} \nY: {mousePos.Y}";
             await Task.Delay(50);
         }
+
 
         public void Destroy()
         {

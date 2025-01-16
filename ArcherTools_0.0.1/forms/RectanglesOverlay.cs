@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.forms;
+using InputSimulatorEx;
+using InputSimulatorEx.Native;
 
 namespace ArcherTools_0._0._1.boxes
 {
     internal class RectanglesOverlay : Form
     {
-
+        public static Form thisForm;
         private const int ResizeMargin = 10;
         private static List<PowerHouseRectangles> pwhRects = new List<PowerHouseRectangles>();
         private PowerHouseRectangles selectedPwhRect = null;
@@ -27,28 +30,42 @@ namespace ArcherTools_0._0._1.boxes
             pwhMonitorAccessible = PwhMonitor;
             this.StartPosition = FormStartPosition.Manual;
             this.Bounds = Screen.AllScreens[PwhMonitor - 1].Bounds;
-            Debug.WriteLine(PwhMonitor);
             this.FormBorderStyle = FormBorderStyle.None;
             this.WindowState = FormWindowState.Maximized;
             this.BackColor = Color.Black;
             this.TransparencyKey = Color.Black;
             this.Opacity = 0.6;
             this.TopMost = true;
-            this.DoubleBuffered = true;           
+            this.DoubleBuffered = true;
+            this.ShowInTaskbar = false;
 
-            pwhRects = importedPwhRects;
-
-            mouseTrackLabel = new MouseTrackLabel();
+            pwhRects = importedPwhRects;            
 
             this.MouseDown += GreatOverlay_MouseDown;
             this.MouseUp += GreatOverlay_MouseUp;
             this.MouseMove += GreatOverlay_MouseMove;
+            this.MouseLeave += GreatOverlay_MouseLeave;
 
             this.Paint += GreatOverlay_Paint;
 
+            thisForm = this;
 
+            _ = MonitorKeyPress(new InputSimulator());
         }
 
+        private static async Task MonitorKeyPress(InputSimulator inputSimulator)
+        {
+            while (true)
+            {                
+                if (inputSimulator.InputDeviceState.IsKeyDown(VirtualKeyCode.END))
+                {
+                    Debug.WriteLine("'End' key pressed. Exiting...");
+                    thisForm.Close();                  
+                    break;
+                }
+                await Task.Delay(100);
+            }
+        }
         private void GreatOverlay_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -75,6 +92,7 @@ namespace ArcherTools_0._0._1.boxes
         private void GreatOverlay_MouseDown(object sender, MouseEventArgs e)
         {
             selectedPwhRect = pwhRects.FirstOrDefault(r => r.getRectangle().Contains(e.Location));
+            mouseTrackLabel.Visible = false;
             if (selectedPwhRect != null)
             {
                 currentResizeDirection = GetResizeDirection(selectedPwhRect.getRectangle(), e.Location);
@@ -87,15 +105,14 @@ namespace ArcherTools_0._0._1.boxes
             var hoverRectangle = pwhRects.FirstOrDefault(r => r.getRectangle().Contains(e.Location));
             if (hoverRectangle != null)
             {
+                if (mouseTrackLabel == null)
+                {
+                    mouseTrackLabel = new MouseTrackLabel();
+                }
                 mouseTrackLabel.UpdateAsync(new Point(e.X - hoverRectangle.getRectangle().Left, e.Y - hoverRectangle.getRectangle().Top));
-            }
-            else
-            {
-                mouseTrackLabel.UpdateAsync(Cursor.Position);
             }
             if (selectedPwhRect != null)
             {
-                
                 if (currentResizeDirection == ResizeDirection.None && e.Button == MouseButtons.Left)
                 {
                     var deltaX = e.X - lastMousePos.X;
@@ -113,12 +130,32 @@ namespace ArcherTools_0._0._1.boxes
 
                 lastMousePos = e.Location;
                 this.Invalidate();
-            }            
+            }
+            else
+            {
+                if (hoverRectangle != null)
+                {
+                    var direction = GetResizeDirection(hoverRectangle.getRectangle(), e.Location);
+                    this.Cursor = GetCursorForDirection(direction);
+
+                }
+
                 else
                 {
+
                     this.Cursor = Cursors.Default;
                 }
             }
+            }
+
+        private void GreatOverlay_MouseLeave(object sender, EventArgs e)
+        {
+            if (mouseTrackLabel != null)
+            {
+                mouseTrackLabel.Destroy();
+                mouseTrackLabel = null;
+            }
+        }
         
 
         private void GreatOverlay_MouseUp(object sender, MouseEventArgs e)
@@ -126,6 +163,8 @@ namespace ArcherTools_0._0._1.boxes
             selectedPwhRect = null;
             currentResizeDirection = ResizeDirection.None;
             this.Cursor = Cursors.Default;
+            mouseTrackLabel.Focus();
+            mouseTrackLabel.Visible = true;
         }
 
         private ResizeDirection GetResizeDirection(Rectangle rect, Point mousePosition)
@@ -206,7 +245,12 @@ namespace ArcherTools_0._0._1.boxes
             using (var rectOv = new RectanglesOverlay(importedPwhRects, PwhMonitor))
             {     
                 rectOv.ShowDialog();
-                mouseTrackLabel.Destroy();
+                if (mouseTrackLabel != null)
+                {
+                    mouseTrackLabel.Destroy();
+                    mouseTrackLabel = null;
+                }
+                rectOv.Dispose();
                 return pwhRects;
             }
 

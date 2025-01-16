@@ -24,7 +24,7 @@ namespace ArcherTools_0._0._1.methods
         {
             ToolConfig toolCfg = ConfigData._toolConfig;
             byte PwhMonitor = 1;
-#if !DEBUG
+//#if !DEBUG
             if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
             {
                 WindowHandler.WinToFocusByName("mstsc");
@@ -48,7 +48,7 @@ namespace ArcherTools_0._0._1.methods
                     PwhMonitor = 1;
                     break;
             }   
-#endif
+//#endif
 
             PowerHouseRectangles pwhRect1 = new PowerHouseRectangles(ControlType.PowerHouseIcons, new SerializableRectangle(new Rectangle(0,0,150,150)));
             PowerHouseRectangles pwhRect2 = new PowerHouseRectangles(ControlType.ItemSearchWindow, new SerializableRectangle(new Rectangle(300, 500, 150, 150)));
@@ -64,7 +64,7 @@ namespace ArcherTools_0._0._1.methods
             List<PowerHouseRectangles> pwhList = new List<PowerHouseRectangles> { pwhRect1, pwhRect2 };
             List<PowerHouseRectangles> alteredRects = RectanglesOverlay.Show(pwhList, PwhMonitor);
 
-            Thread.Sleep(1500);            
+            Thread.Sleep(1500);
             DialogResult saveChanges = MessageBox.Show("Would you like to save your changes?", "Save Changes", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
             if (saveChanges == DialogResult.Yes)
             {
