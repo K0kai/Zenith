@@ -2,18 +2,17 @@
 using ArcherTools_0._0._1.excel;
 using System.Diagnostics;
 using System.Xml.Serialization;
-using static ArcherTools_0._0._1.WindowHandler;
 
 namespace ArcherTools_0._0._1.cfg
 {
     public enum ControlType
     {
-        ReceiptLineLeftSide,
+        ReceiptLineWindow,
         ReceiptLineFirstLine,
         ItemSearchWindow,
         ItemSearchInquiry,
         ItemMaintenanceBox,
-        ItemConfigurationBox,
+        ItemConfigurationWindow,
         NumPiecesInputBox,
         PalletWeightInputBox,
         PalletHeightInputBox,
@@ -34,7 +33,7 @@ namespace ArcherTools_0._0._1.cfg
         [XmlElement("ControlType")]
         public ControlType ControlType { get; set; }
 
-        
+
         [XmlElement("PositionRectangle")]
         public SerializableRectangle rect { get; set; } = new SerializableRectangle();
 
@@ -102,12 +101,12 @@ namespace ArcherTools_0._0._1.cfg
 
         [XmlArray("RectanglePositionList")]
         [XmlArrayItem("PowerHouseRectangles")]
-        public List<PowerHouseRectangles> RectanglePositionList { get; set; } = new List<PowerHouseRectangles>();
+        public List<PowerHouseRectangles> RectanglePositionList { get; set; }
 
         public ReceivingConfig() { }
 
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
-        public ReceivingConfig(string excelFilePath, List<PowerHouseRectangles> rectPosList)
+        public ReceivingConfig(string excelFilePath, List<PowerHouseRectangles> rectPosList = null)
         {
             ExcelFilePath = excelFilePath;
             if (excelFilePath != null && File.Exists(excelFilePath))
@@ -120,17 +119,74 @@ namespace ArcherTools_0._0._1.cfg
 
         public List<PowerHouseRectangles> getRectangles() { return this.RectanglePositionList; }
 
-        public PowerHouseRectangles findRectByType(ControlType ctrlType)
+        internal static void createNewRcvCfg()
         {
-            var rectReturn = new PowerHouseRectangles();
+            if (ConfigData._receivingConfig == null)
+            {
+                MessageBox.Show("I have noticed that the receiving config data is null, we're going to create one now", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                OpenFileDialog dialog = new OpenFileDialog();
+                dialog.Filter = "Excel Sheet (*.xlsx)|*.xlsx|All Files(*.*)|*.*";
+                dialog.FilterIndex = 0;
+                dialog.Multiselect = false;
+                string filePath;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = dialog.FileName;
+                    var rcvConfig = new ReceivingConfig(filePath, new List<PowerHouseRectangles>());
+                    ConfigData.setReceivingConfig(rcvConfig);
+
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
+        public PowerHouseRectangles getRectByType(ControlType ctrlType)
+        {
+            var rectReturn = new PowerHouseRectangles(ctrlType, new SerializableRectangle(new Rectangle(0, 0, 150, 150)));
             foreach (var rect in this.RectanglePositionList)
             {
-                if (rect.ControlType == ctrlType) {
+                if (rect.ControlType == ctrlType)
+                {
                     rectReturn = rect.getPwhRectByType(ctrlType);
                 }
-                
+
             }
             return rectReturn;
+        }
+
+        public int getRectIndexByType(ControlType ctrlType)
+        {
+            var rectReturn = new PowerHouseRectangles(ctrlType, new SerializableRectangle(new Rectangle(0, 0, 150, 150)));
+            for (var i = 0; i < this.RectanglePositionList.Count; i++)
+            {
+                if (!RectanglePositionList[i].getPwhRectByType(ctrlType).rect.toRectangle().IsEmpty)
+                {
+                    return i;
+                }                
+            }
+            return -1;
+        }
+
+        public bool containsCtrlType(ControlType ctrlType)
+        {
+            if ( this.RectanglePositionList.Count == 0 || this.RectanglePositionList == null)
+            {
+                Debug.WriteLine("null list");
+                return false;
+            }
+            foreach (var rect in this.RectanglePositionList)
+            {
+                if (rect.ControlType == ctrlType)
+                {
+                    Debug.WriteLine("conflict");
+                    return true;
+                }
+            }
+            Debug.WriteLine("nothing");
+            return false;
         }
 
         public string? getExcelFilePath() { try { return this.ExcelFilePath; } catch (Exception ex) { Debug.WriteLine($"Excel file path is empty.\n Error Message: {ex.Message}"); return null; } }
@@ -145,7 +201,24 @@ namespace ArcherTools_0._0._1.cfg
 
         public void setMousePositions(List<PowerHouseRectangles> mousePositions) { this.RectanglePositionList = mousePositions; }
 
-        public void addMousePosition(PowerHouseRectangles valueToAdd) { this.RectanglePositionList.Add(valueToAdd); }
+
+        public void addMousePosition(PowerHouseRectangles valueToAdd)
+        {
+            if (!this.containsCtrlType(valueToAdd.ControlType))
+            {
+                Debug.WriteLine("doesnt contain");
+                this.RectanglePositionList.Add(valueToAdd);
+                Debug.WriteLine("adding item");
+            }
+            else
+            {
+                var conflictingRect = getRectByType(valueToAdd.ControlType);
+                if (RectanglePositionList.Contains(conflictingRect))
+                {
+                    RectanglePositionList[getRectIndexByType(valueToAdd.ControlType)] = valueToAdd;
+                }
+            }
+        }
     }
 }
 

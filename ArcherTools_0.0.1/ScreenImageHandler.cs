@@ -21,6 +21,8 @@ namespace ArcherTools_0._0._1
                 screenPoint = DetectImageOther(targetImagePath, threshold);
             });
             Task.WhenAll(taskFirstScreen, taskSecondScreen).Wait();
+            taskFirstScreen.Dispose();
+            taskSecondScreen.Dispose();
             return screenPoint;
 
 

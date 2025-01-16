@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 
-namespace ArcherTools_0._0._1.enum_things
+namespace ArcherTools_0._0._1.enums
 {
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class StringValueAttribute : Attribute

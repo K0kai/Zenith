@@ -1,4 +1,4 @@
-﻿namespace ArcherTools_0._0._1.errors
+﻿namespace ArcherTools_0._0._1.enums
 {
     public class ErrorEnum
     {
@@ -9,6 +9,8 @@
             AccessDenied = 2,
             InvalidInput = 3,
             WindowNotFound = 4,
+            InvalidCfgData = 5,
+            None = 254,
             UnknownError = 255
         }
     }

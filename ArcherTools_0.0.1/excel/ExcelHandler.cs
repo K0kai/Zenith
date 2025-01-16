@@ -93,7 +93,7 @@ namespace ArcherTools_0._0._1.excel
             }
         }
 
-        public List<String> GetColumn(string worksheetName, int column)
+        public List<String> GetColumn(string worksheetName, int column, int startrow = 1)
         {
             using (ExcelPackage package = new ExcelPackage(new FileInfo(_filePath)))
             {
@@ -109,7 +109,7 @@ namespace ArcherTools_0._0._1.excel
                     throw new InvalidOperationException($"Worksheet \"{worksheetName}\" has empty dimensions.");
                 }
                 List<String> columnData = new List<String>();
-                for (int row = 1; row <= excelWorksheet.Dimension.Rows; row++)
+                for (int row = startrow ; row <= excelWorksheet.Dimension.Rows; row++)
                 {
                     var cellValue = excelWorksheet.Cells[row, column].Text;
                     if (!string.IsNullOrWhiteSpace(cellValue))
@@ -118,6 +118,31 @@ namespace ArcherTools_0._0._1.excel
                     }
                 }
                 return columnData;
+            }
+        }
+
+        public void SetColumn<T>(string worksheetName, int column, List<T> values, int startrow = 1)
+        {
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(_filePath)))
+            {
+                if (!this.WorksheetExists(worksheetName))
+                {
+                    throw new FileNotFoundException($"No worksheet with this name \"{worksheetName}\" was found to set this column.");
+                }
+
+                ExcelWorkbook excelWorkbook = package.Workbook;
+                ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[worksheetName];
+                if (excelWorksheet.Dimension == null)
+                {
+                    throw new InvalidOperationException($"Worksheet \"{worksheetName}\" has empty dimensions.");
+                }
+                List<String> columnData = new List<String>();
+                for (int row = startrow; row <= values.Count; row++)
+                {
+                    var value = values[row - startrow];
+                    SetCell(worksheetName, row, column, value);
+                }
+                SaveExcel(package);
             }
         }
 

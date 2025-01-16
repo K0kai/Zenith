@@ -1,6 +1,6 @@
 ﻿using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.controllers;
-using ArcherTools_0._0._1.enum_things;
+using ArcherTools_0._0._1.enums;
 using ArcherTools_0._0._1.methods;
 using System.Diagnostics;
 
@@ -102,7 +102,7 @@ namespace ArcherTools_0._0._1
 
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
-            Receiving.TrainCall();
+            Receiving.MainCall();
 
         }
 

@@ -40,9 +40,19 @@ namespace ArcherTools_0._0._1.controllers
             SetCursorPos(X, Y);
         }
 
-
-
-
+        internal static Point pointFromList(List<int> list)
+        {
+            if (list == null || list.Count == 0)
+            {
+                throw new Exception("The list is empty, unable to make point.");                
+            }
+            Point convPoint = new Point(list[0], list[1]);
+            return convPoint;
+        }
+        internal static void MouseMoveTo(Point coords)
+        {
+            SetCursorPos(coords.X, coords.Y);
+        }
         internal static void MouseClick(clickType clkType = clickType.SingleLeftClick)
         {
             switch (clkType)

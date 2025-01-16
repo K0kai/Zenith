@@ -1,4 +1,4 @@
-﻿using ArcherTools_0._0._1.enum_things;
+﻿using ArcherTools_0._0._1.enums;
 using InputSimulatorEx;
 using InputSimulatorEx.Native;
 using System;

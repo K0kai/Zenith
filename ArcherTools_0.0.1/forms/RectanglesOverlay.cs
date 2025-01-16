@@ -15,14 +15,14 @@ namespace ArcherTools_0._0._1.boxes
 {
     internal class RectanglesOverlay : Form
     {
-        public static Form thisForm;
+        public static Form? thisForm;
         private const int ResizeMargin = 10;
         private static List<PowerHouseRectangles> pwhRects = new List<PowerHouseRectangles>();
-        private PowerHouseRectangles selectedPwhRect = null;
+        private PowerHouseRectangles? selectedPwhRect = null;
         private Point lastMousePos;
         private byte pwhMonitorAccessible;
         private ResizeDirection currentResizeDirection = ResizeDirection.None;
-        private static MouseTrackLabel mouseTrackLabel;
+        private static MouseTrackLabel? mouseTrackLabel;
 
 
         internal RectanglesOverlay(List<PowerHouseRectangles> importedPwhRects, byte PwhMonitor = 1)
