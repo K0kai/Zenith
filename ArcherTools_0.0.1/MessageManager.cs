@@ -1,4 +1,5 @@
-﻿using System.Media;
+﻿using System.Diagnostics;
+using System.Media;
 
 namespace ArcherTools_0._0._1
 {
@@ -69,7 +70,7 @@ namespace ArcherTools_0._0._1
                 var relativePath = "audio";
 
 #if DEBUG
-                var audioFolderPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName, relativePath);
+                var audioFolderPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, relativePath);                
 #else
 var audioFolderPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
 #endif
@@ -89,7 +90,8 @@ var audioFolderPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath
                     }
                     else
                     {
-                        throw new Exception("No audio folder found.");
+                        throw new Exception($"No audio folder found at \"{audioFolderPath}\".");
+
 
                     }
 
@@ -100,7 +102,8 @@ var audioFolderPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath
                 }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show(ex.ToString() + "\n" + ex.Message);
+                
                 return "Error generating message.. this is awkward...";
             }
         }

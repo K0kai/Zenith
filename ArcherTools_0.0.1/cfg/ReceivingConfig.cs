@@ -119,30 +119,6 @@ namespace ArcherTools_0._0._1.cfg
 
         public List<PowerHouseRectangles> getRectangles() { return this.RectanglePositionList; }
 
-        internal static void createNewRcvCfg()
-        {
-            if (ConfigData._receivingConfig == null)
-            {
-                MessageBox.Show("I have noticed that the receiving config data is null, we're going to create one now", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                OpenFileDialog dialog = new OpenFileDialog();
-                dialog.Filter = "Excel Sheet (*.xlsx)|*.xlsx|All Files(*.*)|*.*";
-                dialog.FilterIndex = 0;
-                dialog.Multiselect = false;
-                string filePath;
-                if (dialog.ShowDialog() == DialogResult.OK)
-                {
-                    filePath = dialog.FileName;
-                    var rcvConfig = new ReceivingConfig(filePath, new List<PowerHouseRectangles>());
-                    ConfigData.setReceivingConfig(rcvConfig);
-
-                }
-                else
-                {
-                    return;
-                }
-            }
-        }
-
         public PowerHouseRectangles getRectByType(ControlType ctrlType)
         {
             var rectReturn = new PowerHouseRectangles(ctrlType, new SerializableRectangle(new Rectangle(0, 0, 150, 150)));
@@ -189,9 +165,31 @@ namespace ArcherTools_0._0._1.cfg
             return false;
         }
 
+        public bool configExcel()
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Excel Sheet (*.xlsx)|*.xlsx|All Files(*.*)|*.*";
+            dialog.FilterIndex = 0;
+            dialog.Multiselect = false;
+            string filePath;
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                filePath = dialog.FileName;
+                setExcelFilePath(filePath);
+                ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
+                cfgData.PrepareForSerialization();
+                ConfigData.SerializeConfigData();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public string? getExcelFilePath() { try { return this.ExcelFilePath; } catch (Exception ex) { Debug.WriteLine($"Excel file path is empty.\n Error Message: {ex.Message}"); return null; } }
 
-        public void setExcelFilePath(string filePath) { this.ExcelFilePath = filePath; }
+        public void setExcelFilePath(string filePath) { this.ExcelFilePath = filePath; setExcelSheetNames(filePath); }
 
         public void setExcelSheetNames(string filePath)
         {

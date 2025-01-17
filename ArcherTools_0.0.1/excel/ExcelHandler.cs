@@ -88,8 +88,22 @@ namespace ArcherTools_0._0._1.excel
                 }
                 ExcelWorkbook excelWorkbook = package.Workbook;
                 ExcelWorksheet excelWorksheet = excelWorkbook.Worksheets[worksheetName];
-                excelWorksheet.Cells[row, column].Value = value;
-                SaveExcel(package);
+                if (excelWorksheet.Dimension == null)
+                {
+                    throw new InvalidOperationException($"Worksheet \"{worksheetName}\" has empty dimensions.");
+                }
+                var cell = excelWorksheet.Cells[row, column];
+                if (cell.Merge)
+                {
+                    var mergeId = excelWorksheet.MergedCells[row, column];                   
+                    var mergedCell = excelWorksheet.Cells[mergeId];
+                    mergedCell.Value = value;
+                }
+                else
+                {
+                    cell.Value = value;
+                }
+                package.SaveAsync();
             }
         }
 
@@ -111,7 +125,20 @@ namespace ArcherTools_0._0._1.excel
                 List<String> columnData = new List<String>();
                 for (int row = startrow ; row <= excelWorksheet.Dimension.Rows; row++)
                 {
-                    var cellValue = excelWorksheet.Cells[row, column].Text;
+
+                    var cell = excelWorksheet.Cells[row, column];
+                    string? cellValue = null;
+                    if (cell.Value != null)
+                    cellValue = cell.Value.ToString();
+                    if (cell.Merge)
+                    {
+                        var mergeId = excelWorksheet.MergedCells[row, column];
+                        if (excelWorksheet.Cells[mergeId].First().Value != null)
+                        {
+                            cellValue = excelWorksheet.Cells[mergeId].First().Value.ToString();
+                        }
+                    }
+                    Debug.WriteLine(row);
                     if (!string.IsNullOrWhiteSpace(cellValue))
                     {
                         columnData.Add(cellValue);
@@ -140,9 +167,9 @@ namespace ArcherTools_0._0._1.excel
                 for (int row = startrow; row <= values.Count; row++)
                 {
                     var value = values[row - startrow];
+                    Debug.WriteLine($"{row}\n{column}");
                     SetCell(worksheetName, row, column, value);
                 }
-                SaveExcel(package);
             }
         }
 

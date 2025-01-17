@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ArcherTools_0._0._1.methods;
 
 namespace ArcherTools_0._0._1
 {
@@ -15,6 +16,17 @@ namespace ArcherTools_0._0._1
         public SettingsUserControl()
         {
             InitializeComponent();
+        }
+
+        private void rcvSet_Btn_Click(object sender, EventArgs e)
+        {
+            Receiving.TrainCall();
+        }
+
+        private void return_Btn_Click(object sender, EventArgs e)
+        {
+            PageHandler pageHandler = PageHandler.GetInstance();
+            pageHandler.LoadUserControl(new ToolHub());
         }
     }
 }

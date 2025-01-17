@@ -16,6 +16,9 @@ namespace ArcherTools_0._0._1.cfg
         public static UserConfig? _userConfig { get; private set; }
         public static ReceivingConfig? _receivingConfig { get; private set; }
         public static ToolConfig? _toolConfig { get; private set; }
+        public static string directoryPath = AppDomain.CurrentDomain.BaseDirectory;
+        public static string fileName = "Config.xml";
+        public static string filePath = Path.Combine(directoryPath, fileName);
 
 
         //Serializable variables
@@ -60,11 +63,7 @@ namespace ArcherTools_0._0._1.cfg
         }
 
         public static void SerializeConfigData()
-        {
-            string directoryPath = AppDomain.CurrentDomain.BaseDirectory;
-            string fileName = "Config.xml";
-            string filePath = Path.Combine(directoryPath, fileName);
-
+        {          
             try
             {
                 if (Directory.Exists(directoryPath))
@@ -97,29 +96,53 @@ namespace ArcherTools_0._0._1.cfg
         }
 
         public static ConfigData? DeserializeConfigData()
-        {
-            string directoryPath = AppDomain.CurrentDomain.BaseDirectory;
-            string fileName = "Config.xml";
-            string filePath = Path.Combine(directoryPath, fileName);
-
+        {        
             try
             {
                 if (!File.Exists(filePath))
                 {
-                    throw new FileNotFoundException("Config data file does not exist.");
+                    throw new FileNotFoundException($"Config data file does not exist at path {filePath}.");
                 }
                 var serializer = new XmlSerializer(typeof(ConfigData));
                 using (var fileStream = new FileStream(filePath, FileMode.Open))
                 {
+                    if (new FileInfo(filePath).Length == 0)
+                    {
+                        return null;
+                    }
                     return (ConfigData?)serializer.Deserialize(fileStream);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+                var _ = createNewCfgFile();
+                if (_ == true)
+                {
+                    var cfgData = new ConfigData(new UserConfig(), new ReceivingConfig(ConfigVersion), new ToolConfig());
+                    cfgData.PrepareForSerialization();
+                    SerializeConfigData();
+                    return DeserializeConfigData();                    
+                }
                 return null;
             }
 
+        }
+
+        public static bool createNewCfgFile()
+        {
+            try
+            {
+                using (File.Create(filePath))
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return false;
+            }
         }
 
         public static void setReceivingConfig(ReceivingConfig receivingConfig)

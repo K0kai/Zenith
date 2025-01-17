@@ -1,6 +1,7 @@
 ﻿using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.enums;
+using ArcherTools_0._0._1.forms;
 using ArcherTools_0._0._1.methods;
 using System.Diagnostics;
 
@@ -14,11 +15,11 @@ namespace ArcherTools_0._0._1
 
         private void CenterControl(Control control)
         {
-            int centerX = (this.ClientSize.Width - introlabel.Width) / 2;
+            int centerX = (this.ClientSize.Width - control.Width) / 2;
             int centerY = control.Location.Y;
             //int centerY = (this.ClientSize.Height - introlabel.Height) / 2;
 
-            control.Location = new System.Drawing.Point(centerX, centerY);
+            control.Location = new Point(centerX, centerY);
         }
         public ToolHub()
         {
@@ -102,7 +103,10 @@ namespace ArcherTools_0._0._1
 
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
-            Receiving.MainCall();
+            ReceivingGUI rcvGUI = new ReceivingGUI("Receiving Main GUI", "Available Options:");
+            this.FindForm().Visible = false;
+            rcvGUI.ShowDialog(this);
+            this.FindForm().Visible = true;
 
         }
 
@@ -115,7 +119,7 @@ namespace ArcherTools_0._0._1
 
         private void settings_Btn_Click(object sender, EventArgs e)
         {
-
+            _pageHandler.LoadUserControl(new SettingsUserControl());
         }
     }
 }

@@ -33,8 +33,9 @@
             label1 = new Label();
             toolsCfg_Panel = new Panel();
             panel1 = new Panel();
-            label2 = new Label();
             checkBox1 = new CheckBox();
+            label2 = new Label();
+            return_Btn = new Button();
             toolsCfg_Panel.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -57,6 +58,7 @@
             rcvSet_Btn.TabIndex = 24;
             rcvSet_Btn.Text = "Set up Receiving";
             rcvSet_Btn.UseVisualStyleBackColor = false;
+            rcvSet_Btn.Click += rcvSet_Btn_Click;
             // 
             // pagelabel
             // 
@@ -102,6 +104,17 @@
             panel1.Size = new Size(134, 357);
             panel1.TabIndex = 28;
             // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.ForeColor = Color.Lavender;
+            checkBox1.Location = new Point(8, 40);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(116, 19);
+            checkBox1.TabIndex = 28;
+            checkBox1.Text = "Enable Voicelines";
+            checkBox1.UseVisualStyleBackColor = true;
+            // 
             // label2
             // 
             label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
@@ -115,22 +128,32 @@
             label2.Text = "Program";
             label2.TextAlign = ContentAlignment.TopCenter;
             // 
-            // checkBox1
+            // return_Btn
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.ForeColor = Color.Lavender;
-            checkBox1.Location = new Point(8, 40);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(116, 19);
-            checkBox1.TabIndex = 28;
-            checkBox1.Text = "Enable Voicelines";
-            checkBox1.UseVisualStyleBackColor = true;
+            return_Btn.Anchor = AnchorStyles.Top;
+            return_Btn.BackColor = SystemColors.ControlDarkDark;
+            return_Btn.BackgroundImageLayout = ImageLayout.None;
+            return_Btn.Cursor = Cursors.Hand;
+            return_Btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            return_Btn.FlatAppearance.BorderSize = 0;
+            return_Btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            return_Btn.FlatStyle = FlatStyle.Flat;
+            return_Btn.ForeColor = SystemColors.ButtonFace;
+            return_Btn.Location = new Point(156, 416);
+            return_Btn.Margin = new Padding(25, 3, 25, 3);
+            return_Btn.Name = "return_Btn";
+            return_Btn.Size = new Size(85, 25);
+            return_Btn.TabIndex = 27;
+            return_Btn.Text = "Go back";
+            return_Btn.UseVisualStyleBackColor = false;
+            return_Btn.Click += return_Btn_Click;
             // 
             // SettingsUserControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
+            Controls.Add(return_Btn);
             Controls.Add(panel1);
             Controls.Add(toolsCfg_Panel);
             Controls.Add(pagelabel);
@@ -153,5 +176,6 @@
         private Panel panel1;
         private Label label2;
         private CheckBox checkBox1;
+        private Button return_Btn;
     }
 }
