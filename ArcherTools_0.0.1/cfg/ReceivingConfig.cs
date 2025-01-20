@@ -11,7 +11,7 @@ namespace ArcherTools_0._0._1.cfg
         ReceiptLineFirstLine,
         ItemSearchWindow,
         ItemSearchInquiry,
-        ItemMaintenanceBox,
+        ItemMaintenanceWindow,
         ItemConfigurationWindow,
         NumPiecesInputBox,
         PalletWeightInputBox,

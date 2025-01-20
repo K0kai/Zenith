@@ -36,7 +36,6 @@ namespace ArcherTools_0._0._1.controllers
         {
             if (stringText != null)
             {
-                sim.Keyboard.KeyUp(VirtualKeyCode.SHIFT);
                 var _ = sim.Keyboard.TextEntry(stringText);
             }
             Thread.Sleep(100);

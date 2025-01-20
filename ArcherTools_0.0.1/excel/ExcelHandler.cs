@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using ArcherTools_0._0._1.enums;
+using OfficeOpenXml;
 using System.Diagnostics;
 
 namespace ArcherTools_0._0._1.excel
@@ -60,7 +61,19 @@ namespace ArcherTools_0._0._1.excel
                 var worksheet = package.Workbook.Worksheets[worksheetName];
                 if (worksheet != null)
                 {
+                    worksheet.Cells[row, column].Calculate();
                     var cellValue = worksheet.Cells[row, column].Value;
+                    if (worksheet.Cells[row, column].Merge)
+                    {
+                        var mergeId = worksheet.MergedCells[row, column];
+                        if (worksheet.Cells[mergeId].First().Value != null)
+                        {
+                            worksheet.Cells[mergeId].First().Calculate();
+                            cellValue = worksheet.Cells[mergeId].First().Value.ToString();
+                        }
+
+                    }
+
                     if (cellValue != null)
                     {
                         return cellValue.ToString();
@@ -88,6 +101,10 @@ namespace ArcherTools_0._0._1.excel
                 }
                 ExcelWorkbook excelWorkbook = package.Workbook;
                 ExcelWorksheet excelWorksheet = excelWorkbook.Worksheets[worksheetName];
+                if (excelWorksheet == null)
+                {
+                    throw new FileNotFoundException($"Worksheet \"{worksheetName}\" does not exist.\nInfo: worksheetName: {worksheetName}, row: {row}, column: {column}, value: {value}");
+                }
                 if (excelWorksheet.Dimension == null)
                 {
                     throw new InvalidOperationException($"Worksheet \"{worksheetName}\" has empty dimensions.");
@@ -95,7 +112,7 @@ namespace ArcherTools_0._0._1.excel
                 var cell = excelWorksheet.Cells[row, column];
                 if (cell.Merge)
                 {
-                    var mergeId = excelWorksheet.MergedCells[row, column];                   
+                    var mergeId = excelWorksheet.MergedCells[row, column];
                     var mergedCell = excelWorksheet.Cells[mergeId];
                     mergedCell.Value = value;
                 }
@@ -103,7 +120,9 @@ namespace ArcherTools_0._0._1.excel
                 {
                     cell.Value = value;
                 }
-                package.SaveAsync();
+                package.Save();
+                package.Dispose();
+
             }
         }
 
@@ -123,32 +142,33 @@ namespace ArcherTools_0._0._1.excel
                     throw new InvalidOperationException($"Worksheet \"{worksheetName}\" has empty dimensions.");
                 }
                 List<String> columnData = new List<String>();
-                for (int row = startrow ; row <= excelWorksheet.Dimension.Rows; row++)
+                Parallel.For(startrow, excelWorksheet.Dimension.Rows, row =>
                 {
-
-                    var cell = excelWorksheet.Cells[row, column];
-                    string? cellValue = null;
-                    if (cell.Value != null)
-                    cellValue = cell.Value.ToString();
-                    if (cell.Merge)
                     {
-                        var mergeId = excelWorksheet.MergedCells[row, column];
-                        if (excelWorksheet.Cells[mergeId].First().Value != null)
+
+                        var cell = excelWorksheet.Cells[row, column];
+                        string? cellValue = null;
+                        if (cell.Value != null)
+                            cellValue = cell.Value.ToString();
+                        if (cell.Merge)
                         {
-                            cellValue = excelWorksheet.Cells[mergeId].First().Value.ToString();
+                            var mergeId = excelWorksheet.MergedCells[row, column];
+                            if (excelWorksheet.Cells[mergeId].First().Value != null)
+                            {
+                                cellValue = excelWorksheet.Cells[mergeId].First().Value.ToString();
+                            }
+                        }
+                        if (!string.IsNullOrWhiteSpace(cellValue))
+                        {
+                            columnData.Add(cellValue);
                         }
                     }
-                    Debug.WriteLine(row);
-                    if (!string.IsNullOrWhiteSpace(cellValue))
-                    {
-                        columnData.Add(cellValue);
-                    }
-                }
+                });
                 return columnData;
             }
         }
 
-        public void SetColumn<T>(string worksheetName, int column, List<T> values, int startrow = 1)
+        public void SetColumn<T>(string worksheetName, int column, List<T> values, int startrow = 1, bool nullAll = false)
         {
             using (ExcelPackage package = new ExcelPackage(new FileInfo(_filePath)))
             {
@@ -159,17 +179,31 @@ namespace ArcherTools_0._0._1.excel
 
                 ExcelWorkbook excelWorkbook = package.Workbook;
                 ExcelWorksheet excelWorksheet = package.Workbook.Worksheets[worksheetName];
+                if (excelWorksheet == null)
+                {
+                    throw new FileNotFoundException($"Worksheet \"{worksheetName}\" is null");
+                }
                 if (excelWorksheet.Dimension == null)
                 {
                     throw new InvalidOperationException($"Worksheet \"{worksheetName}\" has empty dimensions.");
                 }
                 List<String> columnData = new List<String>();
-                for (int row = startrow; row <= values.Count; row++)
+                if (!nullAll)
                 {
-                    var value = values[row - startrow];
-                    Debug.WriteLine($"{row}\n{column}");
-                    SetCell(worksheetName, row, column, value);
+
+                    excelWorksheet.Cells[startrow, column].LoadFromCollection(values);
+                    package.Save();
+
                 }
+                else
+                {
+                    for (int row = startrow; row < values.Count + startrow; row++)
+                    {
+                        SetCell(worksheetName, row, column, " ");
+                        Thread.Sleep(5);
+                    }
+                }
+
             }
         }
 
@@ -207,7 +241,7 @@ namespace ArcherTools_0._0._1.excel
             if (File.Exists(excelPath))
             {
                 try
-                {                    
+                {
                     using (ExcelPackage package = new ExcelPackage(excelPath))
                     {
                         ExcelWorkbook workbook = package.Workbook;
@@ -247,10 +281,15 @@ namespace ArcherTools_0._0._1.excel
             {
                 package.Dispose();
             }
-
         }
     }
 }
+
+
+
+        
+
+
 
 
 

@@ -18,6 +18,7 @@ namespace ArcherTools_0._0._1.forms
     {
         private string _title;
         private string _description;
+        private int _lines;
 
         public ItemDumpingGUI(string title, string desc)
         {
@@ -59,13 +60,15 @@ namespace ArcherTools_0._0._1.forms
 
         private void textBoxChanged(object sender, EventArgs e)
         {
-            int count = 0;            
+            int count = 0;
+            _lines = 0;
             TextBox textBox = sender as TextBox;
             string[] lines = textBox.Lines;
             List<String> cleanLines = lines.Where(s => !string.IsNullOrEmpty(s)).ToList();
             foreach (string line in cleanLines)
             {
-              count++;              
+              count++;
+             _lines++;
             }
         this.lines_label.Text = $"Lines: {count}";          
             
@@ -76,7 +79,18 @@ namespace ArcherTools_0._0._1.forms
             string[] lines = this.itemValues_Box.Lines;
             List<String> cleanLines = lines.Where(s => !string.IsNullOrEmpty(s)).ToList();
             return cleanLines;
-        }    
+        } 
+        
+        private List<int> createListFromCount<T>(List<T> list)
+        {
+            int count = list.Count + 1;
+            List<int> newList = new List<int>();
+            for (int i = 1; i < count; i++)
+            {                
+                newList.Add(i);
+            }
+            return newList;
+        }
 
         private void sendItems_btn_Click(object sender, EventArgs e)
         {
@@ -84,6 +98,7 @@ namespace ArcherTools_0._0._1.forms
             {
                 Debug.WriteLine("begin");
                 List<String> values = itemSeparation();
+                List<int> lines = createListFromCount(values);
                 var configDataValidation = Receiving.validateConfigData();
                 var excelDataValidation = Receiving.validateExcel();
                 if (configDataValidation && excelDataValidation)
@@ -94,7 +109,13 @@ namespace ArcherTools_0._0._1.forms
                     if (rcvCfg.ExcelSheetNames.Contains("DUMP"))
                     {
                         var workSheetName = "DUMP";
-                        excelHandler.SetColumn(workSheetName, 4, values, 2);
+                        Task setValues = Task.Run(() =>
+                        {
+                            excelHandler.SetColumn(workSheetName, 4, values, 2);
+                        });
+                        Task.WaitAll(setValues);
+                        Task setLines = Task.Run(() => { excelHandler.SetColumn(workSheetName, 3, lines, 2); });
+                        Task.WaitAll(setLines);                       
                         Debug.WriteLine("done");
                     }
                 }

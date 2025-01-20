@@ -69,7 +69,7 @@ namespace ArcherTools_0._0._1.methods
                     if (checkEnabled == new Point(0, 0))
                     {
     
-                        MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
+                        MouseHandler.MouseMoveTo(new Point(findIp.X + 20, findIp.Y + 5));
                         MouseHandler.MouseClick(clickType.DoubleLeftClick);
                         Thread.Sleep(2000);
                         var user = ConfigData._userConfig.vpnUsername;
@@ -91,7 +91,7 @@ namespace ArcherTools_0._0._1.methods
 
                         if (checkEnabled == new Point(0, 0))
                         {                            
-                            MouseHandler.SetCursorPos(findIp.X + 20, findIp.Y + 5);
+                            MouseHandler.MouseMoveTo(new Point(findIp.X + 20, findIp.Y + 5));
                             MouseHandler.MouseClick(clickType.DoubleLeftClick);
                             Thread.Sleep(2000);
                             var user = ConfigData._userConfig.vpnUsername;

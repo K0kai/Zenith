@@ -10,7 +10,8 @@ namespace ArcherTools_0._0._1
             {"The final. Glorious. Evolution.", "the_glorious_evolution"},
             {"Welcome back, Operator!", "welcome_operator"},
             {"I've been thinking, Operator…. I thought you'd want to know.", "thinking_ordis"},
-            {"Viktor nation... how we feeling?", "viktor_nation" }
+            {"Viktor nation... how we feeling?", "viktor_nation" },
+            {"One must imagine Sisyphus happy.", "sisyphus" }
         };
          
     }
@@ -29,7 +30,6 @@ namespace ArcherTools_0._0._1
                     {"What are we working on today?", false },
                     {"Beware of the machine revolution.", false },
                     { "Sup.", false },
-                    { "Bonjour, ça va?", false },
                     {"Welcome back, Operator!", false },
                     {"I've been thinking, Operator…. I thought you'd want to know.", false },
                     { "The final. Glorious. Evolution.", false },
@@ -43,7 +43,8 @@ namespace ArcherTools_0._0._1
                     _possibleMessages.Add("É sexta feira tô na bala", false);
                     break;
                 case DayOfWeek.Wednesday:
-                    _possibleMessages.Add("You're in the middle of the road now, don't give up!", false);
+                    _possibleMessages.Add("É quarta feira meus bacanos.", false);
+                    _possibleMessages.Add("It is wednesday my dudes.", false);
                     break;
                 case DayOfWeek.Monday:
                     _possibleMessages.Add("One must imagine Sisyphus happy.", false);

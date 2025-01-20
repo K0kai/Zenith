@@ -102,6 +102,7 @@
             cleanExcel_Btn.TabIndex = 7;
             cleanExcel_Btn.Text = "Clean Excel";
             cleanExcel_Btn.UseVisualStyleBackColor = false;
+            cleanExcel_Btn.Click += cleanExcel_Btn_Click;
             // 
             // itemToExcel_Btn
             // 

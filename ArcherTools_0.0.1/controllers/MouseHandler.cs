@@ -25,10 +25,10 @@ namespace ArcherTools_0._0._1.controllers
     internal class MouseHandler
     {
         [DllImport("user32.dll")]
-        internal static extern bool SetCursorPos(int X, int Y);
+        private static extern bool SetCursorPos(int X, int Y);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, IntPtr dwExtraInfo);
+        private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, IntPtr dwExtraInfo);
 
         static InputSimulator sim = new InputSimulator();
 

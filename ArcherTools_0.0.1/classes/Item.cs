@@ -17,7 +17,7 @@ namespace ArcherTools_0._0._1.classes
         public string size { get; set; }
         public string description { get; set; }
 
-        internal Item(string style, string itemCode = "", string color = "", string colorCode = "", string size = "", string description = "", string owner = "") 
+        internal Item(string itemCode, string style = "", string color = "", string colorCode = "", string size = "", string description = "", string owner = "") 
         {
             this.owner = owner;
             this.style = style;
