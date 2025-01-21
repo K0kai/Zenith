@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Media;
+using ArcherTools_0._0._1.cfg;
 
 namespace ArcherTools_0._0._1
 {
@@ -27,7 +28,7 @@ namespace ArcherTools_0._0._1
         private void InitializeMessages()
         {
             _possibleMessages = new Dictionary<String, Boolean> {
-                    {"What are we working on today?", false },
+                    {"What is my task today?", false },
                     {"Beware of the machine revolution.", false },
                     { "Sup.", false },
                     {"Welcome back, Operator!", false },
@@ -71,31 +72,35 @@ namespace ArcherTools_0._0._1
                 var relativePath = "audio";
 
 #if DEBUG
-                var audioFolderPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, relativePath);                
+                var audioFolderPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, relativePath);
 #else
 var audioFolderPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
 #endif
-                if (message_files.listOfAudioMessages.ContainsKey(randomMessage))
+                if (ConfigData._toolConfig != null)
                 {
-                    if (Directory.Exists(audioFolderPath)) {
-                        var audioFileName = message_files.listOfAudioMessages[randomMessage] + ".wav";
-                        var audioFilePath = Path.Combine(audioFolderPath, audioFileName);
-                        
-                        if (File.Exists(audioFilePath))
+                    if (message_files.listOfAudioMessages.ContainsKey(randomMessage) && ConfigData._toolConfig.EnableVoiceLines)
+                    {
+                        if (Directory.Exists(audioFolderPath))
                         {
-                            using (SoundPlayer player = new SoundPlayer(audioFilePath))
+                            var audioFileName = message_files.listOfAudioMessages[randomMessage] + ".wav";
+                            var audioFilePath = Path.Combine(audioFolderPath, audioFileName);
+
+                            if (File.Exists(audioFilePath))
                             {
-                                player.Play(); // Plays async
+                                using (SoundPlayer player = new SoundPlayer(audioFilePath))
+                                {
+                                    player.Play(); // Plays async
+                                }
                             }
                         }
+                        else
+                        {
+                            throw new Exception($"No audio folder found at \"{audioFolderPath}\".");
+
+
+                        }
+
                     }
-                    else
-                    {
-                        throw new Exception($"No audio folder found at \"{audioFolderPath}\".");
-
-
-                    }
-
                 }
 
                     

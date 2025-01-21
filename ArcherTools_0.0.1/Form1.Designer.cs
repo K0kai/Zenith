@@ -57,7 +57,7 @@
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainArcherWindow";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Archer Tools 0.0.1";
+            Text = "Archer Tools";
             ResumeLayout(false);
             PerformLayout();
         }

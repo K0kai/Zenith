@@ -12,6 +12,7 @@ namespace ArcherTools_0._0._1
         private MessageManager messageManager;
         private PageHandler _pageHandler = PageHandler.GetInstance();
         public static Form _mainForm;
+        public static Size ucSize;
 
         private void CenterControl(Control control)
         {
@@ -29,6 +30,7 @@ namespace ArcherTools_0._0._1
             introlabel.Click += introlabel_Click;
             copyrights.LinkClicked += copyrights_LinkClicked_1;
             this.Load += userControlLoad;
+            
             CenterControl(introlabel);
 
 
@@ -37,6 +39,7 @@ namespace ArcherTools_0._0._1
         private void userControlLoad(object sender, EventArgs e)
         {
             _mainForm = this.FindForm();
+            ucSize = _mainForm.Size;
             try
             {
                 ConfigData? config = ConfigData.DeserializeConfigData();
@@ -119,6 +122,7 @@ namespace ArcherTools_0._0._1
 
         private void settings_Btn_Click(object sender, EventArgs e)
         {
+            this.FindForm().Size = new Size(396, 444);
             _pageHandler.LoadUserControl(new SettingsUserControl());
         }
     }

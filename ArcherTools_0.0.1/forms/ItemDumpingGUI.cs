@@ -96,6 +96,7 @@ namespace ArcherTools_0._0._1.forms
         {
             try
             {
+                ReceivingGUI._instance.updateStatusLabel("Status: Attempting to send items now...");
                 Debug.WriteLine("begin");
                 List<String> values = itemSeparation();
                 List<int> lines = createListFromCount(values);
@@ -115,14 +116,16 @@ namespace ArcherTools_0._0._1.forms
                         });
                         Task.WaitAll(setValues);
                         Task setLines = Task.Run(() => { excelHandler.SetColumn(workSheetName, 3, lines, 2); });
-                        Task.WaitAll(setLines);                       
+                        Task.WaitAll(setLines);
+                        ReceivingGUI._instance.updateStatusLabel("Status: Success");
                         Debug.WriteLine("done");
                     }
                 }
-                else { throw new Exception($"Failed at checks: {nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); }
+                else { ReceivingGUI._instance.updateStatusLabel($"Status: Failed at data validation: {nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); throw new Exception($"Failed at checks: {nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); }
             }
             catch (Exception ex)
             {
+                ReceivingGUI._instance.updateStatusLabel($"Status: Failed to send items with error: {ex.StackTrace} || {ex.Message}");
                 Debug.WriteLine($"Something went wrong at item translocation\n{ex.StackTrace}\n{ex.Message}");
             }
         }

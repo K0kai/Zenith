@@ -33,7 +33,7 @@
             label1 = new Label();
             toolsCfg_Panel = new Panel();
             panel1 = new Panel();
-            checkBox1 = new CheckBox();
+            voicelines_checkbtn = new CheckBox();
             label2 = new Label();
             return_Btn = new Button();
             toolsCfg_Panel.SuspendLayout();
@@ -97,23 +97,25 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(checkBox1);
+            panel1.Controls.Add(voicelines_checkbtn);
             panel1.Controls.Add(label2);
             panel1.Location = new Point(249, 75);
             panel1.Name = "panel1";
             panel1.Size = new Size(134, 357);
             panel1.TabIndex = 28;
             // 
-            // checkBox1
+            // voicelines_checkbtn
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.ForeColor = Color.Lavender;
-            checkBox1.Location = new Point(8, 40);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(116, 19);
-            checkBox1.TabIndex = 28;
-            checkBox1.Text = "Enable Voicelines";
-            checkBox1.UseVisualStyleBackColor = true;
+            voicelines_checkbtn.AutoSize = true;
+            voicelines_checkbtn.Checked = true;
+            voicelines_checkbtn.CheckState = CheckState.Checked;
+            voicelines_checkbtn.ForeColor = Color.Lavender;
+            voicelines_checkbtn.Location = new Point(8, 40);
+            voicelines_checkbtn.Name = "voicelines_checkbtn";
+            voicelines_checkbtn.Size = new Size(116, 19);
+            voicelines_checkbtn.TabIndex = 28;
+            voicelines_checkbtn.Text = "Enable Voicelines";
+            voicelines_checkbtn.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
@@ -130,7 +132,7 @@
             // 
             // return_Btn
             // 
-            return_Btn.Anchor = AnchorStyles.Top;
+            return_Btn.Anchor = AnchorStyles.Left | AnchorStyles.Right;
             return_Btn.BackColor = SystemColors.ControlDarkDark;
             return_Btn.BackgroundImageLayout = ImageLayout.None;
             return_Btn.Cursor = Cursors.Hand;
@@ -139,7 +141,7 @@
             return_Btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
             return_Btn.FlatStyle = FlatStyle.Flat;
             return_Btn.ForeColor = SystemColors.ButtonFace;
-            return_Btn.Location = new Point(156, 416);
+            return_Btn.Location = new Point(155, 389);
             return_Btn.Margin = new Padding(25, 3, 25, 3);
             return_Btn.Name = "return_Btn";
             return_Btn.Size = new Size(85, 25);
@@ -158,7 +160,7 @@
             Controls.Add(toolsCfg_Panel);
             Controls.Add(pagelabel);
             Name = "SettingsUserControl";
-            Size = new Size(397, 444);
+            Size = new Size(396, 444);
             toolsCfg_Panel.ResumeLayout(false);
             toolsCfg_Panel.PerformLayout();
             panel1.ResumeLayout(false);
@@ -175,7 +177,7 @@
         private Panel toolsCfg_Panel;
         private Panel panel1;
         private Label label2;
-        private CheckBox checkBox1;
+        private CheckBox voicelines_checkbtn;
         private Button return_Btn;
     }
 }

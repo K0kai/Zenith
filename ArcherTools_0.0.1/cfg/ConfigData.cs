@@ -140,6 +140,8 @@ namespace ArcherTools_0._0._1.cfg
             }
             catch (Exception ex)
             {
+                ToolConfig toolCfgDefault = new ToolConfig(false);
+                ConfigData.setToolConfig(toolCfgDefault);
                 Debug.WriteLine(ex.Message);
                 return false;
             }

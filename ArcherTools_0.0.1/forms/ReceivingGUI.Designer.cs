@@ -31,6 +31,7 @@
             close_Btn = new Button();
             startscript_Btn = new Button();
             panel1 = new Panel();
+            status_Label = new Label();
             cleanExcel_Btn = new Button();
             itemToExcel_Btn = new Button();
             title_Label = new Label();
@@ -77,6 +78,7 @@
             // panel1
             // 
             panel1.AutoSize = true;
+            panel1.Controls.Add(status_Label);
             panel1.Controls.Add(cleanExcel_Btn);
             panel1.Controls.Add(itemToExcel_Btn);
             panel1.Controls.Add(startscript_Btn);
@@ -84,6 +86,18 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(402, 291);
             panel1.TabIndex = 6;
+            // 
+            // status_Label
+            // 
+            status_Label.Dock = DockStyle.Bottom;
+            status_Label.Font = new Font("Segoe UI Semibold", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            status_Label.ForeColor = Color.Lavender;
+            status_Label.Location = new Point(0, 247);
+            status_Label.Name = "status_Label";
+            status_Label.Size = new Size(402, 44);
+            status_Label.TabIndex = 9;
+            status_Label.Text = "Status: Waiting...";
+            status_Label.TextAlign = ContentAlignment.BottomCenter;
             // 
             // cleanExcel_Btn
             // 
@@ -153,7 +167,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
             CancelButton = close_Btn;
-            ClientSize = new Size(428, 423);
+            ClientSize = new Size(428, 421);
             Controls.Add(close_Btn);
             Controls.Add(description_Label);
             Controls.Add(title_Label);
@@ -177,5 +191,6 @@
         private Button itemToExcel_Btn;
         private Label title_Label;
         private Label description_Label;
+        private Label status_Label;
     }
 }

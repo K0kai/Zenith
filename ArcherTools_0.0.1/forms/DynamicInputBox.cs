@@ -19,13 +19,15 @@
             BackColor = ToolHub._mainForm.BackColor;
             this.Text = "Input";
             this.ClientSize = new System.Drawing.Size(300, 40 + 45 * numberOfBoxes);
+            this.TopMost = true;
 
             var promptLabel = new Label
             {
                 ForeColor = ToolHub._mainForm.ForeColor,
                 Text = prompt,
-                Location = new System.Drawing.Point(10, 10),
-                Size = new System.Drawing.Size(260, 20)
+                Location = new Point(10, 10),
+                Size = new System.Drawing.Size(260, 20),
+                AutoSize = true,
             };
             this.Controls.Add(promptLabel);
 
@@ -47,7 +49,7 @@
             {
                 ForeColor = ToolHub._mainForm.ForeColor,
                 Text = "OK",
-                Location = new System.Drawing.Point(200, 40 + numberOfBoxes * 30)
+                Location = new Point(200, 40 + numberOfBoxes * 30)
             };
             okButton.Click += OkButton_Click;
             this.Controls.Add(okButton);
@@ -56,7 +58,7 @@
             {
                 ForeColor = ToolHub._mainForm.ForeColor,
                 Text = "Cancel",
-                Location = new System.Drawing.Point(120, 40 + numberOfBoxes * 30)
+                Location = new Point(120, 40 + numberOfBoxes * 30)
             };
             cancelButton.Click += CancelButton_Click;
             this.Controls.Add(cancelButton);
