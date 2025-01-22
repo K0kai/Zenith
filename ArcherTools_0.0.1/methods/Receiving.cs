@@ -33,9 +33,7 @@ namespace ArcherTools_0._0._1.methods
         private static extern int GetAsyncKeyState(Int32 i);
 
         internal static int pwhMonitor;
-
         internal static int baseDelay = 500;
-
         internal static bool endProcess = false;
 
         
@@ -49,6 +47,7 @@ namespace ArcherTools_0._0._1.methods
                 ReceivingConfig rcvCfg = ConfigData._receivingConfig;
                 ReceivingGUI rcvGui = ReceivingGUI._instance;
                 endProcess = checkForEnd().Result;
+                rcvGui.updateStatusLabel("Beginning receiving process...");
 
                 if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
                 {
@@ -57,6 +56,7 @@ namespace ArcherTools_0._0._1.methods
                 else
                 {
                     MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    rcvGui.updateStatusLabel("Receiving Status: Failed.");
                     return;
                 }
 
@@ -98,7 +98,7 @@ namespace ArcherTools_0._0._1.methods
                         }
                         if (sheet == "TEST CHECK")
                         {
-                            mainWorkSheet = "TEST CHECK";
+                            mainWorkSheet = sheet;
                         }
                     }
                     excelHandler.SetCell(mainWorkSheet, 10, 3, 1);
@@ -106,21 +106,27 @@ namespace ArcherTools_0._0._1.methods
                     Debug.WriteLine($"Unaltered value: {cellvalue}");
                     excelHandler.SetCell(mainWorkSheet, 10, 3, 5);
                     cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);
-                    Debug.WriteLine($"Altered value: {cellvalue}");
-                    MouseHandler.MouseMoveTo(rlReceiptLnFirstLn);
-                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                    MouseHandler.MouseClick();
-                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                    inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                    inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                    Debug.WriteLine($"Altered value: {cellvalue}");               
+                    
                     int startLine = 1;
                     int cntSize = containerSize();
                     Debug.WriteLine(cntSize);
+                    MouseHandler.MouseMoveTo(new Point(rlReceiptLnFirstLn.X + 30,rlReceiptLnFirstLn.Y));
+                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                    MouseHandler.MouseClick();
+
                     for (int i = startLine; i <= cntSize; i++)
                     {
                         try {
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                            MouseHandler.MouseMoveTo(rlReceiptLnFirstLn);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                            MouseHandler.MouseClick();
+                            inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                            //var checkItem = iterateThroughListItems();
                             rcvGui.updateStatusLabel($"Receiving Item: {i} out of {cntSize}");
+                            var checkItem = iterateThroughListLines(cntSize, i);                            
                             excelHandler.SetCell(mainWorkSheet, 10, 3, i);
                             Dictionary<string, string> currentItemInfo = new Dictionary<string, string>
                     {
@@ -136,17 +142,9 @@ namespace ArcherTools_0._0._1.methods
                         {"case_width", excelHandler.GetCell(mainWorkSheet , 17, 9) },
                         {"case_depth", excelHandler.GetCell(mainWorkSheet, 19, 9) }
                     };
-
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                            MouseHandler.MouseMoveTo(rlReceiptLineBorder);
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                            MouseHandler.MouseClick();
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                            inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                            var checkItem = iterateThroughList();
                             var copiedItem = Clipboard.GetText();
                             if (endProcess) { return; }
-                            if (!checkItem)
+                            if (checkItem)
                             {
                                 MouseHandler.MouseMoveTo(rlItemSearchBox); MouseHandler.MouseClick();
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
@@ -225,7 +223,7 @@ namespace ArcherTools_0._0._1.methods
                     string statusTxt = "";
                         if (endProcess)
                         {
-                            statusTxt += "Receiving Interrupted: ";
+                            statusTxt += "Receiving Incomplete: ";
                         }
                         else {
                             statusTxt += "Receiving Complete: ";
@@ -347,7 +345,47 @@ namespace ArcherTools_0._0._1.methods
             return relativePoint;
 
         }
-        private static bool iterateThroughList()
+
+        private static bool iterateThroughListLines(int containerSize, int neededLine)
+        {
+            InputSimulator ips = new InputSimulator();
+            bool found = false;
+            int numIteration = 0;
+            var copiedLine = Clipboard.GetText();
+            while (true)
+            {
+                found = false;
+                if (numIteration >= 100)
+                {
+                    throw new Exception("Iteration timeout");
+                }
+                else
+                {
+                    for (int i = 1; i <= containerSize; i++)
+                    {
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.20));
+                        ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
+                        if (int.Parse(Clipboard.GetText()) == neededLine)
+                        {
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                            ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                            var newIt = new Item(Clipboard.GetText());
+                            receivedItems.Add(newIt);
+                            return true;
+                        }
+                        else
+                        {
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.DOWN);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.6));
+                        }
+                    }
+
+                }
+
+            }
+        }
+        private static bool iterateThroughListItems()
         {
             int numIteration = 0;
             bool found = false;
@@ -389,7 +427,6 @@ namespace ArcherTools_0._0._1.methods
                         var newIt = new Item(copiedItem);
                         receivedItems.Add(newIt);
                         found = false;
-                        numIteration = 0;
                         return found;
                     }
                 }
