@@ -41,10 +41,14 @@ namespace ArcherTools_0._0._1
         private void return_Btn_Click(object sender, EventArgs e)
         {
             ToolConfig toolConfig = new ToolConfig(voicelines_checkbtn.Checked);
-            ConfigData.setToolConfig(toolConfig);
-            ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
-            cfgData.PrepareForSerialization();
-            ConfigData.SerializeConfigData();
+            if (toolConfig.ConfigIsDifferent(ConfigData._toolConfig))
+            {
+                ConfigData.setToolConfig(toolConfig);
+                ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
+                cfgData.PrepareForSerialization();
+                ConfigData.SerializeConfigData();
+            }
+            
             PageHandler pageHandler = PageHandler.GetInstance();
             this.FindForm().Size = ToolHub.ucSize;
             pageHandler.LoadUserControl(new ToolHub());

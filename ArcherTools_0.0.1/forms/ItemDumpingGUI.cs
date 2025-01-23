@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using ArcherTools_0._0._1.cfg;
+﻿using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.excel;
 using ArcherTools_0._0._1.methods;
+using System.Data;
+using System.Diagnostics;
 
 namespace ArcherTools_0._0._1.forms
 {
@@ -19,6 +11,8 @@ namespace ArcherTools_0._0._1.forms
         private string _title;
         private string _description;
         private int _lines;
+        private Point mouseDownLocation;
+        internal static string previousText;
 
         public ItemDumpingGUI(string title, string desc)
         {
@@ -28,18 +22,53 @@ namespace ArcherTools_0._0._1.forms
             description_Label.TextChanged -= labelTextChanged;
             _title = title;
             _description = desc;
+            
+            
+            this.MouseDown += new MouseEventHandler(ItemDumpGUI_MouseDown);
+            this.MouseMove += new MouseEventHandler(ItemDumpGUI_MouseMove);
             this.Load += onLoad;
+            this.FormClosed += onClose;
+
             this.itemValues_Box.TextChanged += textBoxChanged;
             centerLabels();
 
 
         }
 
+        private void onClose(object sender, EventArgs e)
+        {
+            previousText = itemValues_Box.Text;
+        }
         private void onLoad(object sender, EventArgs e)
         {
             title_Label.Text = _title;
             description_Label.Text = _description;
+            foreach (Control ctrl in this.Controls)
+            {
+                if (ctrl.GetType() != typeof(Button) && ctrl.GetType() != typeof(TextBox))
+                {
+                    ctrl.MouseDown += new MouseEventHandler(ItemDumpGUI_MouseDown);
+                    ctrl.MouseMove += new MouseEventHandler(ItemDumpGUI_MouseMove);
+                }
+                if (ctrl.GetType() == typeof(Panel))
+                {
+                    foreach (Control ctrlInCtrl in ctrl.Controls)
+                    {
+                        if (ctrlInCtrl.GetType() != typeof(Button) && ctrlInCtrl.GetType() != typeof(TextBox))
+                        {
+                            ctrlInCtrl.MouseDown += new MouseEventHandler(ItemDumpGUI_MouseDown);
+                            ctrlInCtrl.MouseMove += new MouseEventHandler(ItemDumpGUI_MouseMove);
+                        }
+                    }
+
+                }
+            }
+            if (previousText != null)
+            {
+                itemValues_Box.Text = previousText;
+            }
         }
+        
 
         private void labelTextChanged(object sender, EventArgs e)
         {
@@ -52,6 +81,30 @@ namespace ArcherTools_0._0._1.forms
 
         }
 
+        private void ItemDumpGUI_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // Capture the mouse position when the left button is pressed
+                mouseDownLocation = e.Location;
+            }
+        }
+
+        private void ItemDumpGUI_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // Adjust the form's position based on the mouse movement
+                var deltaX = e.X - mouseDownLocation.X;
+                var deltaY = e.Y - mouseDownLocation.Y;
+
+                this.Location = new Point(
+                    this.Location.X + deltaX,
+                    this.Location.Y + deltaY
+                );
+            }
+        }
+
         private void close_Btn_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -60,9 +113,9 @@ namespace ArcherTools_0._0._1.forms
 
         private void textBoxChanged(object sender, EventArgs e)
         {
-            int count = 0;
+            var count = 0;
             _lines = 0;
-            TextBox textBox = sender as TextBox;
+            var textBox = sender as TextBox;
             string[] lines = textBox.Lines;
             List<String> cleanLines = lines.Where(s => !string.IsNullOrEmpty(s)).ToList();
             foreach (string line in cleanLines)
@@ -83,7 +136,7 @@ namespace ArcherTools_0._0._1.forms
         
         private List<int> createListFromCount<T>(List<T> list)
         {
-            int count = list.Count + 1;
+            var count = list.Count + 1;
             List<int> newList = new List<int>();
             for (int i = 1; i < count; i++)
             {                

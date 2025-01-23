@@ -36,8 +36,8 @@ namespace ArcherTools_0._0._1.methods
         internal static int baseDelay = 500;
         internal static bool endProcess = false;
 
-        
-        public static async void MainCall()
+
+        public static async void MainCall(int startLine = 1)
         {
             var validConfig = validateConfigData();
             var validRect = validateRectanglePositions();
@@ -103,19 +103,28 @@ namespace ArcherTools_0._0._1.methods
                     }
                     excelHandler.SetCell(mainWorkSheet, 10, 3, 1);
                     var cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);
-                    Debug.WriteLine($"Unaltered value: {cellvalue}");
                     excelHandler.SetCell(mainWorkSheet, 10, 3, 5);
-                    cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);
-                    Debug.WriteLine($"Altered value: {cellvalue}");               
+                    cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);                   
                     
-                    int startLine = 1;
+                    var iteration = 1;
+                    if (startLine > 1)
+                    {
+                        iteration = startLine;
+                    }
                     int cntSize = containerSize();
+                    int cntRawSize = containerSize(true);
                     Debug.WriteLine(cntSize);
                     MouseHandler.MouseMoveTo(new Point(rlReceiptLnFirstLn.X + 30,rlReceiptLnFirstLn.Y));
                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                     MouseHandler.MouseClick();
+                    inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.SHIFT);
+                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
+                    inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
+                    inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.MENU);
 
-                    for (int i = startLine; i <= cntSize; i++)
+
+                    for (int i = startLine; i <= cntSize; i++, iteration++)
                     {
                         try {
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
@@ -125,7 +134,7 @@ namespace ArcherTools_0._0._1.methods
                             inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                             //var checkItem = iterateThroughListItems();
-                            rcvGui.updateStatusLabel($"Receiving Item: {i} out of {cntSize}");
+                            rcvGui.updateStatusLabel($"Receiving Item: {iteration} out of {cntRawSize}");
                             var checkItem = iterateThroughListLines(cntSize, i);                            
                             excelHandler.SetCell(mainWorkSheet, 10, 3, i);
                             Dictionary<string, string> currentItemInfo = new Dictionary<string, string>
@@ -247,13 +256,43 @@ namespace ArcherTools_0._0._1.methods
             }
             }
 
-        private static int containerSize()
+        private static int containerSize(bool rawSize = false)
         {
-            int size = 0;
-            ExcelHandler exHandler = new ExcelHandler(ConfigData._receivingConfig.ExcelFilePath);
-            string worksheetName = ConfigData._receivingConfig.ExcelSheetNames[1];
-            size = exHandler.GetColumn(worksheetName, 4, 2).Count();
-            return size;
+            try
+            {
+                var size = 0;
+                ExcelHandler exHandler = new ExcelHandler(ConfigData._receivingConfig.ExcelFilePath);
+                string worksheetName = ConfigData._receivingConfig.ExcelSheetNames[1];
+                var Column = exHandler.GetColumn(worksheetName, 4, 2);
+                if (Column.Count <= 0)
+                {
+                    throw new IndexOutOfRangeException("Item array cannot be zero or less than zero");
+                }
+                if (rawSize)
+                {
+                    size = Column.Count();
+                    return size;
+                }
+                else
+                {
+                    var highestNumber = 0;
+                    foreach (var row in Column)
+                    {
+                        if (int.Parse(row) > highestNumber)
+                        {
+                            highestNumber = int.Parse(row);
+                            
+                        }
+                    }
+                    return highestNumber;
+                }
+            }
+            catch (Exception ex)
+            {
+                ReceivingGUI rcvGui = ReceivingGUI._instance;
+                rcvGui.updateStatusLabel($"Status: Failed to get container size.\nDetails: {ex.StackTrace} | {ex.Message}");
+                return -1;
+            }
         }
 
         private static async Task<bool> checkForEnd()
@@ -287,7 +326,7 @@ namespace ArcherTools_0._0._1.methods
             for (int i = start; i <= times; i++)
             {
                 inputSim.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.4));
             }
         }
 
@@ -486,11 +525,16 @@ namespace ArcherTools_0._0._1.methods
             DialogResult saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             if (saveChanges == DialogResult.Yes)
             {
-                ConfigData._receivingConfig.addMousePosition(pwhRect1);
-                ConfigData._receivingConfig.addMousePosition(pwhRect2);
-                ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
-                cfgData.PrepareForSerialization();
-                ConfigData.SerializeConfigData();
+                ReceivingConfig newRcvCfg = new ReceivingConfig(null, null,ConfigData._receivingConfig); 
+                newRcvCfg.addMousePosition(pwhRect1);
+                newRcvCfg.addMousePosition(pwhRect2);
+                if (ConfigData._receivingConfig.ConfigIsDifferent(newRcvCfg))
+                {
+                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
+                    cfgData.PrepareForSerialization();
+                    ConfigData.SerializeConfigData();
+                }
+               
             }
             pwhList.Clear();
             alteredRects.Clear();
@@ -505,12 +549,16 @@ namespace ArcherTools_0._0._1.methods
             saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             if (saveChanges == DialogResult.Yes)
             {
-                ConfigData._receivingConfig.addMousePosition(pwhRect3);
-                ConfigData._receivingConfig.addMousePosition(pwhRect4);
-                ConfigData._receivingConfig.addMousePosition(pwhRect5);
-                ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
-                cfgData.PrepareForSerialization();
-                ConfigData.SerializeConfigData();
+                ReceivingConfig newRcvCfg = new ReceivingConfig(null, null, ConfigData._receivingConfig);
+                newRcvCfg.addMousePosition(pwhRect3);
+                newRcvCfg.addMousePosition(pwhRect4);
+                newRcvCfg.addMousePosition(pwhRect5);
+                if (ConfigData._receivingConfig.ConfigIsDifferent(newRcvCfg))
+                {
+                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
+                    cfgData.PrepareForSerialization();
+                    ConfigData.SerializeConfigData();
+                }
             }
 
             DialogResult excelConfirmation = MessageBox.Show("Lastly, we are going to set up your excel that will be used for the item configurations", "Last Step", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
@@ -526,10 +574,14 @@ namespace ArcherTools_0._0._1.methods
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 filePath = dialog.FileName;
-                rcvConfig.setExcelFilePath(filePath);
-                ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
-                cfgData.PrepareForSerialization();
-                ConfigData.SerializeConfigData();
+                ReceivingConfig newRcvCfg = new ReceivingConfig(null, null, ConfigData._receivingConfig);
+                newRcvCfg.setExcelFilePath(filePath);
+                if (newRcvCfg.ConfigIsDifferent(ConfigData._receivingConfig))
+                {
+                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
+                    cfgData.PrepareForSerialization();
+                    ConfigData.SerializeConfigData();
+                }
             }
             else
             {

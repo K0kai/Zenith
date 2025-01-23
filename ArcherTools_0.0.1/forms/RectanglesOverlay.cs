@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using ArcherTools_0._0._1.cfg;
-using ArcherTools_0._0._1.controllers;
+﻿using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.forms;
 using InputSimulatorEx;
 using InputSimulatorEx.Native;
+using System.Diagnostics;
 
 namespace ArcherTools_0._0._1.boxes
 {

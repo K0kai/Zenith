@@ -36,6 +36,7 @@
             ToolsListPanel = new FlowLayoutPanel();
             vpnConnect_btn = new Button();
             settings_Btn = new Button();
+            panel2 = new Panel();
             panel1.SuspendLayout();
             ToolsListPanel.SuspendLayout();
             SuspendLayout();
@@ -67,9 +68,10 @@
             // introlabel
             // 
             introlabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            introlabel.AutoEllipsis = true;
             introlabel.AutoSize = true;
             introlabel.Font = new Font("Franklin Gothic Medium Cond", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            introlabel.ForeColor = Color.MediumPurple;
+            introlabel.ForeColor = Color.FromArgb(184, 44, 95);
             introlabel.Location = new Point(298, 41);
             introlabel.Name = "introlabel";
             introlabel.Size = new Size(60, 34);
@@ -81,7 +83,7 @@
             // 
             copyrights.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             copyrights.AutoSize = true;
-            copyrights.BackColor = Color.FromArgb(64, 64, 64);
+            copyrights.BackColor = Color.Transparent;
             copyrights.DisabledLinkColor = Color.Black;
             copyrights.Font = new Font("Segoe UI", 9F);
             copyrights.ForeColor = SystemColors.ButtonHighlight;
@@ -100,12 +102,12 @@
             // receiveBtn
             // 
             receiveBtn.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
-            receiveBtn.BackColor = SystemColors.ControlDarkDark;
+            receiveBtn.BackColor = Color.FromArgb(47, 56, 74);
             receiveBtn.BackgroundImageLayout = ImageLayout.None;
             receiveBtn.Cursor = Cursors.Hand;
             receiveBtn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
             receiveBtn.FlatAppearance.BorderSize = 0;
-            receiveBtn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            receiveBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             receiveBtn.FlatStyle = FlatStyle.Flat;
             receiveBtn.ForeColor = SystemColors.ButtonFace;
             receiveBtn.Location = new Point(25, 3);
@@ -126,18 +128,18 @@
             ToolsListPanel.FlowDirection = FlowDirection.TopDown;
             ToolsListPanel.Location = new Point(218, 188);
             ToolsListPanel.Name = "ToolsListPanel";
-            ToolsListPanel.Size = new Size(216, 425);
+            ToolsListPanel.Size = new Size(216, 435);
             ToolsListPanel.TabIndex = 6;
             // 
             // vpnConnect_btn
             // 
             vpnConnect_btn.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
-            vpnConnect_btn.BackColor = SystemColors.ControlDarkDark;
+            vpnConnect_btn.BackColor = Color.FromArgb(47, 56, 74);
             vpnConnect_btn.BackgroundImageLayout = ImageLayout.None;
             vpnConnect_btn.Cursor = Cursors.Hand;
             vpnConnect_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
             vpnConnect_btn.FlatAppearance.BorderSize = 0;
-            vpnConnect_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            vpnConnect_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             vpnConnect_btn.FlatStyle = FlatStyle.Flat;
             vpnConnect_btn.ForeColor = SystemColors.ButtonFace;
             vpnConnect_btn.Location = new Point(45, 43);
@@ -152,12 +154,12 @@
             // settings_Btn
             // 
             settings_Btn.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
-            settings_Btn.BackColor = SystemColors.ControlDarkDark;
+            settings_Btn.BackColor = Color.FromArgb(47, 56, 74);
             settings_Btn.BackgroundImageLayout = ImageLayout.None;
             settings_Btn.Cursor = Cursors.Hand;
             settings_Btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
             settings_Btn.FlatAppearance.BorderSize = 0;
-            settings_Btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            settings_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             settings_Btn.FlatStyle = FlatStyle.Flat;
             settings_Btn.ForeColor = SystemColors.ButtonFace;
             settings_Btn.Location = new Point(45, 74);
@@ -169,15 +171,25 @@
             settings_Btn.UseVisualStyleBackColor = false;
             settings_Btn.Click += settings_Btn_Click;
             // 
+            // panel2
+            // 
+            panel2.BackColor = Color.FromArgb(184, 44, 95);
+            panel2.Dock = DockStyle.Bottom;
+            panel2.Location = new Point(0, 673);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(670, 10);
+            panel2.TabIndex = 8;
+            // 
             // ToolHub
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.FromArgb(64, 64, 64);
+            BackColor = Color.FromArgb(36, 42, 54);
+            Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(ToolsListPanel);
             Name = "ToolHub";
-            Size = new Size(670, 673);
+            Size = new Size(670, 683);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ToolsListPanel.ResumeLayout(false);
@@ -194,5 +206,6 @@
         private FlowLayoutPanel ToolsListPanel;
         private Button vpnConnect_btn;
         private Button settings_Btn;
+        private Panel panel2;
     }
 }

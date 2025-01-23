@@ -59,8 +59,7 @@ namespace ArcherTools_0._0._1.methods
                 SetForegroundWindow(hWnd);
                 Rectangle rect = WindowHandler.GetWindowRectFromHandle(hWnd);
                 Debug.WriteLine(rect);
-                //OverlayForm overlay = new OverlayForm(rect);
-                //overlay.Show();
+                
                  Point findIp = ScreenImageHandler.SearchImageOnRegion("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\vpn_ip.png", rect, 0.50);
                  Thread.Sleep(1000);
                  if (findIp != new Point(0, 0))

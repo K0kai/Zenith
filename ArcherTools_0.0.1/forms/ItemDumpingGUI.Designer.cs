@@ -63,7 +63,7 @@
             // 
             // close_Btn
             // 
-            close_Btn.BackColor = Color.Indigo;
+            close_Btn.BackColor = Color.FromArgb(184, 44, 95);
             close_Btn.BackgroundImageLayout = ImageLayout.None;
             close_Btn.DialogResult = DialogResult.Cancel;
             close_Btn.FlatAppearance.BorderColor = Color.FromArgb(64, 64, 64);
@@ -85,7 +85,7 @@
             sendItems_btn.Cursor = Cursors.Hand;
             sendItems_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
             sendItems_btn.FlatAppearance.BorderSize = 0;
-            sendItems_btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            sendItems_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             sendItems_btn.FlatStyle = FlatStyle.Flat;
             sendItems_btn.ForeColor = SystemColors.ButtonFace;
             sendItems_btn.Location = new Point(167, 457);

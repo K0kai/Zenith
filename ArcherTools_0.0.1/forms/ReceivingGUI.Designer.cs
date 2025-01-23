@@ -41,7 +41,7 @@
             // 
             // close_Btn
             // 
-            close_Btn.BackColor = Color.Indigo;
+            close_Btn.BackColor = Color.FromArgb(184, 44, 95);
             close_Btn.BackgroundImageLayout = ImageLayout.None;
             close_Btn.DialogResult = DialogResult.Cancel;
             close_Btn.FlatAppearance.BorderColor = Color.FromArgb(64, 64, 64);
@@ -63,7 +63,7 @@
             startscript_Btn.Cursor = Cursors.Hand;
             startscript_Btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
             startscript_Btn.FlatAppearance.BorderSize = 0;
-            startscript_Btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            startscript_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             startscript_Btn.FlatStyle = FlatStyle.Flat;
             startscript_Btn.ForeColor = SystemColors.ButtonFace;
             startscript_Btn.Location = new Point(126, 3);
@@ -84,7 +84,7 @@
             panel1.Controls.Add(startscript_Btn);
             panel1.Location = new Point(12, 118);
             panel1.Name = "panel1";
-            panel1.Size = new Size(402, 291);
+            panel1.Size = new Size(405, 291);
             panel1.TabIndex = 6;
             // 
             // status_Label
@@ -94,7 +94,7 @@
             status_Label.ForeColor = Color.Lavender;
             status_Label.Location = new Point(0, 247);
             status_Label.Name = "status_Label";
-            status_Label.Size = new Size(402, 44);
+            status_Label.Size = new Size(405, 44);
             status_Label.TabIndex = 9;
             status_Label.Text = "Status: Waiting...";
             status_Label.TextAlign = ContentAlignment.BottomCenter;
@@ -106,7 +106,7 @@
             cleanExcel_Btn.Cursor = Cursors.Hand;
             cleanExcel_Btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
             cleanExcel_Btn.FlatAppearance.BorderSize = 0;
-            cleanExcel_Btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            cleanExcel_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             cleanExcel_Btn.FlatStyle = FlatStyle.Flat;
             cleanExcel_Btn.ForeColor = SystemColors.ButtonFace;
             cleanExcel_Btn.Location = new Point(135, 102);
@@ -125,7 +125,7 @@
             itemToExcel_Btn.Cursor = Cursors.Hand;
             itemToExcel_Btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
             itemToExcel_Btn.FlatAppearance.BorderSize = 0;
-            itemToExcel_Btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            itemToExcel_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             itemToExcel_Btn.FlatStyle = FlatStyle.Flat;
             itemToExcel_Btn.ForeColor = SystemColors.ButtonFace;
             itemToExcel_Btn.Location = new Point(135, 57);
@@ -167,7 +167,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
             CancelButton = close_Btn;
-            ClientSize = new Size(428, 421);
+            ClientSize = new Size(428, 426);
             Controls.Add(close_Btn);
             Controls.Add(description_Label);
             Controls.Add(title_Label);

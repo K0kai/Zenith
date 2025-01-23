@@ -1,6 +1,4 @@
 ﻿using ArcherTools_0._0._1.cfg;
-using ArcherTools_0._0._1.controllers;
-using ArcherTools_0._0._1.enums;
 using ArcherTools_0._0._1.forms;
 using ArcherTools_0._0._1.methods;
 using System.Diagnostics;
@@ -11,6 +9,7 @@ namespace ArcherTools_0._0._1
     {
         private MessageManager messageManager;
         private PageHandler _pageHandler = PageHandler.GetInstance();
+        internal ToolHub instance;
         public static Form _mainForm;
         public static Size ucSize;
 
@@ -26,12 +25,11 @@ namespace ArcherTools_0._0._1
         {
             InitializeComponent();
             messageManager = new MessageManager();
-            introlabel.Text = messageManager.RandomizeMessage();
-            introlabel.Click += introlabel_Click;
             copyrights.LinkClicked += copyrights_LinkClicked_1;
             this.Load += userControlLoad;
-            
-            CenterControl(introlabel);
+            this.Invalidated += OnInvalidated;
+            this.instance = this;
+           
 
 
         }
@@ -40,16 +38,34 @@ namespace ArcherTools_0._0._1
         {
             _mainForm = this.FindForm();
             ucSize = _mainForm.Size;
+            this.Cursor = Cursors.Default;
             try
             {
+                if (!File.Exists(ConfigData.filePath))
+                {
+                    ConfigData.createNewCfgFile();
+                }
                 ConfigData? config = ConfigData.DeserializeConfigData();
                 config?.PostDeserialization();
+
+                
+                introlabel.Text = messageManager.RandomizeMessage();
+                introlabel.Click += introlabel_Click;
+                CenterControl(introlabel);
 
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"Failed to deserialize ConfigData: {ex.ToString()}");
             }
+        }
+
+        private void OnInvalidated(object sender, EventArgs e)
+        {
+            if (instance != null) {  return; }
+            introlabel.Text = messageManager.RandomizeMessage();
+            CenterControl(introlabel);
+            copyrights.LinkVisited = false;
         }
 
         private void copyrights_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using ArcherTools_0._0._1.classes;
 using ArcherTools_0._0._1.excel;
+using NPOI.SS.Formula.Functions;
 using System.Diagnostics;
 using System.Xml.Serialization;
 
@@ -57,6 +58,7 @@ namespace ArcherTools_0._0._1.cfg
             }
         }
 
+        
         public PowerHouseRectangles getPwhRectByType(ControlType type)
         {
             if (type == this.ControlType)
@@ -106,15 +108,23 @@ namespace ArcherTools_0._0._1.cfg
         public ReceivingConfig() { }
 
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
-        public ReceivingConfig(string excelFilePath, List<PowerHouseRectangles> rectPosList = null)
+        public ReceivingConfig(string excelFilePath = "", List<PowerHouseRectangles> rectPosList = null, ReceivingConfig rcvCfgOverride = null)
         {
             ExcelFilePath = excelFilePath;
+            RectanglePositionList = rectPosList;
+            configVersion = ConfigData.ConfigVersion;
+            if (rcvCfgOverride != null)
+            {
+                ExcelFilePath = rcvCfgOverride.ExcelFilePath;
+                RectanglePositionList = rcvCfgOverride.RectanglePositionList;
+                configVersion = rcvCfgOverride.configVersion;
+            }
+
             if (excelFilePath != null && File.Exists(excelFilePath))
             {
                 setExcelSheetNames(excelFilePath);
             }
-            RectanglePositionList = rectPosList;
-            configVersion = ConfigData.ConfigVersion;
+            
         }
 
         public List<PowerHouseRectangles> getRectangles() { return this.RectanglePositionList; }
@@ -195,6 +205,53 @@ namespace ArcherTools_0._0._1.cfg
         {
             ExcelHandler excelHandler = new ExcelHandler(filePath);
             this.ExcelSheetNames = ExcelHandler.GetWorksheetNames(filePath);
+        }
+
+        public bool ConfigIsDifferent(ReceivingConfig config)
+        {
+            if (config != null)
+            {
+                if (config.configVersion != this.configVersion)
+                {
+                    return true;
+                }
+                if (config.ExcelFilePath != this.ExcelFilePath)
+                {
+                    return true;
+                }
+                if (config.ExcelSheetNames.Count != this.ExcelSheetNames.Count)
+                {
+                    return true;
+                }
+                foreach (var sheetName in this.ExcelSheetNames)
+                {
+                    if (!config.ExcelSheetNames.Contains(sheetName))
+                    {
+                        return true;
+                    }
+                }
+
+                if (config.RectanglePositionList.Count != this.RectanglePositionList.Count)
+                {
+                    return true;
+                }
+                else
+                {
+                    foreach (var rect in config.RectanglePositionList)
+                    {
+                        if (!rect.getRectangle().Equals(this.getRectByType(rect.ControlType)))
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                
+            }
+            else
+            {
+                return true;
+            }
         }
 
         public void setMousePositions(List<PowerHouseRectangles> mousePositions) { this.RectanglePositionList = mousePositions; }

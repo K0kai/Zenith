@@ -14,9 +14,26 @@ namespace ArcherTools_0._0._1.cfg
 
         public ToolConfig() { }
 
-        public ToolConfig(bool enableVoiceLines = false, byte PWhMonitor = 1)
+        public ToolConfig(bool enableVoiceLines = false)
         {
             EnableVoiceLines = enableVoiceLines;
+
+        }
+
+        public bool ConfigIsDifferent(ToolConfig config)
+        {
+            if (config != null)
+            {
+                if (this.EnableVoiceLines != config.EnableVoiceLines)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return false;
 
         }
     }
