@@ -244,6 +244,10 @@ namespace ArcherTools_0._0._1.methods
                         else
                         {
                             statusTxt += $"There were {failedItems.Count} failed items.";
+                        foreach (var item in failedItems)
+                        {
+                            Debug.WriteLine($"Item {item.Value} failed at line{item.Key}.");
+                        }
                         }
                         rcvGui.updateStatusLabel(statusTxt);
                         receivingCleanUp();
@@ -263,7 +267,7 @@ namespace ArcherTools_0._0._1.methods
                 var size = 0;
                 ExcelHandler exHandler = new ExcelHandler(ConfigData._receivingConfig.ExcelFilePath);
                 string worksheetName = ConfigData._receivingConfig.ExcelSheetNames[1];
-                var Column = exHandler.GetColumn(worksheetName, 4, 2);
+                var Column = exHandler.GetColumn(worksheetName, 3, 2);
                 if (Column.Count <= 0)
                 {
                     throw new IndexOutOfRangeException("Item array cannot be zero or less than zero");
@@ -280,8 +284,10 @@ namespace ArcherTools_0._0._1.methods
                     {
                         if (int.Parse(row) > highestNumber)
                         {
-                            highestNumber = int.Parse(row);
                             
+                            highestNumber = int.Parse(row);
+                            Debug.WriteLine(row);
+
                         }
                     }
                     return highestNumber;
@@ -387,39 +393,52 @@ namespace ArcherTools_0._0._1.methods
 
         private static bool iterateThroughListLines(int containerSize, int neededLine)
         {
+            
             InputSimulator ips = new InputSimulator();
             bool found = false;
             int numIteration = 0;
-            var copiedLine = Clipboard.GetText();
+
             while (true)
             {
+                try {              
                 found = false;
-                if (numIteration >= 100)
-                {
-                    throw new Exception("Iteration timeout");
-                }
-                else
-                {
-                    for (int i = 1; i <= containerSize; i++)
+                    if (numIteration >= 100)
                     {
-                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.20));
-                        ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
-                        if (int.Parse(Clipboard.GetText()) == neededLine)
-                        {
-                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                            ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                            var newIt = new Item(Clipboard.GetText());
-                            receivedItems.Add(newIt);
-                            return true;
-                        }
-                        else
-                        {
-                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.DOWN);
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.6));
-                        }
+                        throw new Exception("Iteration timeout");
                     }
+                    else
+                    {
+                        for (int i = 1; i <= containerSize; i++)
+                        {
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.2));
+                            ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                            var copiedLine = int.Parse(Clipboard.GetText());
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.10));
+                            if (copiedLine == neededLine)
+                            {
+                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.2));
+                                ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                                var newIt = new Item(Clipboard.GetText());
+                                receivedItems.Add(newIt);
+                                return true;
+                            }
+                            else if (copiedLine < neededLine)
+                            {
+                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.DOWN);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
+                            }
+                            else if (copiedLine > neededLine)
+                            {
+                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.UP);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
+                            }
+                        }
+                    } 
 
+                } catch (Exception ex)
+                {
+                    Debug.WriteLine($"Catched Exception {ex.StackTrace}, {ex.Message} at line iterating");
                 }
 
             }
@@ -505,15 +524,17 @@ namespace ArcherTools_0._0._1.methods
             //#endif
 
             ReceivingConfig rcvConfig = ConfigData._receivingConfig;
+
             if (rcvConfig == null)
             {
                 MessageBox.Show("Receiving Config data is null. Possibly corrupted.", ErrorEnum.ErrorCode.InvalidCfgData.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             ConfigData.setReceivingConfig(rcvConfig);
+            ReceivingConfig newRcvCfg = new ReceivingConfig(null, null, rcvConfig);
 
-            PowerHouseRectangles pwhRect1 = rcvConfig.getRectByType(ControlType.PowerHouseIcons);
-            PowerHouseRectangles pwhRect2 = rcvConfig.getRectByType(ControlType.ItemSearchWindow);
+            PowerHouseRectangles pwhRect1 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.PowerHouseIcons));
+            PowerHouseRectangles pwhRect2 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ItemSearchWindow));
             PowerHouseRectangles pwhRect3 = rcvConfig.getRectByType(ControlType.ReceiptLineWindow);
             PowerHouseRectangles pwhRect4 = rcvConfig.getRectByType(ControlType.ItemConfigurationWindow);
             PowerHouseRectangles pwhRect5 = rcvConfig.getRectByType(ControlType.ItemMaintenanceWindow);
@@ -525,12 +546,15 @@ namespace ArcherTools_0._0._1.methods
             DialogResult saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             if (saveChanges == DialogResult.Yes)
             {
-                ReceivingConfig newRcvCfg = new ReceivingConfig(null, null,ConfigData._receivingConfig); 
+                //Debug.WriteLine(rcvConfig.getRectByType(pwhRect2.ControlType).getRectangle());
                 newRcvCfg.addMousePosition(pwhRect1);
                 newRcvCfg.addMousePosition(pwhRect2);
-                if (ConfigData._receivingConfig.ConfigIsDifferent(newRcvCfg))
+                //Debug.WriteLine(newRcvCfg.getRectByType(pwhRect2.ControlType).getRectangle());
+                
+                if (rcvConfig.ConfigIsDifferent(newRcvCfg))
                 {
-                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
+                    
+                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
                     cfgData.PrepareForSerialization();
                     ConfigData.SerializeConfigData();
                 }
@@ -549,7 +573,6 @@ namespace ArcherTools_0._0._1.methods
             saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             if (saveChanges == DialogResult.Yes)
             {
-                ReceivingConfig newRcvCfg = new ReceivingConfig(null, null, ConfigData._receivingConfig);
                 newRcvCfg.addMousePosition(pwhRect3);
                 newRcvCfg.addMousePosition(pwhRect4);
                 newRcvCfg.addMousePosition(pwhRect5);
@@ -574,7 +597,6 @@ namespace ArcherTools_0._0._1.methods
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 filePath = dialog.FileName;
-                ReceivingConfig newRcvCfg = new ReceivingConfig(null, null, ConfigData._receivingConfig);
                 newRcvCfg.setExcelFilePath(filePath);
                 if (newRcvCfg.ConfigIsDifferent(ConfigData._receivingConfig))
                 {

@@ -40,6 +40,11 @@ namespace ArcherTools_0._0._1.cfg
 
         public PowerHouseRectangles() { }
 
+        public PowerHouseRectangles(PowerHouseRectangles rectOverride) {
+            ControlType = rectOverride.ControlType;
+            rect = rectOverride.rect;
+        }
+
         public PowerHouseRectangles(ControlType controlType, SerializableRectangle rectangle)
         {
             ControlType = controlType;
@@ -120,9 +125,9 @@ namespace ArcherTools_0._0._1.cfg
                 configVersion = rcvCfgOverride.configVersion;
             }
 
-            if (excelFilePath != null && File.Exists(excelFilePath))
+            if (ExcelFilePath != null && File.Exists(ExcelFilePath))
             {
-                setExcelSheetNames(excelFilePath);
+                setExcelSheetNames(ExcelFilePath);
             }
             
         }
@@ -213,34 +218,50 @@ namespace ArcherTools_0._0._1.cfg
             {
                 if (config.configVersion != this.configVersion)
                 {
+                    Debug.WriteLine("configversion is different");
                     return true;
                 }
                 if (config.ExcelFilePath != this.ExcelFilePath)
                 {
+                    Debug.WriteLine("filepath is different");
                     return true;
                 }
-                if (config.ExcelSheetNames.Count != this.ExcelSheetNames.Count)
+                if (this.ExcelSheetNames != null && config.ExcelSheetNames != null)
                 {
+                    if (config.ExcelSheetNames.Count != this.ExcelSheetNames.Count)
+                    {
+                        Debug.WriteLine("sheet count is different");
+                        return true;
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine("sheets are null");
                     return true;
                 }
                 foreach (var sheetName in this.ExcelSheetNames)
                 {
                     if (!config.ExcelSheetNames.Contains(sheetName))
                     {
+                        Debug.WriteLine("sheet name is different");
                         return true;
                     }
                 }
 
                 if (config.RectanglePositionList.Count != this.RectanglePositionList.Count)
                 {
+                    Debug.WriteLine("rect list size is different");
                     return true;
                 }
                 else
                 {
-                    foreach (var rect in config.RectanglePositionList)
+                    foreach (var rect in this.RectanglePositionList)
                     {
-                        if (!rect.getRectangle().Equals(this.getRectByType(rect.ControlType)))
+                        Debug.WriteLine($"{rect.getRectangle().Location} vs {config.getRectByType(rect.ControlType).getRectangle().Location}\n" +
+                            $"{rect.ControlType}, {config.getRectByType(rect.ControlType).ControlType}");
+                        if (rect.getRectangle().Location != config.getRectByType(rect.ControlType).getRectangle().Location || rect.getRectangle().Size != config.getRectByType(rect.ControlType).getRectangle().Size)
                         {
+                            Debug.WriteLine("rect position is different");
                             return true;
                         }
                     }
@@ -250,6 +271,7 @@ namespace ArcherTools_0._0._1.cfg
             }
             else
             {
+                Debug.WriteLine("reached the end");
                 return true;
             }
         }
@@ -268,9 +290,11 @@ namespace ArcherTools_0._0._1.cfg
             else
             {
                 var conflictingRect = getRectByType(valueToAdd.ControlType);
-                if (RectanglePositionList.Contains(conflictingRect))
+                if (this.RectanglePositionList.Contains(conflictingRect))
                 {
-                    RectanglePositionList[getRectIndexByType(valueToAdd.ControlType)] = valueToAdd;
+                    Debug.WriteLine("contains");
+                    this.RectanglePositionList[getRectIndexByType(valueToAdd.ControlType)] = valueToAdd;
+                    Debug.WriteLine("adding item");
                 }
             }
         }
