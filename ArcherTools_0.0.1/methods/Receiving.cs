@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ArcherTools_0._0._1.boxes;
 using ArcherTools_0._0._1.cfg;
@@ -14,7 +15,7 @@ namespace ArcherTools_0._0._1.methods
     internal class Receiving
     {
         internal static Point receiptLineBorder = new Point(18, 33);
-        internal static Point receiptLnFirstLn = new Point(55, 50);
+        internal static Point receiptLnFirstLn = new Point(55, 52);
         internal static Point itemSearchBox = new Point(190, 90);
         internal static Point itemMtnIcon = new Point(355, 11);
         internal static Point itemCfgIcon = new Point(264, 10);
@@ -27,8 +28,10 @@ namespace ArcherTools_0._0._1.methods
         internal static Point rlItemCfgIcon = new Point();
         internal static Point rlItemCfgPcsBox = new Point();
 
+        internal static List<ControlType> requiredCtrlTypes = new List<ControlType> { ControlType.ReceiptLineWindow, ControlType.ItemSearchWindow, ControlType.PowerHouseIcons, ControlType.ItemConfigurationWindow };
+
         internal static List<Item> receivedItems = new List<Item>();
-        internal static Dictionary<int, Item> failedItems = new Dictionary<int, Item>();
+        internal static ConcurrentDictionary<int, Item> failedItems = new ConcurrentDictionary<int, Item>();
         [DllImport("user32.dll")]
         private static extern int GetAsyncKeyState(Int32 i);
 
@@ -111,6 +114,10 @@ namespace ArcherTools_0._0._1.methods
                     {
                         iteration = startLine;
                     }
+                    else
+                    {
+                        startLine = int.Parse(excelHandler.GetCell(rcvDumpSheet,2,3));
+                    }
                     int cntSize = containerSize();
                     int cntRawSize = containerSize(true);
                     Debug.WriteLine(cntSize);
@@ -123,13 +130,12 @@ namespace ArcherTools_0._0._1.methods
                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
                     inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.MENU);
 
-
                     for (int i = startLine; i <= cntSize; i++, iteration++)
                     {
                         try {
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                             MouseHandler.MouseMoveTo(rlReceiptLnFirstLn);
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                             MouseHandler.MouseClick();
                             inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
@@ -207,7 +213,7 @@ namespace ArcherTools_0._0._1.methods
                                 else
                                 {
                                     var newItem = new Item(copiedItem);
-                                    failedItems.Add(i, newItem);
+                                    failedItems.TryAdd(i, newItem);
                                     rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {i}");
                                 }
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
@@ -246,7 +252,7 @@ namespace ArcherTools_0._0._1.methods
                             statusTxt += $"There were {failedItems.Count} failed items.";
                         foreach (var item in failedItems)
                         {
-                            Debug.WriteLine($"Item {item.Value} failed at line{item.Key}.");
+                            Debug.WriteLine($"Item {item.Value.itemCode} failed at line {item.Key}.");
                         }
                         }
                         rcvGui.updateStatusLabel(statusTxt);
@@ -416,9 +422,26 @@ namespace ArcherTools_0._0._1.methods
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.10));
                             if (copiedLine == neededLine)
                             {
-                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.2));
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.3));
                                 ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.3));
+                                copiedLine = int.Parse(Clipboard.GetText());
+                                if (copiedLine != neededLine)
+                                {
+                                   continue;
+                                }
+                                EnsureUnstuckKeys();
+                                Clipboard.Clear();
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
+                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
+
+                                for (int z = 1; z <= 3; z++)
+                                {
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.4));
+                                    ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
+                                }                                
                                 var newIt = new Item(Clipboard.GetText());
                                 receivedItems.Add(newIt);
                                 return true;
@@ -442,6 +465,16 @@ namespace ArcherTools_0._0._1.methods
                 }
 
             }
+        }
+
+        private static void EnsureUnstuckKeys()
+        {
+            InputSimulator ips = new InputSimulator();
+            ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+            Thread.Sleep(200);
+            ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.SHIFT);
+            Thread.Sleep(200);
+            ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
         }
         private static bool iterateThroughListItems()
         {
@@ -497,7 +530,7 @@ namespace ArcherTools_0._0._1.methods
         {
             ToolConfig toolCfg = ConfigData._toolConfig;
             byte PwhMonitor = 1;
-            #if !DEBUG
+           // #if !DEBUG
             if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
             {
                 WindowHandler.WinToFocusByName("mstsc");
@@ -521,14 +554,14 @@ namespace ArcherTools_0._0._1.methods
                     PwhMonitor = 1;
                     break;
             }
-            #endif
+           // #endif
 
             ReceivingConfig rcvConfig = ConfigData._receivingConfig;
 
             if (rcvConfig == null)
             {
                 MessageBox.Show("Receiving Config data is null. Possibly corrupted.", ErrorEnum.ErrorCode.InvalidCfgData.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                rcvConfig = new ReceivingConfig();
             }
             ConfigData.setReceivingConfig(rcvConfig);
             
@@ -546,11 +579,12 @@ namespace ArcherTools_0._0._1.methods
 
             Thread.Sleep(1500);
             DialogResult saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+            newRcvCfg.addMousePosition(pwhRect1);
+            newRcvCfg.addMousePosition(pwhRect2);
             if (saveChanges == DialogResult.Yes)
             {
                 //Debug.WriteLine(rcvConfig.getRectByType(pwhRect2.ControlType).getRectangle());
-                newRcvCfg.addMousePosition(pwhRect1);
-                newRcvCfg.addMousePosition(pwhRect2);
+                
                 //Debug.WriteLine(newRcvCfg.getRectByType(pwhRect2.ControlType).getRectangle());
                 
                 if (rcvConfig.ConfigIsDifferent(newRcvCfg))
@@ -573,11 +607,12 @@ namespace ArcherTools_0._0._1.methods
             alteredRects = RectanglesOverlay.Show(pwhList, PwhMonitor);
 
             saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+            newRcvCfg.addMousePosition(pwhRect3);
+            newRcvCfg.addMousePosition(pwhRect4);
+            newRcvCfg.addMousePosition(pwhRect5);
             if (saveChanges == DialogResult.Yes)
             {
-                newRcvCfg.addMousePosition(pwhRect3);
-                newRcvCfg.addMousePosition(pwhRect4);
-                newRcvCfg.addMousePosition(pwhRect5);
+                
                 if (ConfigData._receivingConfig.ConfigIsDifferent(newRcvCfg))
                 {
                     ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
@@ -596,10 +631,12 @@ namespace ArcherTools_0._0._1.methods
             dialog.FilterIndex = 0;
             dialog.Multiselect = false;
             string filePath;
+            
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 filePath = dialog.FileName;
                 newRcvCfg.setExcelFilePath(filePath);
+
                 if (newRcvCfg.ConfigIsDifferent(ConfigData._receivingConfig))
                 {
                     ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
@@ -647,7 +684,7 @@ namespace ArcherTools_0._0._1.methods
             receivedItems.Clear();
             failedItems.Clear();
             receivedItems = new List<Item>();
-            failedItems = new Dictionary<int, Item>();
+            failedItems = new ConcurrentDictionary<int, Item>();
         }
 
         public static bool validateExcel()
@@ -697,21 +734,16 @@ namespace ArcherTools_0._0._1.methods
             try
             {
                 ReceivingConfig rcvCfg = ConfigData._receivingConfig;
-                if (rcvCfg.getRectByType(ControlType.ItemSearchWindow).getRectangle() == new Rectangle(0, 0, 150, 150))
+
+                if (rcvCfg.RectanglePositionList != null && rcvCfg.RectanglePositionList.Count > 0)
                 {
-                    return false;
-                }
-                if (rcvCfg.getRectByType(ControlType.ReceiptLineWindow).getRectangle() == new Rectangle(0, 0, 150, 150))
-                {
-                    return false;
-                }
-                if (rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle() == new Rectangle(0, 0, 150, 150))
-                {
-                    return false;
-                }
-                if (rcvCfg.getRectByType(ControlType.PowerHouseIcons).getRectangle() == new Rectangle(0, 0, 150, 150))
-                {
-                    return false;
+                    foreach (var ctrlType in requiredCtrlTypes)
+                    {
+                        if (rcvCfg.getRectByType(ctrlType).getRectangle() == new Rectangle(0, 0, 150, 150))
+                        {
+                            return false;
+                        }
+                    }
                 }
                 return true;
             }

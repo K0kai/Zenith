@@ -160,7 +160,10 @@ namespace ArcherTools_0._0._1.excel
                         }
                         if (!string.IsNullOrWhiteSpace(cellValue))
                         {
-                            columnData.Add(cellValue);
+                            lock (columnData)
+                            {
+                                columnData.Add(cellValue);
+                            }
                         }
                     }
                 });
