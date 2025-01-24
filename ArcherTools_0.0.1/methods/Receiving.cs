@@ -497,7 +497,7 @@ namespace ArcherTools_0._0._1.methods
         {
             ToolConfig toolCfg = ConfigData._toolConfig;
             byte PwhMonitor = 1;
-            //#if !DEBUG
+            #if !DEBUG
             if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
             {
                 WindowHandler.WinToFocusByName("mstsc");
@@ -521,7 +521,7 @@ namespace ArcherTools_0._0._1.methods
                     PwhMonitor = 1;
                     break;
             }
-            //#endif
+            #endif
 
             ReceivingConfig rcvConfig = ConfigData._receivingConfig;
 
@@ -531,7 +531,7 @@ namespace ArcherTools_0._0._1.methods
                 return;
             }
             ConfigData.setReceivingConfig(rcvConfig);
-            ReceivingConfig newRcvCfg = new ReceivingConfig(null, null, rcvConfig);
+            
 
             PowerHouseRectangles pwhRect1 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.PowerHouseIcons));
             PowerHouseRectangles pwhRect2 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ItemSearchWindow));
@@ -539,8 +539,10 @@ namespace ArcherTools_0._0._1.methods
             PowerHouseRectangles pwhRect4 = rcvConfig.getRectByType(ControlType.ItemConfigurationWindow);
             PowerHouseRectangles pwhRect5 = rcvConfig.getRectByType(ControlType.ItemMaintenanceWindow);
 
+
             List<PowerHouseRectangles> pwhList = new List<PowerHouseRectangles> { pwhRect1, pwhRect2 };
             List<PowerHouseRectangles> alteredRects = RectanglesOverlay.Show(pwhList, PwhMonitor);
+            ReceivingConfig newRcvCfg = new ReceivingConfig(rcvConfig);
 
             Thread.Sleep(1500);
             DialogResult saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
@@ -578,7 +580,7 @@ namespace ArcherTools_0._0._1.methods
                 newRcvCfg.addMousePosition(pwhRect5);
                 if (ConfigData._receivingConfig.ConfigIsDifferent(newRcvCfg))
                 {
-                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
+                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
                     cfgData.PrepareForSerialization();
                     ConfigData.SerializeConfigData();
                 }
@@ -600,7 +602,7 @@ namespace ArcherTools_0._0._1.methods
                 newRcvCfg.setExcelFilePath(filePath);
                 if (newRcvCfg.ConfigIsDifferent(ConfigData._receivingConfig))
                 {
-                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
+                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
                     cfgData.PrepareForSerialization();
                     ConfigData.SerializeConfigData();
                 }

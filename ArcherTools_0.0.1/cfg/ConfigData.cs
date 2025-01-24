@@ -13,10 +13,15 @@ namespace ArcherTools_0._0._1.cfg
 
         //Non serializable variables
         public static string  ConfigVersion { get; set; } = CurrentVersion;
-        public static UserConfig? _userConfig { get; private set; }
-        public static ReceivingConfig? _receivingConfig { get; private set; }
-        public static ToolConfig? _toolConfig { get; private set; }
-        public static string directoryPath = AppDomain.CurrentDomain.BaseDirectory;
+        public static UserConfig? _userConfig { get; internal set; }
+        public static ReceivingConfig? _receivingConfig { get; internal set; }
+        public static ToolConfig? _toolConfig { get; internal set; }
+
+        private static string documentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private static string appCfgMainFolder = Path.Combine(documentsFolder, "Archer Tools");
+        private static string appCfgInnerFolder = Path.Combine(appCfgMainFolder, "Zenith");
+
+        public static string directoryPath = appCfgInnerFolder;
         public static string fileName = "Config.xml";
         public static string filePath = Path.Combine(directoryPath, fileName);
 
@@ -62,17 +67,25 @@ namespace ArcherTools_0._0._1.cfg
 
         }
 
+        public static void EnsureFolderExists()
+        {
+            if (!Directory.Exists(appCfgMainFolder))
+            {
+                Directory.CreateDirectory(appCfgMainFolder);
+            }
+            if (!Directory.Exists(appCfgInnerFolder))
+            {
+                Directory.CreateDirectory(appCfgInnerFolder);
+            }
+        }
+
         public static void SerializeConfigData()
         {          
             try
             {
-                if (Directory.Exists(directoryPath))
+                if (!Directory.Exists(appCfgInnerFolder))
                 {
-
-                }
-                else
-                {
-                    throw new DirectoryNotFoundException($"{directoryPath} does not exist.");
+                    Directory.CreateDirectory(appCfgInnerFolder);
                 }
             }
             catch (Exception ex)
@@ -84,12 +97,6 @@ namespace ArcherTools_0._0._1.cfg
             {
                 serializer.Serialize(fileStream, new ConfigData(_userConfig, _receivingConfig, _toolConfig));
                 Debug.WriteLine($"Serialized config file at path \"{filePath}\".");
-#if DEBUG
-                if (Directory.Exists(directoryPath))
-                {
-                    Process.Start("explorer.exe", filePath);
-                }
-#endif
             }
 
 
@@ -99,6 +106,7 @@ namespace ArcherTools_0._0._1.cfg
         {        
             try
             {
+                EnsureFolderExists();
                 if (!File.Exists(filePath))
                 {
                     throw new FileNotFoundException($"Config data file does not exist at path {filePath}.");
@@ -133,6 +141,7 @@ namespace ArcherTools_0._0._1.cfg
         {
             try
             {
+                EnsureFolderExists() ;
                 using (File.Create(filePath))
                 {
                     return true;
@@ -141,7 +150,7 @@ namespace ArcherTools_0._0._1.cfg
             catch (Exception ex)
             {
                 ToolConfig toolCfgDefault = new ToolConfig(false);
-                ConfigData.setToolConfig(toolCfgDefault);
+                setToolConfig(toolCfgDefault);
                 Debug.WriteLine(ex.Message);
                 return false;
             }

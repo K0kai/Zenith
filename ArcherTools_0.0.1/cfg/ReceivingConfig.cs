@@ -99,7 +99,7 @@ namespace ArcherTools_0._0._1.cfg
     public class ReceivingConfig
     {
         [XmlElement("ReceiveCfgVersion")]
-        public required string configVersion { get; set; } = ConfigData.ConfigVersion;
+        public string configVersion { get; set; } = ConfigData.ConfigVersion;
         [XmlElement("ItemCfgExcelPath")]
         public string ExcelFilePath { get; set; }
         [XmlArray("ItemCfgSheetList")]
@@ -112,18 +112,28 @@ namespace ArcherTools_0._0._1.cfg
 
         public ReceivingConfig() { }
 
+        public ReceivingConfig(ReceivingConfig rcvCfgOverride)
+        {        
+            
+                ExcelFilePath = rcvCfgOverride.ExcelFilePath;
+                RectanglePositionList = rcvCfgOverride.RectanglePositionList
+               .Select(rect => new PowerHouseRectangles(rect))
+               .ToList();
+            configVersion = rcvCfgOverride.configVersion;
+            if (ExcelFilePath != null && File.Exists(ExcelFilePath))
+            {
+                setExcelSheetNames(ExcelFilePath);
+            }
+
+        }
+
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute]
-        public ReceivingConfig(string excelFilePath = "", List<PowerHouseRectangles> rectPosList = null, ReceivingConfig rcvCfgOverride = null)
+        public ReceivingConfig(string excelFilePath = "", List<PowerHouseRectangles> rectPosList = null)
         {
             ExcelFilePath = excelFilePath;
             RectanglePositionList = rectPosList;
             configVersion = ConfigData.ConfigVersion;
-            if (rcvCfgOverride != null)
-            {
-                ExcelFilePath = rcvCfgOverride.ExcelFilePath;
-                RectanglePositionList = rcvCfgOverride.RectanglePositionList;
-                configVersion = rcvCfgOverride.configVersion;
-            }
+            
 
             if (ExcelFilePath != null && File.Exists(ExcelFilePath))
             {
@@ -153,7 +163,7 @@ namespace ArcherTools_0._0._1.cfg
             var rectReturn = new PowerHouseRectangles(ctrlType, new SerializableRectangle(new Rectangle(0, 0, 150, 150)));
             for (var i = 0; i < this.RectanglePositionList.Count; i++)
             {
-                if (!RectanglePositionList[i].getPwhRectByType(ctrlType).rect.toRectangle().IsEmpty)
+                if (!this.RectanglePositionList[i].getPwhRectByType(ctrlType).rect.toRectangle().IsEmpty)
                 {
                     return i;
                 }                
@@ -283,18 +293,16 @@ namespace ArcherTools_0._0._1.cfg
         {
             if (!this.containsCtrlType(valueToAdd.ControlType))
             {
-                Debug.WriteLine("doesnt contain");
                 this.RectanglePositionList.Add(valueToAdd);
-                Debug.WriteLine("adding item");
+                Debug.WriteLine("doesnt contain, adding item");
             }
             else
             {
                 var conflictingRect = getRectByType(valueToAdd.ControlType);
                 if (this.RectanglePositionList.Contains(conflictingRect))
                 {
-                    Debug.WriteLine("contains");
                     this.RectanglePositionList[getRectIndexByType(valueToAdd.ControlType)] = valueToAdd;
-                    Debug.WriteLine("adding item");
+                    Debug.WriteLine("contains, adding item");
                 }
             }
         }
