@@ -28,14 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             rcvSet_Btn = new Button();
             pagelabel = new Label();
             label1 = new Label();
             toolsCfg_Panel = new Panel();
             panel1 = new Panel();
+            presetList = new ListBox();
+            presetList_dropbtn = new Button();
             voicelines_checkbtn = new CheckBox();
             label2 = new Label();
             return_Btn = new Button();
+            presetDropTimer = new System.Windows.Forms.Timer(components);
             toolsCfg_Panel.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -97,12 +101,49 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(presetList);
+            panel1.Controls.Add(presetList_dropbtn);
             panel1.Controls.Add(voicelines_checkbtn);
             panel1.Controls.Add(label2);
             panel1.Location = new Point(249, 75);
+            panel1.MaximumSize = new Size(134, 357);
             panel1.Name = "panel1";
             panel1.Size = new Size(134, 357);
             panel1.TabIndex = 28;
+            // 
+            // presetList
+            // 
+            presetList.BackColor = Color.DimGray;
+            presetList.BorderStyle = BorderStyle.FixedSingle;
+            presetList.ForeColor = SystemColors.Menu;
+            presetList.FormattingEnabled = true;
+            presetList.ItemHeight = 15;
+            presetList.Location = new Point(8, 92);
+            presetList.MaximumSize = new Size(125, 137);
+            presetList.MinimumSize = new Size(1, 1);
+            presetList.Name = "presetList";
+            presetList.Size = new Size(116, 137);
+            presetList.TabIndex = 30;
+            // 
+            // presetList_dropbtn
+            // 
+            presetList_dropbtn.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            presetList_dropbtn.BackColor = SystemColors.ControlDarkDark;
+            presetList_dropbtn.BackgroundImageLayout = ImageLayout.None;
+            presetList_dropbtn.Cursor = Cursors.Hand;
+            presetList_dropbtn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            presetList_dropbtn.FlatAppearance.BorderSize = 0;
+            presetList_dropbtn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            presetList_dropbtn.FlatStyle = FlatStyle.Flat;
+            presetList_dropbtn.ForeColor = SystemColors.ButtonFace;
+            presetList_dropbtn.Location = new Point(8, 65);
+            presetList_dropbtn.Margin = new Padding(25, 3, 25, 3);
+            presetList_dropbtn.Name = "presetList_dropbtn";
+            presetList_dropbtn.Size = new Size(116, 25);
+            presetList_dropbtn.TabIndex = 29;
+            presetList_dropbtn.Text = "Presets";
+            presetList_dropbtn.UseVisualStyleBackColor = false;
+            presetList_dropbtn.Click += presetList_dropbtn_Click;
             // 
             // voicelines_checkbtn
             // 
@@ -150,6 +191,11 @@
             return_Btn.UseVisualStyleBackColor = false;
             return_Btn.Click += return_Btn_Click;
             // 
+            // presetDropTimer
+            // 
+            presetDropTimer.Interval = 25;
+            presetDropTimer.Tick += presetDropTimer_Tick;
+            // 
             // SettingsUserControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -179,5 +225,8 @@
         private Label label2;
         private CheckBox voicelines_checkbtn;
         private Button return_Btn;
+        private System.Windows.Forms.Timer presetDropTimer;
+        private Button presetList_dropbtn;
+        private ListBox presetList;
     }
 }

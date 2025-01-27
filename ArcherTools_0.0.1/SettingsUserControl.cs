@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -23,14 +24,16 @@ namespace ArcherTools_0._0._1
 
         private void onLoad(object sender, EventArgs e)
         {
+            presetList.Height = presetList.MinimumSize.Height;
             var toolCfg = ConfigData._toolConfig;
             if (toolCfg != null)
             {
                 voicelines_checkbtn.Checked = toolCfg.EnableVoiceLines;
-            }
-            
 
-            
+            }
+
+
+
         }
 
         private void rcvSet_Btn_Click(object sender, EventArgs e)
@@ -48,10 +51,41 @@ namespace ArcherTools_0._0._1
                 cfgData.PrepareForSerialization();
                 ConfigData.SerializeConfigData();
             }
-            
+
             PageHandler pageHandler = PageHandler.GetInstance();
             this.FindForm().Size = ToolHub.ucSize;
             pageHandler.LoadUserControl(new ToolHub());
+        }
+
+        private void presetList_dropbtn_Click(object sender, EventArgs e)
+        {
+            presetDropTimer.Start();
+        }
+
+        bool expand = false;
+        private void presetDropTimer_Tick(object sender, EventArgs e)
+        {
+
+            if (!expand)
+            {
+                presetList.Height += 15;
+                if (presetList.Height >= presetList.MaximumSize.Height)
+                {
+                    presetList.Height = presetList.MaximumSize.Height;
+                    presetDropTimer.Stop();
+                    expand = true;
+                }
+            }
+            else
+            {
+                presetList.Height -= 15;
+                if (presetList.Height <= presetList.MinimumSize.Height)
+                {
+                    presetList.Height = presetList.MinimumSize.Height;
+                    presetDropTimer.Stop();
+                    expand = false;
+                }
+            }
         }
     }
 }
