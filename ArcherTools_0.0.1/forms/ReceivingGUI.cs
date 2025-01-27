@@ -139,14 +139,15 @@ namespace ArcherTools_0._0._1.forms
                     this.Cursor = Cursors.WaitCursor;
                     ReceivingConfig rcvConfig = ConfigData._receivingConfig;
                     ExcelHandler exHandler = new ExcelHandler(rcvConfig.ExcelFilePath);
-                    var list = exHandler.GetColumn("DUMP", 4, 2);
+                    var lastFilledRow = exHandler.GetLastFilledRow("DUMP", 3, 2);
+                    var numOfFilledRows = exHandler.GetColumn("DUMP", 3, 2).Count;
                     updateStatusLabel("Status: Cleaning items 1/2");
-                    Task cleanItems = Task.Run(() => { exHandler.SetColumn("DUMP", 4, list, 2, true); });
+                    Task cleanItems = Task.Run(() => { exHandler.SetColumn("DUMP", 4, new List<string>(), 2, true, lastFilledRow); });
                     Task.WaitAll(cleanItems);
                     updateStatusLabel("Status: Cleaning items 2/2");
-                    Task cleanLines = Task.Run(() => { exHandler.SetColumn("DUMP", 3, list, 2, true); });
+                    Task cleanLines = Task.Run(() => { exHandler.SetColumn("DUMP", 3, new List<string>(), 2, true, lastFilledRow); });
                     Task.WaitAll(cleanLines);
-                    updateStatusLabel($"Status: Cleaned {list.Count} items successfully.");
+                    updateStatusLabel($"Status: Cleaned {numOfFilledRows} items successfully.");
                     this.Cursor = Cursors.Default;
 
 

@@ -29,8 +29,11 @@ namespace ArcherTools_0._0._1
             if (toolCfg != null)
             {
                 voicelines_checkbtn.Checked = toolCfg.EnableVoiceLines;
+                autocreatecfg_checkbox.Checked = toolCfg.AutomaticCreateConfig;
+                checkfordefault_checkbox.Checked = toolCfg.CheckForDefault;
 
             }
+            updatePresetList();
 
 
 
@@ -43,7 +46,7 @@ namespace ArcherTools_0._0._1
 
         private void return_Btn_Click(object sender, EventArgs e)
         {
-            ToolConfig toolConfig = new ToolConfig(voicelines_checkbtn.Checked);
+            ToolConfig toolConfig = new ToolConfig(voicelines_checkbtn.Checked, autocreatecfg_checkbox.Checked, checkfordefault_checkbox.Checked);
             if (toolConfig.ConfigIsDifferent(ConfigData._toolConfig))
             {
                 ConfigData.setToolConfig(toolConfig);
@@ -60,6 +63,16 @@ namespace ArcherTools_0._0._1
         private void presetList_dropbtn_Click(object sender, EventArgs e)
         {
             presetDropTimer.Start();
+            
+        }
+
+        private void updatePresetList()
+        {
+            ColorPresets presetInstance = ColorPresets._instance;
+            if (presetInstance != null)
+            {
+                presetList.Items.Add(presetInstance.Presets[0]);
+            }
         }
 
         bool expand = false;

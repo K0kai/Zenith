@@ -48,9 +48,11 @@ namespace ArcherTools_0._0._1
 
                             if (maxVal >= threshold)
                             {
+                                Debug.WriteLine("found");
                                 return new Point(maxLoc.X + roi.X, maxLoc.Y + roi.Y);
+                                
                             }
-
+                            Debug.WriteLine("nope");
                             return Point.Empty;
                         }
                     }

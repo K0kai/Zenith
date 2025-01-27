@@ -33,6 +33,7 @@
             pagelabel = new Label();
             label1 = new Label();
             toolsCfg_Panel = new Panel();
+            autocreatecfg_checkbox = new CheckBox();
             panel1 = new Panel();
             presetList = new ListBox();
             presetList_dropbtn = new Button();
@@ -40,6 +41,7 @@
             label2 = new Label();
             return_Btn = new Button();
             presetDropTimer = new System.Windows.Forms.Timer(components);
+            checkfordefault_checkbox = new CheckBox();
             toolsCfg_Panel.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -92,12 +94,25 @@
             // 
             // toolsCfg_Panel
             // 
+            toolsCfg_Panel.Controls.Add(checkfordefault_checkbox);
+            toolsCfg_Panel.Controls.Add(autocreatecfg_checkbox);
             toolsCfg_Panel.Controls.Add(rcvSet_Btn);
             toolsCfg_Panel.Controls.Add(label1);
             toolsCfg_Panel.Location = new Point(12, 75);
             toolsCfg_Panel.Name = "toolsCfg_Panel";
             toolsCfg_Panel.Size = new Size(136, 357);
             toolsCfg_Panel.TabIndex = 27;
+            // 
+            // autocreatecfg_checkbox
+            // 
+            autocreatecfg_checkbox.AutoSize = true;
+            autocreatecfg_checkbox.ForeColor = Color.Lavender;
+            autocreatecfg_checkbox.Location = new Point(13, 72);
+            autocreatecfg_checkbox.Name = "autocreatecfg_checkbox";
+            autocreatecfg_checkbox.Size = new Size(111, 19);
+            autocreatecfg_checkbox.TabIndex = 31;
+            autocreatecfg_checkbox.Text = "Auto Create Cfg";
+            autocreatecfg_checkbox.UseVisualStyleBackColor = true;
             // 
             // panel1
             // 
@@ -128,7 +143,7 @@
             // presetList_dropbtn
             // 
             presetList_dropbtn.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            presetList_dropbtn.BackColor = SystemColors.ControlDarkDark;
+            presetList_dropbtn.BackColor = Color.DimGray;
             presetList_dropbtn.BackgroundImageLayout = ImageLayout.None;
             presetList_dropbtn.Cursor = Cursors.Hand;
             presetList_dropbtn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
@@ -196,6 +211,17 @@
             presetDropTimer.Interval = 25;
             presetDropTimer.Tick += presetDropTimer_Tick;
             // 
+            // checkfordefault_checkbox
+            // 
+            checkfordefault_checkbox.AutoSize = true;
+            checkfordefault_checkbox.ForeColor = Color.Lavender;
+            checkfordefault_checkbox.Location = new Point(13, 97);
+            checkfordefault_checkbox.Name = "checkfordefault_checkbox";
+            checkfordefault_checkbox.Size = new Size(118, 19);
+            checkfordefault_checkbox.TabIndex = 32;
+            checkfordefault_checkbox.Text = "Check for Default";
+            checkfordefault_checkbox.UseVisualStyleBackColor = true;
+            // 
             // SettingsUserControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -228,5 +254,7 @@
         private System.Windows.Forms.Timer presetDropTimer;
         private Button presetList_dropbtn;
         private ListBox presetList;
+        private CheckBox autocreatecfg_checkbox;
+        private CheckBox checkfordefault_checkbox;
     }
 }

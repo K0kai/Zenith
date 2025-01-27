@@ -51,6 +51,8 @@ namespace ArcherTools_0._0._1.methods
                 ReceivingGUI rcvGui = ReceivingGUI._instance;
                 endProcess = checkForEnd().Result;
                 rcvGui.updateStatusLabel("Beginning receiving process...");
+                var autoCreateCfg = ConfigData._toolConfig.AutomaticCreateConfig;
+                var findDefaultCfg = ConfigData._toolConfig.CheckForDefault;
 
                 if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
                 {
@@ -174,14 +176,36 @@ namespace ArcherTools_0._0._1.methods
 
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                                 if (endProcess) { return; }
-                                var pcCheck = checkPCs(currentItemInfo["number_pieces"]);
-
+                                bool pcCheck;
+                                if (findDefaultCfg)
+                                {
+                                    pcCheck = checkPCsForDefault();
+                                }
+                                else
+                                {
+                                    pcCheck = checkPCs(currentItemInfo["number_pieces"]);
+                                }
                                 //Start Item Config
                                 if (pcCheck)
                                 {
+                                    foreach (var itemInfoValue in currentItemInfo)
+                                    {
+                                        if (itemInfoValue.Value == "#VALUE!" || itemInfoValue.Value == "#VALOR!")
+                                        {
+                                            inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
+                                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                            MouseHandler.MouseMoveTo(rlItemCfgClose); MouseHandler.MouseClick();
+                                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                            MouseHandler.MouseMoveTo(rlItemMtnClose); MouseHandler.MouseClick();
+                                            var newFailedItem = new Item(copiedItem);
+                                            failedItems.TryAdd(i, newFailedItem);
+                                            i++;
+
+                                            continue;
+                                        }
+                                    }
                                     //Tabbing
                                     tabBetween(3);
-
                                     inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                     KeystrokeHandler.TypeText(currentItemInfo["cases_per_pallet"]);
@@ -189,8 +213,8 @@ namespace ArcherTools_0._0._1.methods
                                     inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
                                     inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
-                                    if (endProcess) { return; }
                                     KeystrokeHandler.TypeText(currentItemInfo["cases_per_tier"]);
+                                    if (endProcess) { return; }                                   
                                     tabBetween(7);
                                     KeystrokeHandler.TypeText(currentItemInfo["pallet_weight"]);
                                     tabBetween(2);
@@ -212,9 +236,49 @@ namespace ArcherTools_0._0._1.methods
                                 }
                                 else
                                 {
-                                    var newItem = new Item(copiedItem);
-                                    failedItems.TryAdd(i, newItem);
-                                    rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {i}");
+                                    if (!autoCreateCfg)
+                                    {
+                                        var newItem = new Item(copiedItem);
+                                        failedItems.TryAdd(i, newItem);
+                                        rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {i}");
+                                    }
+                                    else
+                                    {
+                                        if (endProcess) { return; }
+                                        CreateNewConfig(int.Parse(currentItemInfo["number_pieces"]), inputSimulator);
+                                        if (endProcess) { return; }
+                                        tabBetween(3);
+                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
+                                        KeystrokeHandler.TypeText(currentItemInfo["cases_per_pallet"]);
+                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.75));
+                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));                                        
+                                        KeystrokeHandler.TypeText(currentItemInfo["cases_per_tier"]);
+                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
+                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
+                                        KeystrokeHandler.TypeText(currentItemInfo["number_pieces"]);
+                                        tabBetween(6);
+                                        KeystrokeHandler.TypeText(currentItemInfo["pallet_weight"]);
+                                        tabBetween(2);
+                                        KeystrokeHandler.TypeText(currentItemInfo["pallet_height"]);
+                                        tabBetween(2);
+                                        KeystrokeHandler.TypeText(currentItemInfo["pallet_width"]);
+                                        tabBetween(2);
+                                        KeystrokeHandler.TypeText(currentItemInfo["pallet_depth"]);
+                                        tabBetween(4);
+                                        KeystrokeHandler.TypeText(currentItemInfo["case_weight"]);
+                                        tabBetween(2);
+                                        KeystrokeHandler.TypeText(currentItemInfo["case_height"]);
+                                        tabBetween(2);
+                                        KeystrokeHandler.TypeText(currentItemInfo["case_width"]);
+                                        tabBetween(2);
+                                        KeystrokeHandler.TypeText(currentItemInfo["case_depth"]);
+                                        if (endProcess) { return; }
+                                    }
                                 }
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
 
@@ -266,6 +330,13 @@ namespace ArcherTools_0._0._1.methods
             }
             }
 
+        private static void CreateNewConfig(int pcs, InputSimulator ips)
+        {
+            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.INSERT);
+            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.3));
+            ips.Keyboard.TextEntry($"{pcs}PC");
+        }
         private static int containerSize(bool rawSize = false)
         {
             try
@@ -341,7 +412,33 @@ namespace ArcherTools_0._0._1.methods
                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.4));
             }
         }
+        
 
+        private static bool checkPCsForDefault()
+        {
+            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.8));
+            for (int i = 0; i < 5; i++)
+            {
+                Point mouseto = new Point(0, 0);
+                Task findDefault = Task.Run(() =>
+                {
+                    mouseto = ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\defaultcfg.png", 0.99);
+                });
+                Task.WaitAll(findDefault);
+                if (mouseto == new Point(0, 0))
+                {
+                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.4));
+                    KeystrokeHandler.sendKeystroke(KeysEnum.SendKey.Down);
+                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
         private static bool checkPCs(string pcs)
         {
             int intPcs = int.Parse(pcs);

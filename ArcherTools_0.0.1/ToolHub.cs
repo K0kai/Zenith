@@ -1,4 +1,5 @@
 ﻿using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.forms;
 using ArcherTools_0._0._1.methods;
 using System.Diagnostics;
@@ -29,7 +30,7 @@ namespace ArcherTools_0._0._1
             this.Load += userControlLoad;
             this.Invalidated += OnInvalidated;
             this.instance = this;
-           
+
 
 
         }
@@ -48,10 +49,11 @@ namespace ArcherTools_0._0._1
                 ConfigData? config = ConfigData.DeserializeConfigData();
                 config?.PostDeserialization();
 
-                
+
                 introlabel.Text = messageManager.RandomizeMessage();
                 introlabel.Click += introlabel_Click;
                 CenterControl(introlabel);
+                ColorConfig.GenerateDefaults();
 
             }
             catch (Exception ex)
@@ -62,7 +64,7 @@ namespace ArcherTools_0._0._1
 
         private void OnInvalidated(object sender, EventArgs e)
         {
-            if (instance != null) {  return; }
+            if (instance != null) { return; }
             introlabel.Text = messageManager.RandomizeMessage();
             CenterControl(introlabel);
             copyrights.LinkVisited = false;
@@ -140,6 +142,18 @@ namespace ArcherTools_0._0._1
         {
             this.FindForm().Size = new Size(396, 444);
             _pageHandler.LoadUserControl(new SettingsUserControl());
+        }
+
+        private void testbutton_Click(object sender, EventArgs e)
+        {
+            Point mouseto = new Point();
+            Task findDefault = Task.Run(() =>
+            {
+                mouseto = ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\defaultcfg.png", 0.99);
+            });
+            Task.WaitAll(findDefault);
+           
+            MouseHandler.MouseMoveTo(mouseto);
         }
     }
 }

@@ -126,6 +126,50 @@ namespace ArcherTools_0._0._1.excel
             }
         }
 
+        public int GetLastFilledRow(string worksheetName, int column, int startrow = 1)
+        {
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(_filePath)))
+            {
+                if (!this.WorksheetExists(worksheetName))
+                {
+                    throw new FileNotFoundException($"No worksheet with this name \"{worksheetName}\" was found to get this column.");
+                }
+
+                ExcelWorkbook excelWorkbook = package.Workbook;
+                ExcelWorksheet excelWorksheet = excelWorkbook.Worksheets[worksheetName];
+                if (excelWorksheet == null)
+                {
+                    throw new InvalidOperationException($"Worksheet \"{worksheetName}\" has empty dimensions.");
+                }
+                int lastFilledRow = 0;
+                Parallel.For(startrow, excelWorksheet.Dimension.Rows, row =>
+                {
+                    {
+
+                        var cell = excelWorksheet.Cells[row, column];
+                        string? cellValue = null;
+                        if (cell.Value != null)
+                            cellValue = cell.Value.ToString();
+                        if (cell.Merge)
+                        {
+                            var mergeId = excelWorksheet.MergedCells[row, column];
+                            if (excelWorksheet.Cells[mergeId].First().Value != null)
+                            {
+                                cellValue = excelWorksheet.Cells[mergeId].First().Value.ToString();
+                            }
+                        }
+                        if (!string.IsNullOrWhiteSpace(cellValue))
+                        {
+                            lastFilledRow = row;
+                        }
+                    }
+                });
+                return lastFilledRow;
+            }
+        }
+        
+        
+        
         public List<String> GetColumn(string worksheetName, int column, int startrow = 1)
         {
             using (ExcelPackage package = new ExcelPackage(new FileInfo(_filePath)))
@@ -171,7 +215,7 @@ namespace ArcherTools_0._0._1.excel
             }
         }
 
-        public void SetColumn<T>(string worksheetName, int column, List<T> values, int startrow = 1, bool nullAll = false)
+        public void SetColumn<T>(string worksheetName, int column, List<T> values, int startrow = 1, bool nullAll = false, int nullUpToRow = 1)
         {
             using (ExcelPackage package = new ExcelPackage(new FileInfo(_filePath)))
             {
@@ -200,7 +244,7 @@ namespace ArcherTools_0._0._1.excel
                 }
                 else
                 {
-                    for (int row = startrow; row < values.Count + startrow; row++)
+                    for (int row = startrow; row < nullUpToRow + startrow; row++)
                     {
                         SetCell(worksheetName, row, column, " ");
                         Thread.Sleep(5);

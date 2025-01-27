@@ -37,6 +37,7 @@
             vpnConnect_btn = new Button();
             settings_Btn = new Button();
             panel2 = new Panel();
+            testbutton = new Button();
             panel1.SuspendLayout();
             ToolsListPanel.SuspendLayout();
             SuspendLayout();
@@ -125,6 +126,7 @@
             ToolsListPanel.Controls.Add(receiveBtn);
             ToolsListPanel.Controls.Add(vpnConnect_btn);
             ToolsListPanel.Controls.Add(settings_Btn);
+            ToolsListPanel.Controls.Add(testbutton);
             ToolsListPanel.FlowDirection = FlowDirection.TopDown;
             ToolsListPanel.Location = new Point(218, 188);
             ToolsListPanel.Name = "ToolsListPanel";
@@ -180,6 +182,26 @@
             panel2.Size = new Size(670, 10);
             panel2.TabIndex = 8;
             // 
+            // testbutton
+            // 
+            testbutton.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            testbutton.BackColor = Color.FromArgb(47, 56, 74);
+            testbutton.BackgroundImageLayout = ImageLayout.None;
+            testbutton.Cursor = Cursors.Hand;
+            testbutton.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            testbutton.FlatAppearance.BorderSize = 0;
+            testbutton.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
+            testbutton.FlatStyle = FlatStyle.Flat;
+            testbutton.ForeColor = SystemColors.ButtonFace;
+            testbutton.Location = new Point(45, 105);
+            testbutton.Margin = new Padding(25, 3, 25, 3);
+            testbutton.Name = "testbutton";
+            testbutton.Size = new Size(126, 25);
+            testbutton.TabIndex = 6;
+            testbutton.Text = "TestButton";
+            testbutton.UseVisualStyleBackColor = false;
+            testbutton.Click += testbutton_Click;
+            // 
             // ToolHub
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -207,5 +229,6 @@
         private Button vpnConnect_btn;
         private Button settings_Btn;
         private Panel panel2;
+        private Button testbutton;
     }
 }
