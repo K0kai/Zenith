@@ -68,7 +68,7 @@ namespace ArcherTools_0._0._1.forms
             if (cfgdata && excel && rects)
             {
                 List<String> dibf =  DynamicInputBoxForm.Show("Please enter the container code, release and owner", new List<string> { "Container", "Release", "Owner" });
-                if (dibf.Count > 0)
+                if (dibf != null && dibf.Count > 0)
                 {
                     foreach (var streng in dibf)
                     {

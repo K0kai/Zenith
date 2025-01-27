@@ -11,6 +11,7 @@ namespace ArcherTools_0._0._1.forms
         private string _title;
         private string _description;
         private int _lines;
+        private int _selectedLine;
         private Point mouseDownLocation;
         internal static string previousText;
 
@@ -23,13 +24,13 @@ namespace ArcherTools_0._0._1.forms
             _title = title;
             _description = desc;
             
-            
             this.MouseDown += new MouseEventHandler(ItemDumpGUI_MouseDown);
             this.MouseMove += new MouseEventHandler(ItemDumpGUI_MouseMove);
             this.Load += onLoad;
             this.FormClosed += onClose;
 
             this.itemValues_Box.TextChanged += textBoxChanged;
+            this.itemValues_Box.MouseClick += textBoxClicked;
             centerLabels();
 
 
@@ -90,6 +91,19 @@ namespace ArcherTools_0._0._1.forms
             }
         }
 
+        private int getSelectedLine()
+        {
+            var currentLine = itemValues_Box.GetLineFromCharIndex(itemValues_Box.SelectionStart);
+            return currentLine;
+        }
+
+        private void textBoxClicked(object sender, MouseEventArgs e)
+        {
+            selectedLn_Label.Text = $"Selected Line: {getSelectedLine() + 1}";
+        }
+
+
+
         private void ItemDumpGUI_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -123,7 +137,8 @@ namespace ArcherTools_0._0._1.forms
               count++;
              _lines++;
             }
-        this.lines_label.Text = $"Lines: {count}";          
+        this.lines_label.Text = $"Lines: {count}";
+        this.selectedLn_Label.Text = $"Selected Line: {getSelectedLine() + 1}";
             
         }
 

@@ -116,9 +116,16 @@ namespace ArcherTools_0._0._1.cfg
         {        
             
                 ExcelFilePath = rcvCfgOverride.ExcelFilePath;
+            if (rcvCfgOverride.ExcelFilePath != null)
+            {
                 RectanglePositionList = rcvCfgOverride.RectanglePositionList
                .Select(rect => new PowerHouseRectangles(rect))
                .ToList();
+            }
+            else
+            {
+                RectanglePositionList = new List<PowerHouseRectangles>();
+            }
             configVersion = rcvCfgOverride.configVersion;
             if (ExcelFilePath != null && File.Exists(ExcelFilePath))
             {
@@ -147,13 +154,16 @@ namespace ArcherTools_0._0._1.cfg
         public PowerHouseRectangles getRectByType(ControlType ctrlType)
         {
             var rectReturn = new PowerHouseRectangles(ctrlType, new SerializableRectangle(new Rectangle(0, 0, 150, 150)));
-            foreach (var rect in this.RectanglePositionList)
+            if (this.RectanglePositionList != null)
             {
-                if (rect.ControlType == ctrlType)
+                foreach (var rect in this.RectanglePositionList)
                 {
-                    rectReturn = rect.getPwhRectByType(ctrlType);
-                }
+                    if (rect.ControlType == ctrlType)
+                    {
+                        rectReturn = rect.getPwhRectByType(ctrlType);
+                    }
 
+                }
             }
             return rectReturn;
         }
@@ -242,6 +252,16 @@ namespace ArcherTools_0._0._1.cfg
                     {
                         Debug.WriteLine("sheet count is different");
                         return true;
+                    }
+                    else
+                    {
+                        foreach (var sheetName in this.ExcelSheetNames)
+                        {
+                            if (!config.ExcelSheetNames.Contains(sheetName))
+                            {
+                                return true;
+                            }
+                        }
                     }
                 }
                 else

@@ -34,6 +34,7 @@
             sendItems_btn = new Button();
             itemValues_Box = new TextBox();
             lines_label = new Label();
+            selectedLn_Label = new Label();
             SuspendLayout();
             // 
             // title_Label
@@ -88,7 +89,7 @@
             sendItems_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             sendItems_btn.FlatStyle = FlatStyle.Flat;
             sendItems_btn.ForeColor = SystemColors.ButtonFace;
-            sendItems_btn.Location = new Point(167, 457);
+            sendItems_btn.Location = new Point(168, 473);
             sendItems_btn.Margin = new Padding(25, 3, 25, 3);
             sendItems_btn.Name = "sendItems_btn";
             sendItems_btn.Size = new Size(61, 21);
@@ -114,11 +115,21 @@
             // 
             lines_label.AutoSize = true;
             lines_label.ForeColor = SystemColors.ButtonHighlight;
-            lines_label.Location = new Point(12, 457);
+            lines_label.Location = new Point(12, 454);
             lines_label.Name = "lines_label";
             lines_label.Size = new Size(46, 15);
             lines_label.TabIndex = 9;
             lines_label.Text = "Lines: 0";
+            // 
+            // selectedLn_Label
+            // 
+            selectedLn_Label.AutoSize = true;
+            selectedLn_Label.ForeColor = SystemColors.ButtonHighlight;
+            selectedLn_Label.Location = new Point(12, 476);
+            selectedLn_Label.Name = "selectedLn_Label";
+            selectedLn_Label.Size = new Size(88, 15);
+            selectedLn_Label.TabIndex = 10;
+            selectedLn_Label.Text = "Selected Line: 0";
             // 
             // ItemDumpingGUI
             // 
@@ -126,7 +137,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
             CancelButton = close_Btn;
-            ClientSize = new Size(406, 480);
+            ClientSize = new Size(406, 497);
+            Controls.Add(selectedLn_Label);
             Controls.Add(lines_label);
             Controls.Add(sendItems_btn);
             Controls.Add(close_Btn);
@@ -149,5 +161,6 @@
         private Button sendItems_btn;
         private TextBox itemValues_Box;
         private Label lines_label;
+        private Label selectedLn_Label;
     }
 }
