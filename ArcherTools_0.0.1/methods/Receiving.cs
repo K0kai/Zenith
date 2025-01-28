@@ -665,9 +665,9 @@ namespace ArcherTools_0._0._1.methods
 
             PowerHouseRectangles pwhRect1 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.PowerHouseIcons));
             PowerHouseRectangles pwhRect2 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ItemSearchWindow));
-            PowerHouseRectangles pwhRect3 = rcvConfig.getRectByType(ControlType.ReceiptLineWindow);
-            PowerHouseRectangles pwhRect4 = rcvConfig.getRectByType(ControlType.ItemConfigurationWindow);
-            PowerHouseRectangles pwhRect5 = rcvConfig.getRectByType(ControlType.ItemMaintenanceWindow);
+            PowerHouseRectangles pwhRect3 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ReceiptLineWindow));
+            PowerHouseRectangles pwhRect4 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ItemConfigurationWindow));
+            PowerHouseRectangles pwhRect5 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ItemMaintenanceWindow));
 
 
             List<PowerHouseRectangles> pwhList = new List<PowerHouseRectangles> { pwhRect1, pwhRect2 };
@@ -708,14 +708,14 @@ namespace ArcherTools_0._0._1.methods
             newRcvCfg.addMousePosition(pwhRect4);
             newRcvCfg.addMousePosition(pwhRect5);
             if (saveChanges == DialogResult.Yes)
-            {
+           {
                 
-                if (ConfigData._receivingConfig.ConfigIsDifferent(newRcvCfg))
-                {
+               if (ConfigData._receivingConfig.ConfigIsDifferent(newRcvCfg))
+               {
                     ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
                     cfgData.PrepareForSerialization();
                     ConfigData.SerializeConfigData();
-                }
+               }
             }
 
             DialogResult excelConfirmation = MessageBox.Show("Lastly, we are going to set up your excel that will be used for the item configurations", "Last Step", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
