@@ -1,7 +1,9 @@
 ﻿using ArcherTools_0._0._1.boxes;
 using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.classes;
 using ArcherTools_0._0._1.excel;
 using ArcherTools_0._0._1.methods;
+using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
 
@@ -9,10 +11,12 @@ namespace ArcherTools_0._0._1.forms
 {
     public partial class ReceivingGUI : Form
     {
+        
         private string _title;
         private string _desc;
         private string statusDefaultText;
         public static ReceivingGUI _instance;
+        internal static Form containerListForm;
         private Point mouseDownLocation;
         public ReceivingGUI(string title, string desc)
         {
@@ -21,7 +25,7 @@ namespace ArcherTools_0._0._1.forms
             _desc = desc;
             statusDefaultText = status_Label.Text;
             _instance = this;
- 
+
             this.Load += onLoad;
             this.MouseDown += new MouseEventHandler(ReceivingGUI_MouseDown);
             this.MouseMove += new MouseEventHandler(ReceivingGUI_MouseMove);
@@ -41,13 +45,14 @@ namespace ArcherTools_0._0._1.forms
             description_Label.Text = _desc;
             foreach (Control ctrl in this.Controls)
             {
-                if (ctrl.GetType() != typeof(Button)) {
+                if (ctrl.GetType() != typeof(Button))
+                {
                     ctrl.MouseDown += new MouseEventHandler(ReceivingGUI_MouseDown);
                     ctrl.MouseMove += new MouseEventHandler(ReceivingGUI_MouseMove);
                 }
                 if (ctrl.GetType() == typeof(Panel))
                 {
-                    foreach(Control ctrlInCtrl in ctrl.Controls)
+                    foreach (Control ctrlInCtrl in ctrl.Controls)
                     {
                         if (ctrlInCtrl.GetType() != typeof(Button))
                         {
@@ -55,7 +60,7 @@ namespace ArcherTools_0._0._1.forms
                             ctrlInCtrl.MouseMove += new MouseEventHandler(ReceivingGUI_MouseMove);
                         }
                     }
-                    
+
                 }
             }
         }
@@ -67,14 +72,14 @@ namespace ArcherTools_0._0._1.forms
             bool rects = Receiving.validateRectanglePositions();
             if (cfgdata && excel && rects)
             {
-                List<String> dibf =  DynamicInputBoxForm.Show("Please enter the container code, release and owner", new List<string> { "Container", "Release", "Owner" });
-                if (dibf != null && dibf.Count > 0)
-                {
-                    foreach (var streng in dibf)
-                    {
-                        Debug.WriteLine(streng);
-                    }
-                }
+                List<String> dibf = DynamicInputBoxForm.Show("Please enter the container code, release (in number) and owner", new List<string> { "Container", "Release", "Owner" });
+                //if (dibf != null && dibf.Count == 3)
+               // {
+                    //ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> releasesAndItems = new ConcurrentDictionary<int, ConcurrentDictionary<int, Item>>();
+                   // ConcurrentDictionary<int, Item> itemList = new ConcurrentDictionary<int, Item>();
+                   // releasesAndItems.TryAdd(int.Parse(dibf[1]), itemList);
+                    //Container newCtn = new Container(dibf[0], releasesAndItems);
+               // }
                 Receiving.MainCall();
             }
             else
@@ -86,7 +91,7 @@ namespace ArcherTools_0._0._1.forms
 
 
 
- 
+
 
         private void ReceivingGUI_MouseDown(object sender, MouseEventArgs e)
         {
@@ -113,9 +118,9 @@ namespace ArcherTools_0._0._1.forms
         }
         private void itemToExcel_Btn_Click(object sender, EventArgs e)
         {
-           
-                ItemDumpingGUI itDmpGui = new ItemDumpingGUI("Item Dumping GUI", "Follow the placeholder formatting pcs/case_depth/case_width/case_height/case_weight");
-                itDmpGui.Show();            
+
+            ItemDumpingGUI itDmpGui = new ItemDumpingGUI("Item Dumping GUI", "Follow the placeholder formatting pcs/case_depth/case_width/case_height/case_weight");
+            itDmpGui.Show();
         }
 
         public void updateStatusLabel(string text, int delay = 0)
@@ -153,9 +158,49 @@ namespace ArcherTools_0._0._1.forms
 
                 }
                 else { updateStatusLabel($"Status: Failure at data validation.\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation}"); throw new DataException($"Failed at validations:\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
 
+            }
+        }
+
+        private void viewCtn_btn_Click(object sender, EventArgs e)
+        {
+           if (containerListForm == null)
+            {
+                ColorConfig currentPreset = ColorPresets._instance.GetCurrentPreset();
+                if (currentPreset == null)
+                {
+                    status_Label.Text = "Warning" + ": Select a theme in settings before displaying containers.";
+                    return;
+                }
+                containerListForm = new Form();                
+                containerListForm.FormBorderStyle = FormBorderStyle.None;
+                containerListForm.BackColor = currentPreset.BackgroundColor;
+                containerListForm.Visible = true;
+                containerListForm.Size = this.FindForm().Size;
+                containerListForm.Location = new Point(this.FindForm().Location.X + this.FindForm().Size.Width, this.FindForm().Location.Y);
+
+                Label title = new Label();
+                title.Text = "Container List";
+                title.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+                title.ForeColor = currentPreset.PrimaryLabelColor;
+                title.BackColor = Color.Transparent;
+                title.Dock = DockStyle.Top;
+                title.AutoSize = false;
+                title.TextAlign = ContentAlignment.MiddleCenter;
+                containerListForm.Controls.Add(title);
+
+            }
+        }
+
+        private void receivingGUI_WindowMoved(object sender, EventArgs e)
+        {
+            if (containerListForm != null)
+            {
+                containerListForm.Location = containerListForm.Location = new Point(this.FindForm().Location.X + this.FindForm().Size.Width, this.FindForm().Location.Y);
+                Thread.Sleep(10);
             }
         }
     }

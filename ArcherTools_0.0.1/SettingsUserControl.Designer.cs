@@ -33,6 +33,7 @@
             pagelabel = new Label();
             label1 = new Label();
             toolsCfg_Panel = new Panel();
+            checkfordefault_checkbox = new CheckBox();
             autocreatecfg_checkbox = new CheckBox();
             panel1 = new Panel();
             presetList = new ListBox();
@@ -41,7 +42,7 @@
             label2 = new Label();
             return_Btn = new Button();
             presetDropTimer = new System.Windows.Forms.Timer(components);
-            checkfordefault_checkbox = new CheckBox();
+            overlayTip_lbl = new Label();
             toolsCfg_Panel.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -68,13 +69,12 @@
             // 
             // pagelabel
             // 
-            pagelabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
-            pagelabel.AutoSize = true;
+            pagelabel.Dock = DockStyle.Top;
             pagelabel.Font = new Font("Franklin Gothic Medium Cond", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             pagelabel.ForeColor = Color.Lavender;
-            pagelabel.Location = new Point(137, 0);
+            pagelabel.Location = new Point(0, 0);
             pagelabel.Name = "pagelabel";
-            pagelabel.Size = new Size(86, 30);
+            pagelabel.Size = new Size(396, 30);
             pagelabel.TabIndex = 25;
             pagelabel.Text = "Settings";
             pagelabel.TextAlign = ContentAlignment.TopCenter;
@@ -102,6 +102,17 @@
             toolsCfg_Panel.Name = "toolsCfg_Panel";
             toolsCfg_Panel.Size = new Size(136, 357);
             toolsCfg_Panel.TabIndex = 27;
+            // 
+            // checkfordefault_checkbox
+            // 
+            checkfordefault_checkbox.AutoSize = true;
+            checkfordefault_checkbox.ForeColor = Color.Lavender;
+            checkfordefault_checkbox.Location = new Point(13, 97);
+            checkfordefault_checkbox.Name = "checkfordefault_checkbox";
+            checkfordefault_checkbox.Size = new Size(118, 19);
+            checkfordefault_checkbox.TabIndex = 32;
+            checkfordefault_checkbox.Text = "Check for Default";
+            checkfordefault_checkbox.UseVisualStyleBackColor = true;
             // 
             // autocreatecfg_checkbox
             // 
@@ -139,6 +150,7 @@
             presetList.Name = "presetList";
             presetList.Size = new Size(116, 137);
             presetList.TabIndex = 30;
+            presetList.MouseDoubleClick += presetDoubleClick;
             // 
             // presetList_dropbtn
             // 
@@ -211,22 +223,24 @@
             presetDropTimer.Interval = 25;
             presetDropTimer.Tick += presetDropTimer_Tick;
             // 
-            // checkfordefault_checkbox
+            // overlayTip_lbl
             // 
-            checkfordefault_checkbox.AutoSize = true;
-            checkfordefault_checkbox.ForeColor = Color.Lavender;
-            checkfordefault_checkbox.Location = new Point(13, 97);
-            checkfordefault_checkbox.Name = "checkfordefault_checkbox";
-            checkfordefault_checkbox.Size = new Size(118, 19);
-            checkfordefault_checkbox.TabIndex = 32;
-            checkfordefault_checkbox.Text = "Check for Default";
-            checkfordefault_checkbox.UseVisualStyleBackColor = true;
+            overlayTip_lbl.Dock = DockStyle.Top;
+            overlayTip_lbl.Font = new Font("Arial Rounded MT Bold", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            overlayTip_lbl.ForeColor = Color.FromArgb(255, 128, 128);
+            overlayTip_lbl.Location = new Point(0, 30);
+            overlayTip_lbl.Name = "overlayTip_lbl";
+            overlayTip_lbl.Size = new Size(396, 18);
+            overlayTip_lbl.TabIndex = 29;
+            overlayTip_lbl.Text = "Press \"END\" key to move to next step";
+            overlayTip_lbl.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // SettingsUserControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
+            Controls.Add(overlayTip_lbl);
             Controls.Add(return_Btn);
             Controls.Add(panel1);
             Controls.Add(toolsCfg_Panel);
@@ -238,7 +252,6 @@
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -256,5 +269,6 @@
         private ListBox presetList;
         private CheckBox autocreatecfg_checkbox;
         private CheckBox checkfordefault_checkbox;
+        private Label overlayTip_lbl;
     }
 }

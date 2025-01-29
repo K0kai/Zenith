@@ -26,6 +26,12 @@ namespace ArcherTools_0._0._1.classes
             }
         }
 
+        public Container(string containerId, ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> releasesAndItems)
+        {
+            this.ContainerId = containerId;
+            this.ReleasesAndItems = releasesAndItems;
+        }
+
 
     }
 }

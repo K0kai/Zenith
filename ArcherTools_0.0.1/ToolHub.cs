@@ -40,6 +40,8 @@ namespace ArcherTools_0._0._1
             _mainForm = this.FindForm();
             ucSize = _mainForm.Size;
             this.Cursor = Cursors.Default;
+            connectToVpn_Btn.SetToolTip(vpnConnect_btn, "Obsolete function as of December 2024.");
+            preRcv_tooltip.SetToolTip(prercv_Btn, "Session under construction and currently unusable.");
             try
             {
                 if (!File.Exists(ConfigData.filePath))
@@ -152,8 +154,16 @@ namespace ArcherTools_0._0._1
                 mouseto = ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\defaultcfg.png", 0.99);
             });
             Task.WaitAll(findDefault);
-           
+
             MouseHandler.MouseMoveTo(mouseto);
+        }
+
+        private void prercv_Btn_Click(object sender, EventArgs e)
+        {
+            PreReceivingGUI rcvGUI = new PreReceivingGUI("Pre-Receiving Main GUI", "Available Options:");
+            this.FindForm().Visible = false;
+            rcvGUI.ShowDialog(this);
+            this.FindForm().Visible = true;
         }
     }
 }

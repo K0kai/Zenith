@@ -56,7 +56,7 @@ namespace ArcherTools_0._0._1.boxes
                     thisForm.Close();                  
                     break;
                 }
-                await Task.Delay(100);
+                await Task.Delay(50);
             }
         }
         private void GreatOverlay_Paint(object sender, PaintEventArgs e)

@@ -28,16 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             panel1 = new Panel();
             pagelabel = new Label();
             introlabel = new Label();
             copyrights = new LinkLabel();
             receiveBtn = new Button();
             ToolsListPanel = new FlowLayoutPanel();
-            vpnConnect_btn = new Button();
+            prercv_Btn = new Button();
             settings_Btn = new Button();
-            panel2 = new Panel();
+            vpnConnect_btn = new Button();
             testbutton = new Button();
+            panel2 = new Panel();
+            connectToVpn_Btn = new ToolTip(components);
+            preRcv_tooltip = new ToolTip(components);
             panel1.SuspendLayout();
             ToolsListPanel.SuspendLayout();
             SuspendLayout();
@@ -106,8 +110,7 @@
             receiveBtn.BackColor = Color.FromArgb(47, 56, 74);
             receiveBtn.BackgroundImageLayout = ImageLayout.None;
             receiveBtn.Cursor = Cursors.Hand;
-            receiveBtn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
-            receiveBtn.FlatAppearance.BorderSize = 0;
+            receiveBtn.FlatAppearance.BorderColor = Color.FromArgb(184, 44, 95);
             receiveBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             receiveBtn.FlatStyle = FlatStyle.Flat;
             receiveBtn.ForeColor = SystemColors.ButtonFace;
@@ -124,8 +127,9 @@
             // 
             ToolsListPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             ToolsListPanel.Controls.Add(receiveBtn);
-            ToolsListPanel.Controls.Add(vpnConnect_btn);
+            ToolsListPanel.Controls.Add(prercv_Btn);
             ToolsListPanel.Controls.Add(settings_Btn);
+            ToolsListPanel.Controls.Add(vpnConnect_btn);
             ToolsListPanel.Controls.Add(testbutton);
             ToolsListPanel.FlowDirection = FlowDirection.TopDown;
             ToolsListPanel.Location = new Point(218, 188);
@@ -133,25 +137,24 @@
             ToolsListPanel.Size = new Size(216, 435);
             ToolsListPanel.TabIndex = 6;
             // 
-            // vpnConnect_btn
+            // prercv_Btn
             // 
-            vpnConnect_btn.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
-            vpnConnect_btn.BackColor = Color.FromArgb(47, 56, 74);
-            vpnConnect_btn.BackgroundImageLayout = ImageLayout.None;
-            vpnConnect_btn.Cursor = Cursors.Hand;
-            vpnConnect_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
-            vpnConnect_btn.FlatAppearance.BorderSize = 0;
-            vpnConnect_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
-            vpnConnect_btn.FlatStyle = FlatStyle.Flat;
-            vpnConnect_btn.ForeColor = SystemColors.ButtonFace;
-            vpnConnect_btn.Location = new Point(45, 43);
-            vpnConnect_btn.Margin = new Padding(25, 3, 25, 3);
-            vpnConnect_btn.Name = "vpnConnect_btn";
-            vpnConnect_btn.Size = new Size(126, 25);
-            vpnConnect_btn.TabIndex = 4;
-            vpnConnect_btn.Text = "Connect to VPN";
-            vpnConnect_btn.UseVisualStyleBackColor = false;
-            vpnConnect_btn.Click += vpnConnect_btn_Click;
+            prercv_Btn.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            prercv_Btn.BackColor = Color.FromArgb(47, 56, 74);
+            prercv_Btn.BackgroundImageLayout = ImageLayout.None;
+            prercv_Btn.Cursor = Cursors.Hand;
+            prercv_Btn.FlatAppearance.BorderColor = Color.FromArgb(184, 44, 95);
+            prercv_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
+            prercv_Btn.FlatStyle = FlatStyle.Flat;
+            prercv_Btn.ForeColor = SystemColors.ButtonFace;
+            prercv_Btn.Location = new Point(25, 43);
+            prercv_Btn.Margin = new Padding(25, 3, 25, 3);
+            prercv_Btn.Name = "prercv_Btn";
+            prercv_Btn.Size = new Size(166, 34);
+            prercv_Btn.TabIndex = 7;
+            prercv_Btn.Text = "Pre-Receiving";
+            prercv_Btn.UseVisualStyleBackColor = false;
+            prercv_Btn.Click += prercv_Btn_Click;
             // 
             // settings_Btn
             // 
@@ -164,7 +167,7 @@
             settings_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             settings_Btn.FlatStyle = FlatStyle.Flat;
             settings_Btn.ForeColor = SystemColors.ButtonFace;
-            settings_Btn.Location = new Point(45, 74);
+            settings_Btn.Location = new Point(45, 83);
             settings_Btn.Margin = new Padding(25, 3, 25, 3);
             settings_Btn.Name = "settings_Btn";
             settings_Btn.Size = new Size(126, 25);
@@ -173,14 +176,25 @@
             settings_Btn.UseVisualStyleBackColor = false;
             settings_Btn.Click += settings_Btn_Click;
             // 
-            // panel2
+            // vpnConnect_btn
             // 
-            panel2.BackColor = Color.FromArgb(184, 44, 95);
-            panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(0, 673);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(670, 10);
-            panel2.TabIndex = 8;
+            vpnConnect_btn.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+            vpnConnect_btn.BackColor = Color.FromArgb(47, 56, 74);
+            vpnConnect_btn.BackgroundImageLayout = ImageLayout.None;
+            vpnConnect_btn.Cursor = Cursors.Hand;
+            vpnConnect_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            vpnConnect_btn.FlatAppearance.BorderSize = 0;
+            vpnConnect_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
+            vpnConnect_btn.FlatStyle = FlatStyle.Flat;
+            vpnConnect_btn.ForeColor = SystemColors.ButtonFace;
+            vpnConnect_btn.Location = new Point(45, 114);
+            vpnConnect_btn.Margin = new Padding(25, 3, 25, 3);
+            vpnConnect_btn.Name = "vpnConnect_btn";
+            vpnConnect_btn.Size = new Size(126, 25);
+            vpnConnect_btn.TabIndex = 4;
+            vpnConnect_btn.Text = "Connect to VPN";
+            vpnConnect_btn.UseVisualStyleBackColor = false;
+            vpnConnect_btn.Click += vpnConnect_btn_Click;
             // 
             // testbutton
             // 
@@ -193,7 +207,7 @@
             testbutton.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             testbutton.FlatStyle = FlatStyle.Flat;
             testbutton.ForeColor = SystemColors.ButtonFace;
-            testbutton.Location = new Point(45, 105);
+            testbutton.Location = new Point(45, 145);
             testbutton.Margin = new Padding(25, 3, 25, 3);
             testbutton.Name = "testbutton";
             testbutton.Size = new Size(126, 25);
@@ -201,6 +215,31 @@
             testbutton.Text = "TestButton";
             testbutton.UseVisualStyleBackColor = false;
             testbutton.Click += testbutton_Click;
+            // 
+            // panel2
+            // 
+            panel2.BackColor = Color.FromArgb(184, 44, 95);
+            panel2.Dock = DockStyle.Bottom;
+            panel2.Location = new Point(0, 673);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(670, 10);
+            panel2.TabIndex = 8;
+            // 
+            // connectToVpn_Btn
+            // 
+            connectToVpn_Btn.AutoPopDelay = 5000;
+            connectToVpn_Btn.InitialDelay = 200;
+            connectToVpn_Btn.ReshowDelay = 100;
+            connectToVpn_Btn.ToolTipIcon = ToolTipIcon.Warning;
+            connectToVpn_Btn.ToolTipTitle = "Warning";
+            // 
+            // preRcv_tooltip
+            // 
+            preRcv_tooltip.AutoPopDelay = 5000;
+            preRcv_tooltip.InitialDelay = 200;
+            preRcv_tooltip.ReshowDelay = 100;
+            preRcv_tooltip.ToolTipIcon = ToolTipIcon.Warning;
+            preRcv_tooltip.ToolTipTitle = "Warning";
             // 
             // ToolHub
             // 
@@ -230,5 +269,8 @@
         private Button settings_Btn;
         private Panel panel2;
         private Button testbutton;
+        private Button prercv_Btn;
+        private ToolTip connectToVpn_Btn;
+        private ToolTip preRcv_tooltip;
     }
 }

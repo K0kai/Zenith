@@ -17,8 +17,8 @@ namespace ArcherTools_0._0._1.methods
         internal static Point receiptLineBorder = new Point(18, 33);
         internal static Point receiptLnFirstLn = new Point(55, 52);
         internal static Point itemSearchBox = new Point(190, 90);
-        internal static Point itemMtnIcon = new Point(355, 11);
-        internal static Point itemCfgIcon = new Point(264, 10);
+        internal static Point itemMtnIcon = new Point(355, 54);
+        internal static Point itemCfgIcon = new Point(264, 54);
         internal static Point itemCfgPcsBox = new Point(160, 38);
 
         internal static Point rlReceiptLineBorder = new Point();
@@ -28,7 +28,7 @@ namespace ArcherTools_0._0._1.methods
         internal static Point rlItemCfgIcon = new Point();
         internal static Point rlItemCfgPcsBox = new Point();
 
-        internal static List<ControlType> requiredCtrlTypes = new List<ControlType> { ControlType.ReceiptLineWindow, ControlType.ItemSearchWindow, ControlType.PowerHouseIcons, ControlType.ItemConfigurationWindow };
+        internal static List<ControlType> requiredCtrlTypes = new List<ControlType> { ControlType.ReceiptLineWindow, ControlType.ItemSearchWindow, ControlType.PowerHouseUpperTab, ControlType.ItemConfigurationWindow };
 
         internal static List<Item> receivedItems = new List<Item>();
         internal static ConcurrentDictionary<int, Item> failedItems = new ConcurrentDictionary<int, Item>();
@@ -47,9 +47,10 @@ namespace ArcherTools_0._0._1.methods
             var validExcel = validateExcel();
             if (validConfig && validRect && validExcel)
             {
+                endProcess = false;
                 ReceivingConfig rcvCfg = ConfigData._receivingConfig;
                 ReceivingGUI rcvGui = ReceivingGUI._instance;
-                endProcess = checkForEnd().Result;
+
                 rcvGui.updateStatusLabel("Beginning receiving process...");
                 var autoCreateCfg = ConfigData._toolConfig.AutomaticCreateConfig;
                 var findDefaultCfg = ConfigData._toolConfig.CheckForDefault;
@@ -61,7 +62,7 @@ namespace ArcherTools_0._0._1.methods
                 else
                 {
                     MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    rcvGui.updateStatusLabel("Receiving Status: Failed.");
+                    rcvGui.updateStatusLabel("Receiving Status: Discontinued.");
                     return;
                 }
 
@@ -80,8 +81,8 @@ namespace ArcherTools_0._0._1.methods
                 rlReceiptLineBorder = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLineBorder);
                 rlReceiptLnFirstLn = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLnFirstLn);
                 rlItemSearchBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), itemSearchBox);
-                rlItemMtnIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseIcons), itemMtnIcon);
-                rlItemCfgIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseIcons), itemCfgIcon);
+                rlItemMtnIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemMtnIcon);
+                rlItemCfgIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemCfgIcon);
                 rlItemCfgPcsBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemConfigurationWindow), itemCfgPcsBox);
                 Point rlItemMtnClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Width - 20, rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.Y + 15);
                 Point rlItemCfgClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Width - 15, rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.Y + 15);
@@ -131,7 +132,11 @@ namespace ArcherTools_0._0._1.methods
                     inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
                     inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.MENU);
-
+                    Task.Run(() =>
+                    {
+                        _ = checkForEnd();
+                    });
+                    
                     for (int i = startLine; i <= cntSize; i++, iteration++)
                     {
                         try {
@@ -143,7 +148,8 @@ namespace ArcherTools_0._0._1.methods
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                             //var checkItem = iterateThroughListItems();
                             rcvGui.updateStatusLabel($"Receiving Item: {iteration} out of {cntRawSize}");
-                            var checkItem = iterateThroughListLines(cntSize, i);                            
+                            var checkItem = iterateThroughListLines(cntSize, i);  
+                            if (endProcess) { return; }
                             excelHandler.SetCell(mainWorkSheet, 10, 3, i);
                             Dictionary<string, string> currentItemInfo = new Dictionary<string, string>
                     {
@@ -316,7 +322,7 @@ namespace ArcherTools_0._0._1.methods
                             statusTxt += $"There were {failedItems.Count} failed items.";
                         foreach (var item in failedItems)
                         {
-                            Debug.WriteLine($"Item {item.Value.itemCode} failed at line {item.Key}.");
+                            Debug.WriteLine($"Item {item.Value.itemCode} failed at line: {item.Key}.");
                         }
                         }
                         rcvGui.updateStatusLabel(statusTxt);
@@ -378,26 +384,18 @@ namespace ArcherTools_0._0._1.methods
             }
         }
 
-        private static async Task<bool> checkForEnd()
-        {
-            const int VK_END = 0x23;
+        private static bool checkForEnd()        {
+            InputSimulator ips = new InputSimulator();            
             while (true)
             {
-                int keystate = GetAsyncKeyState(VK_END);
-
-                Thread.Sleep(25);
-
-                if ((keystate & 1) == 1)
+                
+                if (ips.InputDeviceState.IsHardwareKeyDown(InputSimulatorEx.Native.VirtualKeyCode.END))
                 {
                     Debug.WriteLine("pressed");
+                    endProcess = true;
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
-
-                
+                Thread.Sleep(25);
 
             }
             
@@ -498,22 +496,19 @@ namespace ArcherTools_0._0._1.methods
         {
             
             InputSimulator ips = new InputSimulator();
-            bool found = false;
             int numIteration = 0;
 
             while (true)
             {
-                try {              
-                found = false;
-                    if (numIteration >= 100)
-                    {
-                        throw new Exception("Iteration timeout");
-                    }
-                    else
-                    {
+                try {  
                         for (int i = 1; i <= containerSize; i++)
                         {
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.2));
+                        if (numIteration >= 100 || endProcess)
+                        {
+                            endProcess = true;
+                            throw new Exception("Iteration timeout");
+                        }
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.2));
                             ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
                             var copiedLine = int.Parse(Clipboard.GetText());
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.10));
@@ -554,10 +549,19 @@ namespace ArcherTools_0._0._1.methods
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
                             }
                         }
-                    } 
+                     
 
                 } catch (Exception ex)
                 {
+                    if (ex.Source == "InputSimulatorEx.dll")
+                    {
+                        Debug.WriteLine("its the ips");
+                        return false;
+                    }
+                    if (ex.Message == "Iteration timeout")
+                    {
+                        return false;
+                    }
                     Debug.WriteLine($"Catched Exception {ex.StackTrace}, {ex.Message} at line iterating");
                 }
 
@@ -663,87 +667,70 @@ namespace ArcherTools_0._0._1.methods
             ConfigData.setReceivingConfig(rcvConfig);
             
 
-            PowerHouseRectangles pwhRect1 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.PowerHouseIcons));
+            PowerHouseRectangles pwhRect1 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.PowerHouseUpperTab));
             PowerHouseRectangles pwhRect2 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ItemSearchWindow));
             PowerHouseRectangles pwhRect3 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ReceiptLineWindow));
             PowerHouseRectangles pwhRect4 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ItemConfigurationWindow));
             PowerHouseRectangles pwhRect5 = new PowerHouseRectangles(rcvConfig.getRectByType(ControlType.ItemMaintenanceWindow));
 
-
-            List<PowerHouseRectangles> pwhList = new List<PowerHouseRectangles> { pwhRect1, pwhRect2 };
-            List<PowerHouseRectangles> alteredRects = RectanglesOverlay.Show(pwhList, PwhMonitor);
             ReceivingConfig newRcvCfg = new ReceivingConfig(rcvConfig);
+            List<PowerHouseRectangles> pwhList = new List<PowerHouseRectangles> { pwhRect1, pwhRect2 };
+            List<PowerHouseRectangles> alteredRects = new List<PowerHouseRectangles>();
+            Task rectsPt1 = Task.Run(() =>
+            {
+                 alteredRects = RectanglesOverlay.Show(pwhList, PwhMonitor);
+            });
+            Task.WaitAll(rectsPt1);       
+            
 
             Thread.Sleep(1500);
-            DialogResult saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+            
             newRcvCfg.addMousePosition(pwhRect1);
             newRcvCfg.addMousePosition(pwhRect2);
-            if (saveChanges == DialogResult.Yes)
+            if (rcvConfig.ConfigIsDifferent(newRcvCfg))
             {
-                //Debug.WriteLine(rcvConfig.getRectByType(pwhRect2.ControlType).getRectangle());
-                
-                //Debug.WriteLine(newRcvCfg.getRectByType(pwhRect2.ControlType).getRectangle());
-                
-                if (rcvConfig.ConfigIsDifferent(newRcvCfg))
+                DialogResult saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                if (saveChanges == DialogResult.Yes)
                 {
-                    
+                    //Debug.WriteLine(rcvConfig.getRectByType(pwhRect2.ControlType).getRectangle());
+
+                    //Debug.WriteLine(newRcvCfg.getRectByType(pwhRect2.ControlType).getRectangle());
                     ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
                     cfgData.PrepareForSerialization();
                     ConfigData.SerializeConfigData();
+
+
                 }
-               
-            }
+
+            }           
             pwhList.Clear();
             alteredRects.Clear();
+
             pwhList.Add(pwhRect3);
             pwhList.Add(pwhRect4);
             pwhList.Add(pwhRect5);
+
             DialogResult nextStepConfirm = MessageBox.Show("Now we are going to step two.\nPlease open any container's Receipt Lines window, once open, press ok to continue", "Next Step", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button1);
             if (nextStepConfirm != DialogResult.OK) { return; }
-
-            alteredRects = RectanglesOverlay.Show(pwhList, PwhMonitor);
-
-            saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+            Task rectsPt2 = Task.Run(() =>
+            {
+                alteredRects = RectanglesOverlay.Show(pwhList, PwhMonitor);
+            });
+            Task.WaitAll(rectsPt2);            
             newRcvCfg.addMousePosition(pwhRect3);
             newRcvCfg.addMousePosition(pwhRect4);
             newRcvCfg.addMousePosition(pwhRect5);
-            if (saveChanges == DialogResult.Yes)
-           {
+            if (ConfigData._receivingConfig.ConfigIsDifferent(newRcvCfg))
+            {
                 
-               if (ConfigData._receivingConfig.ConfigIsDifferent(newRcvCfg))
-               {
-                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
-                    cfgData.PrepareForSerialization();
-                    ConfigData.SerializeConfigData();
-               }
-            }
-
-            DialogResult excelConfirmation = MessageBox.Show("Lastly, we are going to set up your excel that will be used for the item configurations", "Last Step", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-            if (excelConfirmation != DialogResult.OK)
-            {
-                return;
-            }
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Excel Sheet (*.xlsx)|*.xlsx|All Files(*.*)|*.*";
-            dialog.FilterIndex = 0;
-            dialog.Multiselect = false;
-            string filePath;
-            
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                filePath = dialog.FileName;
-                newRcvCfg.setExcelFilePath(filePath);
-
-                if (newRcvCfg.ConfigIsDifferent(ConfigData._receivingConfig))
+                DialogResult saveChanges = MessageBox.Show("Would you like to save these changes?", "Save", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                
+                if (saveChanges == DialogResult.Yes)
                 {
                     ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
                     cfgData.PrepareForSerialization();
                     ConfigData.SerializeConfigData();
                 }
-            }
-            else
-            {
-                return;
             }
         }
 

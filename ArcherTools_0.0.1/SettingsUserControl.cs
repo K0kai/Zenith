@@ -33,6 +33,8 @@ namespace ArcherTools_0._0._1
                 checkfordefault_checkbox.Checked = toolCfg.CheckForDefault;
 
             }
+          
+            overlayTip_lbl.Visible = false;
             updatePresetList();
 
 
@@ -41,7 +43,41 @@ namespace ArcherTools_0._0._1
 
         private void rcvSet_Btn_Click(object sender, EventArgs e)
         {
-            Receiving.TrainCall();
+            overlayTip_lbl.Visible = true;
+            Task receiveSet = Task.Run(() =>
+            {                
+                Receiving.TrainCall();
+            });
+            Task.WaitAll(receiveSet);
+            overlayTip_lbl.Visible = false;
+            ReceivingConfig newRcvCfg = new ReceivingConfig(ConfigData._receivingConfig);
+            DialogResult excelConfirmation = MessageBox.Show("Lastly, we are going to set up your excel that will be used for the item configurations", "Last Step", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+            if (excelConfirmation != DialogResult.OK)
+            {
+                return;
+            }
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Excel Sheet (*.xlsx)|*.xlsx|All Files(*.*)|*.*";
+            dialog.FilterIndex = 0;
+            dialog.Multiselect = false;
+            string filePath;
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                filePath = dialog.FileName;
+                newRcvCfg.setExcelFilePath(filePath);
+
+                if (newRcvCfg.ConfigIsDifferent(ConfigData._receivingConfig))
+                {
+                    ConfigData cfgData = new ConfigData(ConfigData._userConfig, newRcvCfg, ConfigData._toolConfig);
+                    cfgData.PrepareForSerialization();
+                    ConfigData.SerializeConfigData();
+                }
+            }
+            else
+            {
+                return;
+            }
         }
 
         private void return_Btn_Click(object sender, EventArgs e)
@@ -72,6 +108,18 @@ namespace ArcherTools_0._0._1
             if (presetInstance != null)
             {
                 presetList.Items.Add(presetInstance.Presets[0]);
+            }
+        }
+
+        private void presetDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (presetList.SelectedItem != null)
+                {
+                    ColorPresets._instance.SetPreset(presetList.SelectedItem);
+                    Debug.WriteLine(ColorPresets._instance.GetCurrentPreset().ToString());
+                }
             }
         }
 

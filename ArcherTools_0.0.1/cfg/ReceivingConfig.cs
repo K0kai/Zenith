@@ -25,7 +25,7 @@ namespace ArcherTools_0._0._1.cfg
         CasesDepthInputBox,
         CasesPerPalletInputBox,
         CasesPerTierInputBox,
-        PowerHouseIcons
+        PowerHouseUpperTab
     }
 
     [Serializable]

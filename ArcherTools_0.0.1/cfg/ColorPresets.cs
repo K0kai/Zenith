@@ -26,7 +26,7 @@ namespace ArcherTools_0._0._1.cfg
             }
         }
 
-        public void SetPreset(string PresetName)
+        public void SetPreset(object selPreset)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace ArcherTools_0._0._1.cfg
                 {
                     foreach (var preset in Presets)
                     {
-                        if (preset.PresetName == PresetName)
+                        if (preset == selPreset)
                         {
                             SelectedPreset = preset;
                         }
@@ -46,6 +46,11 @@ namespace ArcherTools_0._0._1.cfg
             {
                 Debug.WriteLine($"Failed to set preset.\nReason:{ex.Message}, {ex.StackTrace}");
             }
+        }
+
+        public ColorConfig GetCurrentPreset()
+        {
+            return SelectedPreset;
         }
 
 

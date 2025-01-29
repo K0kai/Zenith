@@ -28,14 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             close_Btn = new Button();
             startscript_Btn = new Button();
             panel1 = new Panel();
+            viewCtn_btn = new Button();
             status_Label = new Label();
             cleanExcel_Btn = new Button();
             itemToExcel_Btn = new Button();
             title_Label = new Label();
             description_Label = new Label();
+            viewCtn_Timer = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -78,14 +81,34 @@
             // panel1
             // 
             panel1.AutoSize = true;
+            panel1.Controls.Add(viewCtn_btn);
             panel1.Controls.Add(status_Label);
             panel1.Controls.Add(cleanExcel_Btn);
             panel1.Controls.Add(itemToExcel_Btn);
             panel1.Controls.Add(startscript_Btn);
             panel1.Location = new Point(12, 118);
             panel1.Name = "panel1";
-            panel1.Size = new Size(405, 291);
+            panel1.Size = new Size(432, 291);
             panel1.TabIndex = 6;
+            // 
+            // viewCtn_btn
+            // 
+            viewCtn_btn.BackColor = SystemColors.ControlDarkDark;
+            viewCtn_btn.BackgroundImageLayout = ImageLayout.None;
+            viewCtn_btn.Cursor = Cursors.Hand;
+            viewCtn_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            viewCtn_btn.FlatAppearance.BorderSize = 0;
+            viewCtn_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
+            viewCtn_btn.FlatStyle = FlatStyle.Flat;
+            viewCtn_btn.ForeColor = SystemColors.ButtonFace;
+            viewCtn_btn.Location = new Point(158, 53);
+            viewCtn_btn.Margin = new Padding(25, 3, 25, 3);
+            viewCtn_btn.Name = "viewCtn_btn";
+            viewCtn_btn.Size = new Size(101, 22);
+            viewCtn_btn.TabIndex = 10;
+            viewCtn_btn.Text = "View Containers";
+            viewCtn_btn.UseVisualStyleBackColor = false;
+            viewCtn_btn.Click += viewCtn_btn_Click;
             // 
             // status_Label
             // 
@@ -94,7 +117,7 @@
             status_Label.ForeColor = Color.Lavender;
             status_Label.Location = new Point(0, 247);
             status_Label.Name = "status_Label";
-            status_Label.Size = new Size(405, 44);
+            status_Label.Size = new Size(432, 44);
             status_Label.TabIndex = 9;
             status_Label.Text = "Status: Waiting...";
             status_Label.TextAlign = ContentAlignment.BottomCenter;
@@ -109,7 +132,7 @@
             cleanExcel_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             cleanExcel_Btn.FlatStyle = FlatStyle.Flat;
             cleanExcel_Btn.ForeColor = SystemColors.ButtonFace;
-            cleanExcel_Btn.Location = new Point(135, 102);
+            cleanExcel_Btn.Location = new Point(135, 134);
             cleanExcel_Btn.Margin = new Padding(25, 3, 25, 3);
             cleanExcel_Btn.Name = "cleanExcel_Btn";
             cleanExcel_Btn.Size = new Size(141, 28);
@@ -128,7 +151,7 @@
             itemToExcel_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             itemToExcel_Btn.FlatStyle = FlatStyle.Flat;
             itemToExcel_Btn.ForeColor = SystemColors.ButtonFace;
-            itemToExcel_Btn.Location = new Point(135, 57);
+            itemToExcel_Btn.Location = new Point(135, 89);
             itemToExcel_Btn.Margin = new Padding(25, 3, 25, 3);
             itemToExcel_Btn.Name = "itemToExcel_Btn";
             itemToExcel_Btn.Size = new Size(141, 28);
@@ -160,6 +183,7 @@
             description_Label.TabIndex = 8;
             description_Label.Text = "Description";
             description_Label.TextAlign = ContentAlignment.MiddleCenter;
+            description_Label.LocationChanged += receivingGUI_WindowMoved;
             // 
             // ReceivingGUI
             // 
@@ -192,5 +216,7 @@
         private Label title_Label;
         private Label description_Label;
         private Label status_Label;
+        private Button viewCtn_btn;
+        private System.Windows.Forms.Timer viewCtn_Timer;
     }
 }
