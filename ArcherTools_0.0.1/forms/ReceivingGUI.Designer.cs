@@ -39,6 +39,7 @@
             title_Label = new Label();
             description_Label = new Label();
             viewCtn_Timer = new System.Windows.Forms.Timer(components);
+            overlayTip_lbl = new Label();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -88,7 +89,7 @@
             panel1.Controls.Add(startscript_Btn);
             panel1.Location = new Point(12, 118);
             panel1.Name = "panel1";
-            panel1.Size = new Size(432, 291);
+            panel1.Size = new Size(404, 291);
             panel1.TabIndex = 6;
             // 
             // viewCtn_btn
@@ -112,12 +113,13 @@
             // 
             // status_Label
             // 
+            status_Label.AutoEllipsis = true;
             status_Label.Dock = DockStyle.Bottom;
             status_Label.Font = new Font("Segoe UI Semibold", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             status_Label.ForeColor = Color.Lavender;
             status_Label.Location = new Point(0, 247);
             status_Label.Name = "status_Label";
-            status_Label.Size = new Size(432, 44);
+            status_Label.Size = new Size(404, 44);
             status_Label.TabIndex = 9;
             status_Label.Text = "Status: Waiting...";
             status_Label.TextAlign = ContentAlignment.BottomCenter;
@@ -185,6 +187,18 @@
             description_Label.TextAlign = ContentAlignment.MiddleCenter;
             description_Label.LocationChanged += receivingGUI_WindowMoved;
             // 
+            // overlayTip_lbl
+            // 
+            overlayTip_lbl.Dock = DockStyle.Bottom;
+            overlayTip_lbl.Font = new Font("Arial Rounded MT Bold", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            overlayTip_lbl.ForeColor = Color.FromArgb(255, 128, 128);
+            overlayTip_lbl.Location = new Point(0, 408);
+            overlayTip_lbl.Name = "overlayTip_lbl";
+            overlayTip_lbl.Size = new Size(428, 18);
+            overlayTip_lbl.TabIndex = 30;
+            overlayTip_lbl.Text = "Press \"END\" key to stop at any moment";
+            overlayTip_lbl.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // ReceivingGUI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -192,6 +206,7 @@
             BackColor = Color.FromArgb(64, 64, 64);
             CancelButton = close_Btn;
             ClientSize = new Size(428, 426);
+            Controls.Add(overlayTip_lbl);
             Controls.Add(close_Btn);
             Controls.Add(description_Label);
             Controls.Add(title_Label);
@@ -218,5 +233,6 @@
         private Label status_Label;
         private Button viewCtn_btn;
         private System.Windows.Forms.Timer viewCtn_Timer;
+        internal Label overlayTip_lbl;
     }
 }

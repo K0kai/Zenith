@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using ArcherTools_0._0._1.boxes;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.classes;
@@ -30,16 +29,21 @@ namespace ArcherTools_0._0._1.methods
 
         internal static List<ControlType> requiredCtrlTypes = new List<ControlType> { ControlType.ReceiptLineWindow, ControlType.ItemSearchWindow, ControlType.PowerHouseUpperTab, ControlType.ItemConfigurationWindow };
 
+        internal static List<int> linesFromExcel;
         internal static List<Item> receivedItems = new List<Item>();
         internal static ConcurrentDictionary<int, Item> failedItems = new ConcurrentDictionary<int, Item>();
-        [DllImport("user32.dll")]
-        private static extern int GetAsyncKeyState(Int32 i);
 
         internal static int pwhMonitor;
         internal static int baseDelay = 500;
         internal static bool endProcess = false;
 
-
+        private static void PrepareToReceive(ExcelHandler exHandler, string worksheetName)
+        {
+            List<int> listLine = new List<int>();
+            var lineCol = exHandler.GetColumn(worksheetName, 3, 2);
+            listLine = lineCol.Select(int.Parse).ToList();
+            linesFromExcel = listLine;
+        }
         public static async void MainCall(int startLine = 1)
         {
             var validConfig = validateConfigData();
@@ -107,11 +111,16 @@ namespace ArcherTools_0._0._1.methods
                             mainWorkSheet = sheet;
                         }
                     }
+                    PrepareToReceive(excelHandler, rcvDumpSheet);
                     excelHandler.SetCell(mainWorkSheet, 10, 3, 1);
                     var cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);
                     excelHandler.SetCell(mainWorkSheet, 10, 3, 5);
                     cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);                   
-                    
+                    if (linesFromExcel == null || linesFromExcel.Count == 0)
+                    {
+                        rcvGui.updateStatusLabel("Receiving Interrupted: No lines were found in excel.");
+                        return;
+                    }
                     var iteration = 1;
                     if (startLine > 1)
                     {
@@ -136,10 +145,12 @@ namespace ArcherTools_0._0._1.methods
                     {
                         _ = checkForEnd();
                     });
-                    
-                    for (int i = startLine; i <= cntSize; i++, iteration++)
+
+
+                    foreach (var line in linesFromExcel)
                     {
                         try {
+                            rcvGui.updateVisibility(rcvGui.overlayTip_lbl, true);
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                             MouseHandler.MouseMoveTo(rlReceiptLnFirstLn);
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
@@ -148,9 +159,9 @@ namespace ArcherTools_0._0._1.methods
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                             //var checkItem = iterateThroughListItems();
                             rcvGui.updateStatusLabel($"Receiving Item: {iteration} out of {cntRawSize}");
-                            var checkItem = iterateThroughListLines(cntSize, i);  
-                            if (endProcess) { return; }
-                            excelHandler.SetCell(mainWorkSheet, 10, 3, i);
+                            var checkItem = iterateThroughListLines(cntSize, line);  
+                            if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+                            excelHandler.SetCell(mainWorkSheet, 10, 3, line);
                             Dictionary<string, string> currentItemInfo = new Dictionary<string, string>
                     {
                         {"number_pieces", excelHandler.GetCell(mainWorkSheet, 4, 3) },
@@ -165,8 +176,33 @@ namespace ArcherTools_0._0._1.methods
                         {"case_width", excelHandler.GetCell(mainWorkSheet , 17, 9) },
                         {"case_depth", excelHandler.GetCell(mainWorkSheet, 19, 9) }
                     };
+                            var skipItem = false;
                             var copiedItem = Clipboard.GetText();
-                            if (endProcess) { return; }
+                            foreach (var itemInfoValue in currentItemInfo)
+                            {
+                                if (itemInfoValue.Value == "#VALUE!" || itemInfoValue.Value == "#VALOR!" || itemInfoValue.Value == "#N/D")
+                                {                                    
+                                    var newFailedItem = new Item(copiedItem);
+                                    failedItems.TryAdd(line, newFailedItem);
+                                    skipItem = true;
+                                    Debug.WriteLine("Invalid Item.");
+                                    break;
+                                }
+                            }
+                            foreach (var item in receivedItems)
+                            {
+                                if (item.itemCode == copiedItem)
+                                {
+                                    skipItem = true;
+                                    Debug.WriteLine("Equal item, skipping.");
+                                }
+                            }
+                            if (skipItem)
+                            {                                
+                                iteration++;
+                                continue;
+                            }
+                            if (endProcess) { AfterEndProcess(rcvGui, line); return; }
                             if (checkItem)
                             {
                                 MouseHandler.MouseMoveTo(rlItemSearchBox); MouseHandler.MouseClick();
@@ -181,7 +217,7 @@ namespace ArcherTools_0._0._1.methods
                                 MouseHandler.MouseMoveTo(rlItemCfgIcon); MouseHandler.MouseClick();
 
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                if (endProcess) { return; }
+                                if (endProcess) { AfterEndProcess(rcvGui, line); return; }
                                 bool pcCheck;
                                 if (findDefaultCfg)
                                 {
@@ -194,22 +230,7 @@ namespace ArcherTools_0._0._1.methods
                                 //Start Item Config
                                 if (pcCheck)
                                 {
-                                    foreach (var itemInfoValue in currentItemInfo)
-                                    {
-                                        if (itemInfoValue.Value == "#VALUE!" || itemInfoValue.Value == "#VALOR!")
-                                        {
-                                            inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
-                                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                            MouseHandler.MouseMoveTo(rlItemCfgClose); MouseHandler.MouseClick();
-                                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                            MouseHandler.MouseMoveTo(rlItemMtnClose); MouseHandler.MouseClick();
-                                            var newFailedItem = new Item(copiedItem);
-                                            failedItems.TryAdd(i, newFailedItem);
-                                            i++;
-
-                                            continue;
-                                        }
-                                    }
+                                    
                                     //Tabbing
                                     tabBetween(3);
                                     inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
@@ -220,7 +241,7 @@ namespace ArcherTools_0._0._1.methods
                                     inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                     KeystrokeHandler.TypeText(currentItemInfo["cases_per_tier"]);
-                                    if (endProcess) { return; }                                   
+                                    if (endProcess) { AfterEndProcess(rcvGui, line);  return; }                                   
                                     tabBetween(7);
                                     KeystrokeHandler.TypeText(currentItemInfo["pallet_weight"]);
                                     tabBetween(2);
@@ -237,7 +258,7 @@ namespace ArcherTools_0._0._1.methods
                                     KeystrokeHandler.TypeText(currentItemInfo["case_width"]);
                                     tabBetween(2);
                                     KeystrokeHandler.TypeText(currentItemInfo["case_depth"]);
-                                    if (endProcess) { return; }
+                                    if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
 
                                 }
                                 else
@@ -245,14 +266,14 @@ namespace ArcherTools_0._0._1.methods
                                     if (!autoCreateCfg)
                                     {
                                         var newItem = new Item(copiedItem);
-                                        failedItems.TryAdd(i, newItem);
-                                        rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {i}");
+                                        failedItems.TryAdd(line, newItem);
+                                        rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {line}");
                                     }
                                     else
                                     {
-                                        if (endProcess) { return; }
+                                        if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
                                         CreateNewConfig(int.Parse(currentItemInfo["number_pieces"]), inputSimulator);
-                                        if (endProcess) { return; }
+                                        if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
                                         tabBetween(3);
                                         inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
@@ -283,14 +304,17 @@ namespace ArcherTools_0._0._1.methods
                                         KeystrokeHandler.TypeText(currentItemInfo["case_width"]);
                                         tabBetween(2);
                                         KeystrokeHandler.TypeText(currentItemInfo["case_depth"]);
-                                        if (endProcess) { return; }
+                                        if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
                                     }
                                 }
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
 
-                                if (endProcess) { return; }
+                                if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
 
                                 inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
+                                var newIt = new Item(copiedItem);
+                                receivedItems.Add(newIt);
+                                iteration++;
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                                 MouseHandler.MouseMoveTo(rlItemCfgClose); MouseHandler.MouseClick();
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
@@ -384,6 +408,11 @@ namespace ArcherTools_0._0._1.methods
             }
         }
 
+        private static void AfterEndProcess(ReceivingGUI rcvGuiInstance, int Line)
+        {
+            rcvGuiInstance.updateStatusLabel($"Receiving Interrupted: Stopped at Line: {Line}");
+            rcvGuiInstance.updateVisibility(rcvGuiInstance.overlayTip_lbl, false);
+        }
         private static bool checkForEnd()        {
             InputSimulator ips = new InputSimulator();            
             while (true)
@@ -414,7 +443,7 @@ namespace ArcherTools_0._0._1.methods
 
         private static bool checkPCsForDefault()
         {
-            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.8));
+            Thread.Sleep((int)Math.Ceiling(baseDelay * 1.2));
             for (int i = 0; i < 5; i++)
             {
                 Point mouseto = new Point(0, 0);
@@ -514,14 +543,24 @@ namespace ArcherTools_0._0._1.methods
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.10));
                             if (copiedLine == neededLine)
                             {
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.3));
+                            var lineMatch = false;
+                            for (int x = 1; x <= 5; x++)
+                            {
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
                                 ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.3));
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.2));
                                 copiedLine = int.Parse(Clipboard.GetText());
                                 if (copiedLine != neededLine)
                                 {
-                                   continue;
+                                    lineMatch = false;
+                                    break;
                                 }
+                                else { lineMatch = true;}
+                            }
+                            if (!lineMatch)
+                            {
+                                continue;
+                            }
                                 EnsureUnstuckKeys();
                                 Clipboard.Clear();
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
@@ -534,8 +573,7 @@ namespace ArcherTools_0._0._1.methods
                                     ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
                                 }                                
-                                var newIt = new Item(Clipboard.GetText());
-                                receivedItems.Add(newIt);
+                                
                                 return true;
                             }
                             else if (copiedLine < neededLine)
@@ -568,6 +606,8 @@ namespace ArcherTools_0._0._1.methods
             }
         }
 
+        
+
         private static void EnsureUnstuckKeys()
         {
             InputSimulator ips = new InputSimulator();
@@ -577,7 +617,7 @@ namespace ArcherTools_0._0._1.methods
             Thread.Sleep(200);
             ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
         }
-        private static bool iterateThroughListItems()
+       /* private static bool iterateThroughListItems()
         {
             int numIteration = 0;
             bool found = false;
@@ -625,7 +665,7 @@ namespace ArcherTools_0._0._1.methods
             }
 
             return found;
-        }     
+        }  */   
 
         public static void TrainCall()
         {
@@ -769,6 +809,7 @@ namespace ArcherTools_0._0._1.methods
             failedItems.Clear();
             receivedItems = new List<Item>();
             failedItems = new ConcurrentDictionary<int, Item>();
+            ReceivingGUI._instance.updateVisibility(ReceivingGUI._instance.overlayTip_lbl, false);
         }
 
         public static bool validateExcel()

@@ -3,18 +3,22 @@
     public class DynamicInputBoxForm : Form
     {
         private List<TextBox> boxes = new List<TextBox>();
+        private List<string> _boxNames;
         private Button okButton;
         private Button cancelButton;
         private List<string> userInputs = new List<String>();
+        private bool _preventDefault;
 
         public List<string> UserInputs => userInputs;
 
 
-        public DynamicInputBoxForm(string prompt, List<string> boxNames)
+        public DynamicInputBoxForm(string prompt, List<string> boxNames, bool preventDefault = false)
         {
             boxes = new List<TextBox>();
             int numberOfBoxes = boxNames.Count;
             userInputs = new List<string>();
+            _boxNames = boxNames;
+            _preventDefault = preventDefault;
 
             BackColor = ToolHub._mainForm.BackColor;
             this.Text = "Input";
@@ -71,7 +75,15 @@
         {
             foreach (var textBox in boxes)
             {
-                userInputs.Add(textBox.Text);
+                if (_preventDefault)
+                {
+                    if (!_boxNames.Contains(textBox.Text))
+                        userInputs.Add(textBox.Text);
+                }
+                else
+                {
+                    userInputs.Add(textBox.Text);
+                }
             }
 
             this.DialogResult = DialogResult.OK;
@@ -84,7 +96,7 @@
             this.Close();
         }
 
-        public static List<string> Show(string prompt, List<string> numberOfInputs)
+        public static List<string> Show(string prompt, List<string> numberOfInputs, bool preventDefault = false)
         {
             using (var inputBox = new DynamicInputBoxForm(prompt, numberOfInputs))
             {
