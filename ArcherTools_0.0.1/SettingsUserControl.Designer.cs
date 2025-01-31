@@ -36,6 +36,7 @@
             checkfordefault_checkbox = new CheckBox();
             autocreatecfg_checkbox = new CheckBox();
             panel1 = new Panel();
+            selPreset_lbl = new Label();
             presetList = new ListBox();
             presetList_dropbtn = new Button();
             voicelines_checkbtn = new CheckBox();
@@ -127,6 +128,7 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(selPreset_lbl);
             panel1.Controls.Add(presetList);
             panel1.Controls.Add(presetList_dropbtn);
             panel1.Controls.Add(voicelines_checkbtn);
@@ -136,6 +138,18 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(134, 357);
             panel1.TabIndex = 28;
+            // 
+            // selPreset_lbl
+            // 
+            selPreset_lbl.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            selPreset_lbl.AutoSize = true;
+            selPreset_lbl.BackColor = Color.Transparent;
+            selPreset_lbl.ForeColor = Color.WhiteSmoke;
+            selPreset_lbl.Location = new Point(25, 232);
+            selPreset_lbl.Name = "selPreset_lbl";
+            selPreset_lbl.Size = new Size(86, 15);
+            selPreset_lbl.TabIndex = 31;
+            selPreset_lbl.Text = "Selected: None";
             // 
             // presetList
             // 
@@ -270,5 +284,6 @@
         private CheckBox autocreatecfg_checkbox;
         private CheckBox checkfordefault_checkbox;
         private Label overlayTip_lbl;
+        private Label selPreset_lbl;
     }
 }

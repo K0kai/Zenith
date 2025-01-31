@@ -1,14 +1,15 @@
-﻿using ArcherTools_0._0._1.cfg;
+﻿using System.Diagnostics;
+using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.forms;
 using ArcherTools_0._0._1.methods;
-using System.Diagnostics;
 
 namespace ArcherTools_0._0._1
 {
     public partial class ToolHub : UserControl
     {
         private MessageManager messageManager;
+        public static string programVersion = "0.1.0";
         private PageHandler _pageHandler = PageHandler.GetInstance();
         internal ToolHub instance;
         public static Form _mainForm;
@@ -38,6 +39,17 @@ namespace ArcherTools_0._0._1
         private void userControlLoad(object sender, EventArgs e)
         {
             _mainForm = this.FindForm();
+            _mainForm.FormBorderStyle = FormBorderStyle.Sizable;
+            _mainForm.FormClosing += OnFormClosed;
+            this.pagelabel.Text = $"Zenith v{programVersion}";
+            if (Properties.Settings.Default.ToolHubLocation != new Point(0, 0))
+            {
+                _mainForm.Location = Properties.Settings.Default.ToolHubLocation;
+            }
+            if (Properties.Settings.Default.ToolHubSize != new Size(0, 0))
+            {
+                _mainForm.Size = Properties.Settings.Default.ToolHubSize;
+            }
             ucSize = _mainForm.Size;
             this.Cursor = Cursors.Default;
             connectToVpn_Btn.SetToolTip(vpnConnect_btn, "Obsolete function as of December 2024.");
@@ -55,6 +67,7 @@ namespace ArcherTools_0._0._1
                 introlabel.Text = messageManager.RandomizeMessage();
                 introlabel.Click += introlabel_Click;
                 CenterControl(introlabel);
+                CenterControl(pagelabel);
                 ColorConfig.GenerateDefaults();
 
             }
@@ -64,6 +77,12 @@ namespace ArcherTools_0._0._1
             }
         }
 
+        private void OnFormClosed(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.ToolHubSize = _mainForm.Size;
+            Properties.Settings.Default.ToolHubLocation = _mainForm.Location;            
+            Properties.Settings.Default.Save();
+        }
         private void OnInvalidated(object sender, EventArgs e)
         {
             if (instance != null) { return; }
@@ -126,8 +145,16 @@ namespace ArcherTools_0._0._1
 
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
-            ReceivingGUI rcvGUI = new ReceivingGUI("Receiving Main GUI", "Available Options:");
-            rcvGUI.Show();
+            if (ReceivingGUI._instance == null)
+            {
+                ReceivingGUI rcvGUI = new ReceivingGUI("Receiving Main GUI", "Available Options:");
+                rcvGUI.Show();
+            }
+            else
+            {
+                ReceivingGUI._instance.Focus();
+            }
+            
 
 
         }

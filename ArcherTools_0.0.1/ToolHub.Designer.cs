@@ -54,20 +54,20 @@
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(670, 114);
+            panel1.Size = new Size(509, 147);
             panel1.TabIndex = 7;
             // 
             // pagelabel
             // 
             pagelabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             pagelabel.AutoSize = true;
-            pagelabel.Font = new Font("Franklin Gothic Medium Cond", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            pagelabel.ForeColor = Color.Lavender;
-            pagelabel.Location = new Point(249, 90);
+            pagelabel.Font = new Font("Franklin Gothic Medium Cond", 20.25F);
+            pagelabel.ForeColor = Color.FromArgb(184, 44, 95);
+            pagelabel.Location = new Point(212, 55);
             pagelabel.Name = "pagelabel";
-            pagelabel.Size = new Size(159, 24);
+            pagelabel.Size = new Size(76, 34);
             pagelabel.TabIndex = 2;
-            pagelabel.Text = "List of available Tools";
+            pagelabel.Text = "Zenith";
             pagelabel.TextAlign = ContentAlignment.TopCenter;
             // 
             // introlabel
@@ -75,11 +75,11 @@
             introlabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             introlabel.AutoEllipsis = true;
             introlabel.AutoSize = true;
-            introlabel.Font = new Font("Franklin Gothic Medium Cond", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            introlabel.ForeColor = Color.FromArgb(184, 44, 95);
-            introlabel.Location = new Point(298, 41);
+            introlabel.Font = new Font("Franklin Gothic Medium Cond", 14.25F);
+            introlabel.ForeColor = Color.Lavender;
+            introlabel.Location = new Point(227, 123);
             introlabel.Name = "introlabel";
-            introlabel.Size = new Size(60, 34);
+            introlabel.Size = new Size(43, 24);
             introlabel.TabIndex = 1;
             introlabel.Text = "Sup.";
             introlabel.TextAlign = ContentAlignment.TopCenter;
@@ -94,7 +94,7 @@
             copyrights.ForeColor = SystemColors.ButtonHighlight;
             copyrights.LinkArea = new LinkArea(26, 5);
             copyrights.LinkColor = SystemColors.ActiveCaption;
-            copyrights.Location = new Point(223, 0);
+            copyrights.Location = new Point(142, 0);
             copyrights.Name = "copyrights";
             copyrights.Size = new Size(233, 21);
             copyrights.TabIndex = 0;
@@ -132,9 +132,9 @@
             ToolsListPanel.Controls.Add(vpnConnect_btn);
             ToolsListPanel.Controls.Add(testbutton);
             ToolsListPanel.FlowDirection = FlowDirection.TopDown;
-            ToolsListPanel.Location = new Point(218, 188);
+            ToolsListPanel.Location = new Point(137, 188);
             ToolsListPanel.Name = "ToolsListPanel";
-            ToolsListPanel.Size = new Size(216, 435);
+            ToolsListPanel.Size = new Size(216, 317);
             ToolsListPanel.TabIndex = 6;
             // 
             // prercv_Btn
@@ -220,9 +220,9 @@
             // 
             panel2.BackColor = Color.FromArgb(184, 44, 95);
             panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(0, 673);
+            panel2.Location = new Point(0, 555);
             panel2.Name = "panel2";
-            panel2.Size = new Size(670, 10);
+            panel2.Size = new Size(509, 10);
             panel2.TabIndex = 8;
             // 
             // connectToVpn_Btn
@@ -250,7 +250,7 @@
             Controls.Add(panel1);
             Controls.Add(ToolsListPanel);
             Name = "ToolHub";
-            Size = new Size(670, 683);
+            Size = new Size(509, 565);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ToolsListPanel.ResumeLayout(false);

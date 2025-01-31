@@ -41,23 +41,21 @@
             mainPanel.Dock = DockStyle.Fill;
             mainPanel.Location = new Point(0, 0);
             mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(630, 623);
+            mainPanel.Size = new Size(297, 396);
             mainPanel.TabIndex = 0;
             // 
             // MainArcherWindow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             BackColor = Color.FromArgb(64, 64, 64);
-            ClientSize = new Size(630, 623);
+            ClientSize = new Size(297, 396);
             Controls.Add(mainPanel);
             ForeColor = Color.Lavender;
-            FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "MainArcherWindow";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Archer Tools";
+            Text = "Zenith";
             ResumeLayout(false);
             PerformLayout();
         }

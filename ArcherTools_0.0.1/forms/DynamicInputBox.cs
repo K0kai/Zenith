@@ -67,7 +67,8 @@
             cancelButton.Click += CancelButton_Click;
             this.Controls.Add(cancelButton);
             this.StartPosition = FormStartPosition.CenterParent;
-
+            this.CancelButton = cancelButton;
+            this.AcceptButton = okButton;
 
         }
 

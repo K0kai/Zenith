@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Diagnostics;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.methods;
 
@@ -16,16 +6,22 @@ namespace ArcherTools_0._0._1
 {
     public partial class SettingsUserControl : UserControl
     {
+        public static SettingsUserControl _instance;
         public SettingsUserControl()
         {
             InitializeComponent();
             this.Load += onLoad;
+            
         }
 
         private void onLoad(object sender, EventArgs e)
         {
+            _instance = this;
+            this.FindForm().FormClosing += form_OnClosing;
             presetList.Height = presetList.MinimumSize.Height;
+            selPreset_lbl.Location = new Point(selPreset_lbl.Location.X, presetList_dropbtn.Location.Y + presetList_dropbtn.Size.Height + presetList.Size.Height + selPreset_lbl.Size.Height);
             var toolCfg = ConfigData._toolConfig;
+            this.Invalidated += form_Invalidated;
             if (toolCfg != null)
             {
                 voicelines_checkbtn.Checked = toolCfg.EnableVoiceLines;
@@ -33,12 +29,25 @@ namespace ArcherTools_0._0._1
                 checkfordefault_checkbox.Checked = toolCfg.CheckForDefault;
 
             }
-          
+            ColorPresets._instance.SetPreset(Properties.Settings.Default.SelectedPreset);          
             overlayTip_lbl.Visible = false;
             updatePresetList();
+            updateSelectedPreset();
 
 
 
+        }
+
+        private void form_OnClosing(object sender, FormClosingEventArgs e)
+        {
+            _instance.Dispose();
+            _instance = null;
+        }
+
+        private void form_Invalidated(object sender, EventArgs e)
+        {
+            updatePresetList();
+            updateSelectedPreset();
         }
 
         private void rcvSet_Btn_Click(object sender, EventArgs e)
@@ -105,9 +114,24 @@ namespace ArcherTools_0._0._1
         private void updatePresetList()
         {
             ColorPresets presetInstance = ColorPresets._instance;
-            if (presetInstance != null)
+            if (presetInstance != null && presetInstance.Presets.Count > 0)
             {
-                presetList.Items.Add(presetInstance.Presets[0]);
+                presetList.Items.Clear();
+                foreach (var presets in presetInstance.Presets) { 
+                presetList.Items.Add(presets);
+                }
+            }
+        }
+
+        private void updateSelectedPreset()
+        {
+            ColorPresets presetInstance = ColorPresets._instance;
+            if (presetInstance != null && presetInstance.Presets.Count > 0)
+            {
+                selPreset_lbl.Text = selPreset_lbl.Text.Split(':')[0] += $": {presetInstance.SelectedPreset}";
+                Properties.Settings.Default.SelectedPreset = presetInstance.SelectedPreset.PresetName;
+                Properties.Settings.Default.Save();
+
             }
         }
 
@@ -130,6 +154,7 @@ namespace ArcherTools_0._0._1
             if (!expand)
             {
                 presetList.Height += 15;
+                selPreset_lbl.Location = new Point(selPreset_lbl.Location.X, selPreset_lbl.Location.Y + 14);
                 if (presetList.Height >= presetList.MaximumSize.Height)
                 {
                     presetList.Height = presetList.MaximumSize.Height;
@@ -140,6 +165,7 @@ namespace ArcherTools_0._0._1
             else
             {
                 presetList.Height -= 15;
+                selPreset_lbl.Location = new Point(selPreset_lbl.Location.X, selPreset_lbl.Location.Y - 14);
                 if (presetList.Height <= presetList.MinimumSize.Height)
                 {
                     presetList.Height = presetList.MinimumSize.Height;

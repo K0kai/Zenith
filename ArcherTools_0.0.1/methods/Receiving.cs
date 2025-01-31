@@ -43,9 +43,9 @@ namespace ArcherTools_0._0._1.methods
             var lineCol = exHandler.GetColumn(worksheetName, 3, 2);
             listLine = lineCol.Select(int.Parse).ToList();
             listLine.Sort();
-            linesFromExcel = listLine;
-            
+            linesFromExcel = listLine;            
         }
+
         public static async void MainCall(int startLine = 1, bool descendingStart = false)
         {
             var validConfig = validateConfigData();
@@ -415,6 +415,39 @@ namespace ArcherTools_0._0._1.methods
             }
         }
 
+        private static Task UpdateReceivedItems(int Line, Item item, bool fail = false)
+        {
+            if (!fail)
+            {
+                try
+                {
+                    receivedItems.Add(item);
+                    if (Container.SelectedContainer != null)
+                    {
+                        var currentContainer = Container.SelectedContainer;
+                        currentContainer.AddItemToRelease(Container.SelectedRelease, Line, item);
+                    }
+                    return Task.CompletedTask;
+                }
+                catch (Exception ex)
+                {
+                    return Task.FromException(ex);
+                }
+            }
+            else
+            {
+                try
+                {
+                    failedItems.TryAdd(Line, item);
+                    return Task.CompletedTask;
+                }
+                catch (Exception ex)
+                {
+                    return Task.FromException(ex);
+                }
+            }
+        }
+
         private static void AfterEndProcess(ReceivingGUI rcvGuiInstance, int Line)
         {
             rcvGuiInstance.updateStatusLabel($"Receiving Interrupted: Stopped at Line: {Line}");
@@ -551,7 +584,7 @@ namespace ArcherTools_0._0._1.methods
                             if (copiedLine == neededLine)
                             {
                             var lineMatch = false;
-                            for (int x = 1; x <= 5; x++)
+                            for (int x = 1; x <= 3; x++)
                             {
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
                                 ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
@@ -607,7 +640,7 @@ namespace ArcherTools_0._0._1.methods
                     {
                         return false;
                     }
-                    Debug.WriteLine($"Catched Exception {ex.StackTrace}, {ex.Message} at line iterating");
+                    Debug.WriteLine($"Catched Exception {ex}, line:{Clipboard.GetText()} at line iterating");
                 }
 
             }

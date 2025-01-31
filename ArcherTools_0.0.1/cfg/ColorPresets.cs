@@ -1,18 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArcherTools_0._0._1.cfg
 {
     [Serializable]
-    internal class ColorPresets
+    internal class ColorPresets : INotifyPropertyChanged
     {
         public static ColorPresets _instance;
-        public static ColorConfig SelectedPreset { get; set; }
+        private ColorConfig selectedPreset;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public ColorConfig SelectedPreset
+        {
+            get
+            {
+                return selectedPreset;
+            }
+            set
+            {
+                lock (_instance)
+                {
+                    if (value != selectedPreset)
+                    {
+                        selectedPreset = value;
+                        NotifyPropertyChanged("SelectedPreset");
+                    }
+                }
+                }
+        }
+
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, e);
+            SettingsUserControl._instance.Invalidate();
+        }
+
         public List<ColorConfig> Presets { get; internal set; }
 
         public ColorPresets() { }
@@ -26,17 +55,35 @@ namespace ArcherTools_0._0._1.cfg
             }
         }
 
+    
+
         public void SetPreset(object selPreset)
         {
             try
             {
-                if (Presets.Count != 0)
+                if (selPreset.GetType() == typeof(ColorConfig))
                 {
-                    foreach (var preset in Presets)
+                    if (Presets.Count != 0)
                     {
-                        if (preset == selPreset)
+                        foreach (var preset in Presets)
                         {
-                            SelectedPreset = preset;
+                            if (preset == selPreset)
+                            {
+                                SelectedPreset = preset;
+                            }
+                        }
+                    }
+                }
+                else if (selPreset.GetType() == typeof(string))
+                {
+                    if (Presets.Count != 0)
+                    {
+                        foreach (var preset in Presets)
+                        {
+                            if (preset.PresetName == (string) selPreset)
+                            {
+                                SelectedPreset = preset;
+                            }
                         }
                     }
                 }

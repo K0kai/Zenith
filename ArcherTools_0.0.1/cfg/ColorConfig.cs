@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Emgu.CV.Structure;
+﻿using System.Xml.Serialization;
 
 namespace ArcherTools_0._0._1.cfg
 {
@@ -25,6 +19,8 @@ namespace ArcherTools_0._0._1.cfg
         public Color InputBoxColor { get; set; }
         [XmlIgnore]
         public Color TextColor { get; set; }
+        [XmlIgnore]
+        public Color DetailsColor {  get; set; }
 
         [XmlElement("BackgroundColor")]
         public int BackgroundColorAsARGB {
@@ -32,17 +28,37 @@ namespace ArcherTools_0._0._1.cfg
             set { BackgroundColor = Color.FromArgb(value); }
         }
         [XmlElement("PrimaryLabelColor")]
-        public int PrimaryLabelColorAsARGB { get; set; }
+        public int PrimaryLabelColorAsARGB {
+            get { return PrimaryLabelColor.ToArgb(); }
+            set { PrimaryLabelColor = Color.FromArgb(value); } }
         [XmlElement("SecondaryLabelColor")]
-        public int SecondaryLabelColorAsARGB { get; set; }
+        public int SecondaryLabelColorAsARGB {
+            get { return SecondaryLabelColor.ToArgb(); }
+            set { SecondaryLabelColor = Color.FromArgb(value); }
+        }
         [XmlElement("ButtonColor")]
-        public int ButtonColorAsARGB { get; set; }
+        public int ButtonColorAsARGB {
+            get { return ButtonColor.ToArgb(); }
+            set { ButtonColor = Color.FromArgb(value); }
+        }
         [XmlElement("InputBox")]
-        public int InputBoxColorAsARGB { get; set; }
+        public int InputBoxColorAsARGB {
+            get { return InputBoxColor.ToArgb(); }
+            set { InputBoxColor = Color.FromArgb(value); }
+        }
         [XmlElement("TextColor")]
-        public int TextColorAsARGB { get; set; }
+        public int TextColorAsARGB {
+            get { return TextColor.ToArgb(); }
+            set { TextColor = Color.FromArgb(value); }
+        }
+        [XmlElement("DetailsColor")]
+        public int DetailsColorAsARGB
+        {
+            get { return DetailsColor.ToArgb(); }
+            set { DetailsColor = Color.FromArgb(value); }
+        }
 
-        public ColorConfig(string presetName, Color backgroundColor, Color primaryLabelColor, Color secondaryLabelColor, Color buttonColor, Color inputBoxColor, Color textColor)
+        public ColorConfig(string presetName, Color backgroundColor, Color primaryLabelColor, Color secondaryLabelColor, Color buttonColor, Color inputBoxColor, Color textColor, Color detailsColor)
         {
             PresetName = presetName;
             BackgroundColor = backgroundColor;
@@ -51,6 +67,7 @@ namespace ArcherTools_0._0._1.cfg
             ButtonColor = buttonColor;
             InputBoxColor = inputBoxColor;
             TextColor = textColor;
+            DetailsColor = detailsColor;
         }
 
         internal static void GenerateDefaults()
@@ -61,8 +78,9 @@ namespace ArcherTools_0._0._1.cfg
             Color btnColor = Color.DimGray;
             Color inputBox = Color.FromArgb(40, 40, 40);
             Color textColor = Color.WhiteSmoke;
+            Color detailsColor = Color.FromArgb(184, 44, 95);
             string presetName = "Dark";
-            ColorConfig defaultDark = new ColorConfig(presetName, bgColor, primaryLblColor, secondaryLblColor, btnColor, inputBox, textColor);
+            ColorConfig defaultDark = new ColorConfig(presetName, bgColor, primaryLblColor, secondaryLblColor, btnColor, inputBox, textColor, detailsColor);
             ColorPresets initPresetList = new ColorPresets(new List<ColorConfig> {defaultDark});
         }
 
