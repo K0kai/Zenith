@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ArcherTools_0._0._1.classes
     {
-    internal class Item
+    public class Item
     {
         public string owner {  get; set; }
         public string style {  get; set; }

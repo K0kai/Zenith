@@ -42,9 +42,11 @@ namespace ArcherTools_0._0._1.methods
             List<int> listLine = new List<int>();
             var lineCol = exHandler.GetColumn(worksheetName, 3, 2);
             listLine = lineCol.Select(int.Parse).ToList();
+            listLine.Sort();
             linesFromExcel = listLine;
+            
         }
-        public static async void MainCall(int startLine = 1)
+        public static async void MainCall(int startLine = 1, bool descendingStart = false)
         {
             var validConfig = validateConfigData();
             var validRect = validateRectanglePositions();
@@ -58,6 +60,7 @@ namespace ArcherTools_0._0._1.methods
                 rcvGui.updateStatusLabel("Beginning receiving process...");
                 var autoCreateCfg = ConfigData._toolConfig.AutomaticCreateConfig;
                 var findDefaultCfg = ConfigData._toolConfig.CheckForDefault;
+                
 
                 if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
                 {
@@ -110,6 +113,10 @@ namespace ArcherTools_0._0._1.methods
                         {
                             mainWorkSheet = sheet;
                         }
+                    }
+                    if (descendingStart)
+                    {
+                        linesFromExcel.Reverse();
                     }
                     PrepareToReceive(excelHandler, rcvDumpSheet);
                     excelHandler.SetCell(mainWorkSheet, 10, 3, 1);

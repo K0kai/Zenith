@@ -127,9 +127,8 @@ namespace ArcherTools_0._0._1
         private void receiveBtn_Click_1(object sender, EventArgs e)
         {
             ReceivingGUI rcvGUI = new ReceivingGUI("Receiving Main GUI", "Available Options:");
-            this.FindForm().Visible = false;
-            rcvGUI.ShowDialog(this);
-            this.FindForm().Visible = true;
+            rcvGUI.Show();
+
 
         }
 

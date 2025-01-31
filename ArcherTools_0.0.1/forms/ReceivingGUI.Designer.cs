@@ -70,7 +70,7 @@
             startscript_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             startscript_Btn.FlatStyle = FlatStyle.Flat;
             startscript_Btn.ForeColor = SystemColors.ButtonFace;
-            startscript_Btn.Location = new Point(126, 3);
+            startscript_Btn.Location = new Point(73, 3);
             startscript_Btn.Margin = new Padding(25, 3, 25, 3);
             startscript_Btn.Name = "startscript_Btn";
             startscript_Btn.Size = new Size(159, 39);
@@ -89,7 +89,7 @@
             panel1.Controls.Add(startscript_Btn);
             panel1.Location = new Point(12, 118);
             panel1.Name = "panel1";
-            panel1.Size = new Size(404, 291);
+            panel1.Size = new Size(292, 291);
             panel1.TabIndex = 6;
             // 
             // viewCtn_btn
@@ -102,7 +102,7 @@
             viewCtn_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             viewCtn_btn.FlatStyle = FlatStyle.Flat;
             viewCtn_btn.ForeColor = SystemColors.ButtonFace;
-            viewCtn_btn.Location = new Point(158, 53);
+            viewCtn_btn.Location = new Point(105, 53);
             viewCtn_btn.Margin = new Padding(25, 3, 25, 3);
             viewCtn_btn.Name = "viewCtn_btn";
             viewCtn_btn.Size = new Size(101, 22);
@@ -119,7 +119,7 @@
             status_Label.ForeColor = Color.Lavender;
             status_Label.Location = new Point(0, 247);
             status_Label.Name = "status_Label";
-            status_Label.Size = new Size(404, 44);
+            status_Label.Size = new Size(292, 44);
             status_Label.TabIndex = 9;
             status_Label.Text = "Status: Waiting...";
             status_Label.TextAlign = ContentAlignment.BottomCenter;
@@ -134,7 +134,7 @@
             cleanExcel_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             cleanExcel_Btn.FlatStyle = FlatStyle.Flat;
             cleanExcel_Btn.ForeColor = SystemColors.ButtonFace;
-            cleanExcel_Btn.Location = new Point(135, 134);
+            cleanExcel_Btn.Location = new Point(82, 134);
             cleanExcel_Btn.Margin = new Padding(25, 3, 25, 3);
             cleanExcel_Btn.Name = "cleanExcel_Btn";
             cleanExcel_Btn.Size = new Size(141, 28);
@@ -153,7 +153,7 @@
             itemToExcel_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             itemToExcel_Btn.FlatStyle = FlatStyle.Flat;
             itemToExcel_Btn.ForeColor = SystemColors.ButtonFace;
-            itemToExcel_Btn.Location = new Point(135, 89);
+            itemToExcel_Btn.Location = new Point(82, 89);
             itemToExcel_Btn.Margin = new Padding(25, 3, 25, 3);
             itemToExcel_Btn.Name = "itemToExcel_Btn";
             itemToExcel_Btn.Size = new Size(141, 28);
@@ -169,7 +169,7 @@
             title_Label.ForeColor = Color.Lavender;
             title_Label.Location = new Point(0, 0);
             title_Label.Name = "title_Label";
-            title_Label.Size = new Size(428, 46);
+            title_Label.Size = new Size(336, 46);
             title_Label.TabIndex = 7;
             title_Label.Text = "Title";
             title_Label.TextAlign = ContentAlignment.MiddleCenter;
@@ -181,7 +181,7 @@
             description_Label.ForeColor = Color.Lavender;
             description_Label.Location = new Point(0, 46);
             description_Label.Name = "description_Label";
-            description_Label.Size = new Size(428, 42);
+            description_Label.Size = new Size(336, 42);
             description_Label.TabIndex = 8;
             description_Label.Text = "Description";
             description_Label.TextAlign = ContentAlignment.MiddleCenter;
@@ -194,7 +194,7 @@
             overlayTip_lbl.ForeColor = Color.FromArgb(255, 128, 128);
             overlayTip_lbl.Location = new Point(0, 408);
             overlayTip_lbl.Name = "overlayTip_lbl";
-            overlayTip_lbl.Size = new Size(428, 18);
+            overlayTip_lbl.Size = new Size(336, 18);
             overlayTip_lbl.TabIndex = 30;
             overlayTip_lbl.Text = "Press \"END\" key to stop at any moment";
             overlayTip_lbl.TextAlign = ContentAlignment.MiddleCenter;
@@ -205,7 +205,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
             CancelButton = close_Btn;
-            ClientSize = new Size(428, 426);
+            ClientSize = new Size(336, 426);
             Controls.Add(overlayTip_lbl);
             Controls.Add(close_Btn);
             Controls.Add(description_Label);
@@ -216,6 +216,7 @@
             StartPosition = FormStartPosition.CenterParent;
             Text = "ReceivingGUI";
             TopMost = true;
+            LocationChanged += receivingGUI_WindowMoved;
             panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();

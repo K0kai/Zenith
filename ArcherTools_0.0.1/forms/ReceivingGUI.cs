@@ -3,6 +3,7 @@ using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.classes;
 using ArcherTools_0._0._1.excel;
 using ArcherTools_0._0._1.methods;
+using SixLabors.ImageSharp.PixelFormats;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
@@ -11,13 +12,14 @@ namespace ArcherTools_0._0._1.forms
 {
     public partial class ReceivingGUI : Form
     {
-        
+
         private string _title;
         private string _desc;
         private string statusDefaultText;
         public static ReceivingGUI _instance;
         internal static Form containerListForm;
         private Point mouseDownLocation;
+        internal bool containerWindowEnabled = false;
         public ReceivingGUI(string title, string desc)
         {
             InitializeComponent();
@@ -83,9 +85,9 @@ namespace ArcherTools_0._0._1.forms
             var boxNames = new List<string> { "Container", "Release", "Owner" };
             if (cfgdata && excel && rects)
             {
-                List<String> dibf = DynamicInputBoxForm.Show("Please enter the container code, release (in number) and owner",boxNames , true);
+                List<String> dibf = DynamicInputBoxForm.Show("Please enter the container code, release (in number) and owner", boxNames, true);
                 var isValid = true;
-                
+
                 if (dibf != null && dibf.Count == 3)
                 {
                     foreach (var thing in dibf)
@@ -95,13 +97,14 @@ namespace ArcherTools_0._0._1.forms
                             isValid = false;
                         }
                     }
-                    if (isValid) {
+                    if (isValid)
+                    {
                         ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> releasesAndItems = new ConcurrentDictionary<int, ConcurrentDictionary<int, Item>>();
                         ConcurrentDictionary<int, Item> itemList = new ConcurrentDictionary<int, Item>();
                         releasesAndItems.TryAdd(int.Parse(dibf[1]), itemList);
                         Container newCtn = new Container(dibf[0], releasesAndItems);
                     }
-                   
+
                 }
                 Receiving.MainCall();
             }
@@ -190,7 +193,7 @@ namespace ArcherTools_0._0._1.forms
 
         private void viewCtn_btn_Click(object sender, EventArgs e)
         {
-           if (containerListForm == null)
+            if (containerListForm == null)
             {
                 ColorConfig currentPreset = ColorPresets._instance.GetCurrentPreset();
                 if (currentPreset == null)
@@ -198,12 +201,16 @@ namespace ArcherTools_0._0._1.forms
                     status_Label.Text = "Warning" + ": Select a theme in settings before displaying containers.";
                     return;
                 }
-                containerListForm = new Form();                
+                containerListForm = new Form();
                 containerListForm.FormBorderStyle = FormBorderStyle.None;
                 containerListForm.BackColor = currentPreset.BackgroundColor;
-                containerListForm.Visible = true;
+                containerListForm.Visible = false;
                 containerListForm.Size = new Size(this.FindForm().Size.Width - this.FindForm().Size.Width * 1 / 4, this.FindForm().Size.Height);
+                containerListForm.MaximumSize = containerListForm.Size;
+                containerListForm.MinimumSize = new Size(0, containerListForm.Size.Height);
+                containerListForm.Visible = true;
                 containerListForm.Location = new Point(this.FindForm().Location.X + this.FindForm().Size.Width, this.FindForm().Location.Y);
+                containerListForm.TopMost = true;
 
                 Label title = new Label();
                 title.Name = "title_label";
@@ -214,29 +221,90 @@ namespace ArcherTools_0._0._1.forms
                 title.Dock = DockStyle.Top;
                 title.AutoSize = false;
                 title.TextAlign = ContentAlignment.MiddleCenter;
-                
+
 
                 Panel mainPanel = new Panel();
                 mainPanel.BackColor = Color.Transparent;
                 mainPanel.Name = "mainPanel";
                 mainPanel.Visible = true;
-                mainPanel.Size = new Size(containerListForm.Size.Width - 20, containerListForm.Size.Height - (containerListForm.Size.Height * 1 / 3));
+                mainPanel.Size = new Size(containerListForm.Size.Width - 20, containerListForm.Size.Height - (containerListForm.Size.Height * 1 / 4));
                 mainPanel.Location = new Point(7, 100);
                 mainPanel.BorderStyle = BorderStyle.FixedSingle;
 
                 ListBox containerList = new ListBox();
                 containerList.Name = "containerList_listbox";
-                containerList.Size = new Size(250, 200);
+                containerList.Size = new Size((int)Math.Ceiling(containerListForm.Size.Width * 0.75), (int)Math.Ceiling(containerListForm.Size.Height * 0.6));
                 containerList.Visible = true;
-                containerList.Location = new Point(mainPanel.Location.X + (int)Math.Round(mainPanel.Location.X * 2.25), mainPanel.Location.Y - (int)Math.Round(mainPanel.Location.Y * 0.8));
+                containerList.Location = new Point(mainPanel.Location.X + (int)Math.Round(mainPanel.Location.X * 2.2), mainPanel.Location.Y - (int)Math.Round(mainPanel.Location.Y * 0.8));
                 containerList.BackColor = currentPreset.InputBoxColor;
                 containerList.ForeColor = currentPreset.TextColor;
 
+                Button closeButton = new Button();
+                closeButton.Name = "closeButton_btn";
+                closeButton.BackColor = Color.FromArgb(184, 44, 95);
+                closeButton.ForeColor = currentPreset.TextColor;
+                closeButton.Text = "X";
+                closeButton.Size = new Size(22, 23);
+                closeButton.Location = new Point(containerListForm.Size.Width - closeButton.Size.Width, 0);
+                closeButton.Visible = true;
+                closeButton.FlatStyle = FlatStyle.Flat;
+                closeButton.FlatAppearance.BorderSize = 0;
+
+                Button addContainer = new Button();
+                addContainer.Name = "addCtn_btn";
+                addContainer.BackColor = currentPreset.ButtonColor; addContainer.ForeColor = currentPreset.TextColor;
+                addContainer.Text = "+";
+                addContainer.Font = new Font("Segoe UI", 7.5f);
+                addContainer.Size = new Size(108, 20);
+                addContainer.Location = new Point((int)Math.Round((containerList.Size.Width / 2.0) * 0.25), containerList.Size.Height + 7);
+                addContainer.FlatAppearance.BorderSize = 0;
+                addContainer.FlatStyle = FlatStyle.Flat;
+                addContainer.AutoSize = true;
+                addContainer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                addContainer.FlatAppearance.MouseOverBackColor = Color.YellowGreen;
+                addContainer.Cursor = Cursors.Hand;
+                addContainer.MouseClick += addContainer_Clicked;
+
+                Button delContainer = new Button();
+                delContainer.Name = "delCtn_btn";
+                delContainer.BackColor = currentPreset.ButtonColor; delContainer.ForeColor = currentPreset.TextColor;
+                delContainer.Text = "-";
+                delContainer.Font = new Font("Segoe UI", 7.5f);
+                delContainer.Size = new Size(108, 20);
+                delContainer.Location = new Point(containerList.Size.Width, containerList.Size.Height + 7);
+                delContainer.FlatAppearance.BorderSize = 0;
+                delContainer.FlatStyle = FlatStyle.Flat;
+                delContainer.AutoSize = true;
+                delContainer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                delContainer.FlatAppearance.MouseOverBackColor = Color.IndianRed;
+                delContainer.Cursor = Cursors.Hand;
+
+
+
                 containerListForm.Controls.Add(title);
                 containerListForm.Controls.Add(mainPanel);
+                containerListForm.Controls.Add(closeButton);
+                mainPanel.Controls.Add(addContainer);
+                mainPanel.Controls.Add(delContainer);
+
                 mainPanel.Controls.Add(containerList);
+                closeButton.BringToFront();
+                containerWindowEnabled = true;
 
 
+            }
+            else
+            {
+                if (containerWindowEnabled)
+                {
+                    containerListForm.Visible = false;
+                    containerWindowEnabled = false;
+                }
+                else
+                {
+                    containerListForm.Visible = true;
+                    containerWindowEnabled = true;
+                }
             }
         }
 
@@ -248,5 +316,48 @@ namespace ArcherTools_0._0._1.forms
                 Thread.Sleep(10);
             }
         }
+
+        private static void UpdateContainerList()
+        {
+            if (containerListForm != null)
+            {
+                Control[] FindBox = containerListForm.Controls.Find("containerList_listbox", true);
+                ListBox listBox = (ListBox) FindBox[0];
+                foreach(var cont in ArcherTools_0._0._1.classes.Container.AllContainers)
+                {
+                    if(!listBox.Items.Contains(cont)){
+                        listBox.Items.Add(cont);
+                    }
+                }
+            }
+        }
+
+        private void addContainer_Clicked(object sender, EventArgs e)
+        {
+            var boxNames = new List<string> { "Container", "Release", "Owner" };
+            List<String> dibf = DynamicInputBoxForm.Show("Please enter the container code, release (in number) and owner", boxNames, true);
+            var isValid = true;
+
+            if (dibf != null && dibf.Count == 3)
+            {
+                foreach (var thing in dibf)
+                {
+                    if (boxNames.Contains(thing))
+                    {
+                        isValid = false;
+                    }
+                }
+                if (isValid)
+                {
+                    ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> releasesAndItems = new ConcurrentDictionary<int, ConcurrentDictionary<int, Item>>();
+                    ConcurrentDictionary<int, Item> itemList = new ConcurrentDictionary<int, Item>();
+                    releasesAndItems.TryAdd(int.Parse(dibf[1]), itemList);
+                    Container newCtn = new Container(dibf[0], releasesAndItems);
+                    ArcherTools_0._0._1.classes.Container.AddContainer(newCtn);
+                    UpdateContainerList();
+                }
+            }
+        }
     }
 }
+

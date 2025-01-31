@@ -20,6 +20,7 @@ namespace ArcherTools_0._0._1.cfg
         private static string documentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         private static string appCfgMainFolder = Path.Combine(documentsFolder, "Archer Tools");
         private static string appCfgInnerFolder = Path.Combine(appCfgMainFolder, "Zenith");
+        internal static string appContainersFolder = Path.Combine(appCfgInnerFolder, "Containers");
 
         public static string directoryPath = appCfgInnerFolder;
         public static string fileName = "Config.xml";
@@ -76,6 +77,10 @@ namespace ArcherTools_0._0._1.cfg
             if (!Directory.Exists(appCfgInnerFolder))
             {
                 Directory.CreateDirectory(appCfgInnerFolder);
+            }
+            if (!Directory.Exists(appContainersFolder))
+            {
+                Directory.CreateDirectory(appContainersFolder);
             }
         }
 
