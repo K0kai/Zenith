@@ -137,7 +137,7 @@
             status_Label.ForeColor = Color.Lavender;
             status_Label.Location = new Point(0, 247);
             status_Label.Name = "status_Label";
-            status_Label.Size = new Size(292, 44);
+            status_Label.Size = new Size(312, 44);
             status_Label.TabIndex = 9;
             status_Label.Text = "Status: Waiting...";
             status_Label.TextAlign = ContentAlignment.BottomCenter;
@@ -171,7 +171,7 @@
             panel1.Controls.Add(startscript_Btn);
             panel1.Location = new Point(12, 118);
             panel1.Name = "panel1";
-            panel1.Size = new Size(292, 291);
+            panel1.Size = new Size(312, 291);
             panel1.TabIndex = 6;
             // 
             // description_Label

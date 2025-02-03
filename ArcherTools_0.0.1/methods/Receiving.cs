@@ -201,7 +201,7 @@ namespace ArcherTools_0._0._1.methods
                                 if (item.itemCode == copiedItem)
                                 {
                                     skipItem = true;
-                                    Debug.WriteLine("Equal item, skipping.");
+                                    Debug.WriteLine("Equal Item, skipping.");
                                 }
                             }
                             if (skipItem)
@@ -332,7 +332,14 @@ namespace ArcherTools_0._0._1.methods
                         catch(Exception ex)
                         {
                             rcvGui.updateStatusLabel($"Status: An error ocurred, ending receiving now\nDetails: {ex.StackTrace}\n{ex.Message}");
-                            receivingCleanUp();
+                            if (failedItems.Count <= 0)
+                            {
+                                receivingCleanUp();
+                            }
+                            else
+                            {
+                                receivingCleanUp(false);
+                            }
                             return;
                         }
                         }
@@ -415,17 +422,17 @@ namespace ArcherTools_0._0._1.methods
             }
         }
 
-        private static Task UpdateReceivedItems(int Line, Item item, bool fail = false)
+        private static Task UpdateReceivedItems(int Line, Item Item, bool fail = false)
         {
             if (!fail)
             {
                 try
                 {
-                    receivedItems.Add(item);
+                    receivedItems.Add(Item);
                     if (Container.SelectedContainer != null)
                     {
                         var currentContainer = Container.SelectedContainer;
-                        currentContainer.AddItemToRelease(Container.SelectedRelease, Line, item);
+                        currentContainer.AddItemToRelease(Container.SelectedRelease, Line, Item);
                     }
                     return Task.CompletedTask;
                 }
@@ -438,7 +445,7 @@ namespace ArcherTools_0._0._1.methods
             {
                 try
                 {
-                    failedItems.TryAdd(Line, item);
+                    failedItems.TryAdd(Line, Item);
                     return Task.CompletedTask;
                 }
                 catch (Exception ex)
@@ -677,12 +684,12 @@ namespace ArcherTools_0._0._1.methods
                 }
                 else
                 {
-                    foreach( var item in receivedItems)
+                    foreach( var Item in receivedItems)
                     {
-                        if (item.itemCode.Trim() == copiedItem.Trim())
+                        if (Item.itemCode.Trim() == copiedItem.Trim())
                         {
                             found = true;
-                            Debug.WriteLine($"Already received item: {item.itemCode} vs copied item: {copiedItem}");
+                            Debug.WriteLine($"Already received Item: {Item.itemCode} vs copied Item: {copiedItem}");
                         }
                     }
                     if (found == true)
@@ -842,13 +849,16 @@ namespace ArcherTools_0._0._1.methods
             }
         }
 
-        internal static void receivingCleanUp()
+        internal static void receivingCleanUp(bool clearFailed = true)
         {
             endProcess = false;
-            receivedItems.Clear();
-            failedItems.Clear();
+            receivedItems.Clear();            
             receivedItems = new List<Item>();
-            failedItems = new ConcurrentDictionary<int, Item>();
+            if (clearFailed)
+            {
+                failedItems.Clear();
+                failedItems = new ConcurrentDictionary<int, Item>();
+            }
             ReceivingGUI._instance.updateVisibility(ReceivingGUI._instance.overlayTip_lbl, false);
         }
 

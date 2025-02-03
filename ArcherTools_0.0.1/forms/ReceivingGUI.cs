@@ -185,15 +185,25 @@ namespace ArcherTools_0._0._1.forms
 
         private void viewCtn_btn_Click(object sender, EventArgs e)
         {
-            if (containerListForm == null)
+            ColorConfig currentPreset = ColorPresets._instance.GetCurrentPreset();
+            if (currentPreset == null)
+            {
+                status_Label.Text = "Warning" + ": Select a theme in settings before displaying containers.";
+                return;
+            }
+            if (ContainerListGUI._instance == null)
+            {
+                ContainerListGUI ctlgui = new ContainerListGUI("Container List GUI");
+                ctlgui.Show();
+            }
+            else
+            {
+                ContainerListGUI._instance.Focus();
+            }
+            if (ContainerListGUI._instance == null)
             {
                 ArcherTools_0._0._1.classes.Container.DeserializeAllContainers();
-                ColorConfig currentPreset = ColorPresets._instance.GetCurrentPreset();
-                if (currentPreset == null)
-                {
-                    status_Label.Text = "Warning" + ": Select a theme in settings before displaying containers.";
-                    return;
-                }
+               
                 containerListForm = new Form();
                 containerListForm.FormBorderStyle = FormBorderStyle.None;
                 containerListForm.BackColor = currentPreset.BackgroundColor;
