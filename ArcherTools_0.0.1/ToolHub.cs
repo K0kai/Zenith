@@ -50,6 +50,7 @@ namespace ArcherTools_0._0._1
             {
                 _mainForm.Size = Properties.Settings.Default.ToolHubSize;
             }
+            
             ucSize = _mainForm.Size;
             this.Cursor = Cursors.Default;
             connectToVpn_Btn.SetToolTip(vpnConnect_btn, "Obsolete function as of December 2024.");
@@ -69,6 +70,17 @@ namespace ArcherTools_0._0._1
                 CenterControl(introlabel);
                 CenterControl(pagelabel);
                 ColorConfig.GenerateDefaults();
+                if (!string.IsNullOrEmpty(Properties.Settings.Default.SelectedPreset))
+                {
+                    ColorPresets._instance.SetPreset(Properties.Settings.Default.SelectedPreset);
+                }
+                try
+                {
+                    classes.Container.DeserializeAllContainers();
+                }
+                catch (Exception ex) {
+                    Debug.WriteLine(ex.StackTrace);
+                }
 
             }
             catch (Exception ex)

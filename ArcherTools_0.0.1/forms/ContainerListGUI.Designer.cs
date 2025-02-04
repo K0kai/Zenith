@@ -60,7 +60,7 @@
             // panel1
             // 
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 369);
+            panel1.Location = new Point(0, 345);
             panel1.Name = "panel1";
             panel1.Size = new Size(370, 81);
             panel1.TabIndex = 10;
@@ -73,7 +73,7 @@
             panel2.Controls.Add(selectCtn_lbl);
             panel2.Controls.Add(containerList_listbox);
             panel2.Dock = DockStyle.Bottom;
-            panel2.Location = new Point(0, 94);
+            panel2.Location = new Point(0, 70);
             panel2.Name = "panel2";
             panel2.Size = new Size(370, 275);
             panel2.TabIndex = 11;
@@ -132,7 +132,7 @@
             release_cbbox.FormattingEnabled = true;
             release_cbbox.Location = new Point(65, 9);
             release_cbbox.Name = "release_cbbox";
-            release_cbbox.Size = new Size(27, 23);
+            release_cbbox.Size = new Size(49, 23);
             release_cbbox.TabIndex = 13;
             // 
             // release_lbl
@@ -213,7 +213,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
-            ClientSize = new Size(370, 450);
+            ClientSize = new Size(370, 426);
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(title_Label);

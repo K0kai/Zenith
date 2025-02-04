@@ -185,7 +185,6 @@
             description_Label.TabIndex = 8;
             description_Label.Text = "Description";
             description_Label.TextAlign = ContentAlignment.MiddleCenter;
-            description_Label.LocationChanged += receivingGUI_WindowMoved;
             // 
             // title_Label
             // 
@@ -216,7 +215,6 @@
             StartPosition = FormStartPosition.CenterParent;
             Text = "ReceivingGUI";
             TopMost = true;
-            LocationChanged += receivingGUI_WindowMoved;
             panel1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();

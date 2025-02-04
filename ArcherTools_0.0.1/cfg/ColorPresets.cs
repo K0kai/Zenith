@@ -39,7 +39,10 @@ namespace ArcherTools_0._0._1.cfg
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null) handler(this, e);
-            SettingsUserControl._instance.Invalidate();
+            if (SettingsUserControl._instance != null)
+            {
+                SettingsUserControl._instance.Invalidate();
+            }
         }
 
         public List<ColorConfig> Presets { get; internal set; }

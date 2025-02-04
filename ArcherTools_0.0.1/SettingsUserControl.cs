@@ -7,10 +7,13 @@ namespace ArcherTools_0._0._1
     public partial class SettingsUserControl : UserControl
     {
         public static SettingsUserControl _instance;
+        private static BindingSource presetBs;
         public SettingsUserControl()
         {
             InitializeComponent();
             this.Load += onLoad;
+            presetBs = new BindingSource();
+            presetBs.DataSource = ColorPresets._instance.Presets;
             
         }
 
@@ -22,6 +25,7 @@ namespace ArcherTools_0._0._1
             selPreset_lbl.Location = new Point(selPreset_lbl.Location.X, presetList_dropbtn.Location.Y + presetList_dropbtn.Size.Height + presetList.Size.Height + selPreset_lbl.Size.Height);
             var toolCfg = ConfigData._toolConfig;
             this.Invalidated += form_Invalidated;
+            this.presetList.DataSource = ColorPresets._instance.Presets;
             if (toolCfg != null)
             {
                 voicelines_checkbtn.Checked = toolCfg.EnableVoiceLines;
@@ -29,9 +33,8 @@ namespace ArcherTools_0._0._1
                 checkfordefault_checkbox.Checked = toolCfg.CheckForDefault;
 
             }
-            ColorPresets._instance.SetPreset(Properties.Settings.Default.SelectedPreset);          
+            
             overlayTip_lbl.Visible = false;
-            updatePresetList();
             updateSelectedPreset();
 
 
@@ -46,7 +49,6 @@ namespace ArcherTools_0._0._1
 
         private void form_Invalidated(object sender, EventArgs e)
         {
-            updatePresetList();
             updateSelectedPreset();
         }
 
@@ -111,21 +113,11 @@ namespace ArcherTools_0._0._1
             
         }
 
-        private void updatePresetList()
-        {
-            ColorPresets presetInstance = ColorPresets._instance;
-            if (presetInstance != null && presetInstance.Presets.Count > 0)
-            {
-                presetList.Items.Clear();
-                foreach (var presets in presetInstance.Presets) { 
-                presetList.Items.Add(presets);
-                }
-            }
-        }
 
         private void updateSelectedPreset()
         {
             ColorPresets presetInstance = ColorPresets._instance;
+            presetBs.ResetBindings(false);
             if (presetInstance != null && presetInstance.Presets.Count > 0)
             {
                 selPreset_lbl.Text = selPreset_lbl.Text.Split(':')[0] += $": {presetInstance.SelectedPreset}";

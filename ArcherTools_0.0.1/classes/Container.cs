@@ -1,15 +1,21 @@
 ﻿using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.forms;
+using MathNet.Numerics;
 
 namespace ArcherTools_0._0._1.classes
 {
-    public class Container
+    public class Container 
     {
+
+        private static Container selectedContainer;
         public static Container SelectedContainer { get; set; }
+
         public static int SelectedRelease {  get; set; }
         public static List<Container> AllContainers { get; set; }
         public string ContainerId { get; set; }
@@ -19,7 +25,9 @@ namespace ArcherTools_0._0._1.classes
         public int ExpectedSize { get; set; }
         public string ContainerStatus { get; set; }
 
+      
 
+       
 
         public ConcurrentDictionary<int, Item>? GetContainerItems(int release)
         {
@@ -48,6 +56,7 @@ namespace ArcherTools_0._0._1.classes
         {
             this.ContainerId = containerId;
             this.ReleasesAndItems = releasesAndItems;
+            UpdateContainerStatus();
         }
 
         public override string ToString()
@@ -62,16 +71,31 @@ namespace ArcherTools_0._0._1.classes
 
         public void UpdateContainerStatus()
         {
-            if (ReleasesAndItems.Count >= ExpectedSize)
+            if (SelectedContainer != null)
             {
-                ContainerStatus = "Complete";
-                return;
+                if (SelectedContainer != null && SelectedRelease == null)
+                {
+                    ContainerStatus = "No Release Selected";
+                    return;
+                }
+                else
+                {
+                    if (ReleasesAndItems[SelectedRelease].Count == 0)
+                    {
+                        ContainerStatus = "Empty";
+                        return;
+                    }
+                    else if (ReleasesAndItems[SelectedRelease].Count >= ExpectedSize)
+                    {
+                        ContainerStatus = "Complete";
+                    }
+                    else
+                    {
+                        ContainerStatus = "Incomplete";
+                    }
+                }
             }
-            if (ReleasesAndItems.Count < ExpectedSize)
-            {
-                ContainerStatus = "Incomplete";
-                return;
-            }
+            
         }
 
         public void SetExpectedSize(int expectedSize)
