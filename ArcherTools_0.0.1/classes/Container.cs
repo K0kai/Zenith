@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,14 +11,24 @@ using MathNet.Numerics;
 
 namespace ArcherTools_0._0._1.classes
 {
-    public class Container 
+    public class Container
     {
-
+        public static Container SelectedContainer
+        {
+            get => selectedContainer;
+            set
+            {
+                selectedContainer = value;
+                OnPropertyChanged(nameof(SelectedContainer));
+            }
+        }
+      
+   
         private static Container selectedContainer;
-        public static Container SelectedContainer { get; set; }
-
         public static int SelectedRelease {  get; set; }
-        public static List<Container> AllContainers { get; set; }
+        private static int selectedRelease;
+
+        public static List<Container> AllContainers { get; set; } = new List<Container>();
         public string ContainerId { get; set; }
 
         [JsonConverter(typeof(ConcurrentDictionaryConverter))]
@@ -25,10 +36,14 @@ namespace ArcherTools_0._0._1.classes
         public int ExpectedSize { get; set; }
         public string ContainerStatus { get; set; }
 
-      
+        public static event PropertyChangedEventHandler? StaticPropertyChanged;
 
-       
 
+
+        public static void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+        }
         public ConcurrentDictionary<int, Item>? GetContainerItems(int release)
         {
             try
@@ -42,7 +57,32 @@ namespace ArcherTools_0._0._1.classes
                 return null;
             }
         }
-
+        
+        public static void SetSelectedRelease(object? release)
+        {
+            try
+            {
+                var convSelectedRelease = int.Parse((string)release);
+                if (SelectedContainer != null)
+                {
+                    if (SelectedContainer.ReleasesAndItems != null)
+                    {
+                        foreach (var releases in SelectedContainer.ReleasesAndItems.Keys)
+                        {
+                            if (releases == convSelectedRelease)
+                            {
+                                SelectedRelease = convSelectedRelease;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.StackTrace);
+                Debug.WriteLine($"Failed to select release from string: {release}");
+            }
+        }
         public void AddItemToRelease(int release, int line, Item item)
         {
             if (this.ReleasesAndItems != null)
@@ -56,6 +96,10 @@ namespace ArcherTools_0._0._1.classes
         {
             this.ContainerId = containerId;
             this.ReleasesAndItems = releasesAndItems;
+            if (AllContainers == null)
+            {
+                AllContainers = new List<Container>();
+            }
             UpdateContainerStatus();
         }
 
@@ -80,18 +124,21 @@ namespace ArcherTools_0._0._1.classes
                 }
                 else
                 {
-                    if (ReleasesAndItems[SelectedRelease].Count == 0)
+                    if (SelectedContainer.ContainerId == this.ContainerId)
                     {
-                        ContainerStatus = "Empty";
-                        return;
-                    }
-                    else if (ReleasesAndItems[SelectedRelease].Count >= ExpectedSize)
-                    {
-                        ContainerStatus = "Complete";
-                    }
-                    else
-                    {
-                        ContainerStatus = "Incomplete";
+                        if (ReleasesAndItems[SelectedRelease].Count == 0)
+                        {
+                            ContainerStatus = "Empty";
+                            return;
+                        }
+                        else if (ReleasesAndItems[SelectedRelease].Count >= ExpectedSize)
+                        {
+                            ContainerStatus = "Complete";
+                        }
+                        else
+                        {
+                            ContainerStatus = "Incomplete";
+                        }
                     }
                 }
             }
@@ -121,7 +168,10 @@ namespace ArcherTools_0._0._1.classes
             AllContainers.Add(container);
             try
             {
-                ReceivingGUI.containerListForm.Invalidate();
+                if (ReceivingGUI.containerListForm != null)
+                {
+                    ReceivingGUI.containerListForm.Invalidate();
+                }
             }
             catch { }
         }

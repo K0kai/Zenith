@@ -45,7 +45,7 @@ namespace ArcherTools_0._0._1.cfg
             }
         }
 
-        public List<ColorConfig> Presets { get; internal set; }
+        public List<ColorConfig> Presets { get; internal set; } = new List<ColorConfig>();
 
         public ColorPresets() { }
 

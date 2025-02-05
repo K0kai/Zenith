@@ -13,7 +13,7 @@ namespace ArcherTools_0._0._1.forms
         public static Form _instanceForm;
         public static ContainerListGUI _instance;
         private static BindingSource containerBs = new BindingSource();
-        
+
         public ContainerListGUI(string title)
         {
             InitializeComponent();
@@ -22,6 +22,15 @@ namespace ArcherTools_0._0._1.forms
             this.VisibleChanged += ContainerListGUI_ShownOrVisible;
             this.Shown += ContainerListGUI_ShownOrVisible;
             this.containerList_listbox.MouseDoubleClick += containerList_Click;
+            this.release_cbbox.SelectionChangeCommitted += Release_cbbox_SelectionChangeCommitted;
+        }
+
+        private void Release_cbbox_SelectionChangeCommitted(object? sender, EventArgs e)
+        {
+            if (this.containerList_listbox.SelectedItem != null)
+            {
+                classes.Container.SetSelectedRelease(release_cbbox.SelectedItem);
+            }
         }
 
         private void ContainerListGUI_Load(object? sender, EventArgs e)
@@ -33,9 +42,6 @@ namespace ArcherTools_0._0._1.forms
             this.addCtn_btn.Click += addContainer_Clicked;
             this.delCtn_btn.Click += delContainer_Clicked;
             this.Invalidated += ContainerListGUI_Invalidated;
-
-            containerBs.DataSource = classes.Container.AllContainers;
-            this.containerList_listbox.DataSource = containerBs;
 
 
             Label title = title_Label;
@@ -56,6 +62,14 @@ namespace ArcherTools_0._0._1.forms
 
             Label selectedContainer = selectCtn_lbl;
             selectedContainer.ForeColor = currentPreset.TextColor;
+            containerBs.DataSource = classes.Container.AllContainers;
+            classes.Container.StaticPropertyChanged += Container_StaticPropertyChanged;
+            this.containerList_listbox.DataSource = containerBs;
+            this.Invalidate();
+        }
+
+        private void Container_StaticPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
             this.Invalidate();
         }
 
@@ -71,7 +85,9 @@ namespace ArcherTools_0._0._1.forms
         {
             UpdateContainerList();
             UpdateSelectedContainer();
+            Debug.WriteLine("deu bom");
         }
+
         private static void UpdateSelectedContainer()
         {
             if (_instanceForm != null)
@@ -82,6 +98,7 @@ namespace ArcherTools_0._0._1.forms
                 {
                     selectedLabel.Text = selectedLabel.Text.Split(':')[0] + $": {classes.Container.SelectedContainer.ToString()}";
                     var selectedContainer = classes.Container.SelectedContainer;
+                    _instance.release_cbbox.Items.Clear();
                     foreach (var release in selectedContainer.ReleasesAndItems)
                     {
                         _instance.release_cbbox.Items.Add(release.Key);
@@ -91,15 +108,20 @@ namespace ArcherTools_0._0._1.forms
                 else
                 {
                     selectedLabel.Text = selectedLabel.Text.Split(':')[0] + $": Nothing.";
+                    _instance.release_cbbox.Items.Clear();
+                    _instance.release_cbbox.SelectedItem = null;
                     _instance.status_lbl.Text = "Status: ";
+                    
                 }
             }
         }
+
 
         internal static void UpdateContainerList()
         {
             containerBs.ResetBindings(false);
         }
+
 
         private void ContainerListGUI_ShownOrVisible(object? sender, EventArgs e)
         {
