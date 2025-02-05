@@ -11,7 +11,8 @@ namespace ArcherTools_0._0._1.forms
     {
 
         public static Form _instanceForm;
-        public static ContainerListGUI _instance;
+        public static Form viewCfgForm;
+        public static ContainerListGUI _instance;        
         private static BindingSource containerBs = new BindingSource();
 
         public ContainerListGUI(string title)
@@ -62,15 +63,55 @@ namespace ArcherTools_0._0._1.forms
 
             Label selectedContainer = selectCtn_lbl;
             selectedContainer.ForeColor = currentPreset.TextColor;
+
             containerBs.DataSource = classes.Container.AllContainers;
             classes.Container.StaticPropertyChanged += Container_StaticPropertyChanged;
             this.containerList_listbox.DataSource = containerBs;
+
+            if (classes.Container.SelectedContainer != null)
+            {
+                this.containerList_listbox.SelectedItem = classes.Container.SelectedContainer;
+            }
+
             this.Invalidate();
+        }
+
+        private void SelectedContainer_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "ContainerStatus")
+            {
+                UpdateSelectedContainerStatus();
+                UpdateSelectedRelease();
+            }
+            if (e.PropertyName == "SelectedRelease")
+            {
+                UpdateSelectedRelease();
+            }
+            if (e.PropertyName == "ExpectedSize")
+            {
+                UpdateExpectedSize();
+            }
         }
 
         private void Container_StaticPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            this.Invalidate();
+
+            UpdateContainerList();
+            if (e.PropertyName == "SelectedContainer")
+            {
+                UpdateSelectedContainer();
+                if (classes.Container.SelectedContainer != null)
+                {
+                    classes.Container.SelectedContainer.PropertyChanged += SelectedContainer_PropertyChanged;
+                }
+                else
+                {
+                    if (_instance != null)
+                    {
+                        _instance.release_cbbox.Text = "";
+                    }
+                }
+            }
         }
 
         private void _instanceForm_FormClosed(object? sender, FormClosedEventArgs e)
@@ -85,7 +126,43 @@ namespace ArcherTools_0._0._1.forms
         {
             UpdateContainerList();
             UpdateSelectedContainer();
-            Debug.WriteLine("deu bom");
+        }
+
+        private static void UpdateSelectedContainerStatus()
+        {
+            if (_instanceForm != null)
+            {
+                if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
+                {
+                    _instance.status_lbl.Text = _instance.status_lbl.Text.Split(':')[0] + $": {classes.Container.SelectedContainer.ContainerStatus}";
+                }
+            }
+        }
+
+        private static void UpdateSelectedRelease()
+        {
+            if (_instanceForm != null)
+            {
+                if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
+                {
+                    _instance.release_cbbox.SelectedIndex = _instance.release_cbbox.Items.IndexOf(classes.Container.SelectedRelease);
+                }
+            }
+        }
+
+        private static void UpdateExpectedSize()
+        {
+            if (_instanceForm != null)
+            {
+                if (classes.Container.SelectedContainer != null)
+                {
+                    _instance.size_lbl.Text = _instance.size_lbl.Text.Split(':')[0] + $": {classes.Container.SelectedContainer.ExpectedSize} Items";
+                }
+                else
+                {
+                    _instance.size_lbl.Text = _instance.size_lbl.Text.Split(':')[0] + ":";
+                }
+            }
         }
 
         private static void UpdateSelectedContainer()
@@ -102,7 +179,6 @@ namespace ArcherTools_0._0._1.forms
                     foreach (var release in selectedContainer.ReleasesAndItems)
                     {
                         _instance.release_cbbox.Items.Add(release.Key);
-                        _instance.status_lbl.Text = _instance.status_lbl.Text.Split(':')[0] + $": {classes.Container.SelectedContainer.ContainerStatus}";
                     }
                 }
                 else
@@ -111,8 +187,9 @@ namespace ArcherTools_0._0._1.forms
                     _instance.release_cbbox.Items.Clear();
                     _instance.release_cbbox.SelectedItem = null;
                     _instance.status_lbl.Text = "Status: ";
-                    
+
                 }
+                UpdateExpectedSize();
             }
         }
 
@@ -176,10 +253,9 @@ namespace ArcherTools_0._0._1.forms
                     }
                     releasesAndItems.TryAdd(int.Parse(dibf[1]), itemList);
                     var newCtn = new Container(dibf[0], releasesAndItems);
-                    
+
                     classes.Container.AddContainer(newCtn);
                     newCtn.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, newCtn.ContainerId));
-                    _instanceForm.Invalidate();
                 }
             }
         }
@@ -197,11 +273,80 @@ namespace ArcherTools_0._0._1.forms
                 {
                     await classes.Container.DeleteContainerFileAsync(currentSelectedContainer);
                     classes.Container.RemoveContainer(currentSelectedContainer);
-                    _instanceForm.Invalidate();
                 }
             }
         }
 
+        private void viewCfg_btn_Click(object sender, EventArgs e)
+        {
+            ColorConfig currentPreset = ColorPresets._instance.GetCurrentPreset();
+            Form viewcfgform = new Form();
+            viewcfgform.Name = classes.Container.SelectedContainer.ToString() + "'s Configurations.";
+            viewcfgform.BackColor = currentPreset.BackgroundColor;
+            viewcfgform.FormBorderStyle = FormBorderStyle.None;
+            viewcfgform.TopMost = true;
+            viewcfgform.Size = new Size(500, 300);
 
+            Panel lowerPanel = new Panel();
+            lowerPanel.Dock = DockStyle.Bottom;
+            lowerPanel.Name = "lowerPanel";
+            lowerPanel.BorderStyle = BorderStyle.FixedSingle;
+
+            Button closeBtn = new Button();
+            closeBtn.Text = "X";
+            closeBtn.Size = new Size(22, 23);
+            closeBtn.AutoSize = true;
+            closeBtn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            closeBtn.BackColor = currentPreset.DetailsColor;
+            closeBtn.ForeColor = currentPreset.TextColor;
+            closeBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(currentPreset.DetailsColorAsARGB + 10);
+            closeBtn.FlatStyle = FlatStyle.Flat;
+            closeBtn.Location = new Point(viewcfgform.Size.Width - closeBtn.Size.Width - 3, 0);
+            closeBtn.FlatAppearance.BorderSize = 0;
+            
+
+            Panel upperPanel = new Panel();
+            upperPanel.Dock = DockStyle.Top;
+            upperPanel.Name = "upperPanel";
+            upperPanel.BorderStyle = BorderStyle.FixedSingle;
+
+            Label titleLabel = new Label();
+            titleLabel.Dock = DockStyle.Top;
+            titleLabel.AutoSize = false;
+            titleLabel.Text = $"Viewing Configurations for: {classes.Container.SelectedContainer.ToString()}";
+            titleLabel.Name = "title_Label";
+            titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            titleLabel.BackColor = Color.Transparent;
+            titleLabel.ForeColor = currentPreset.PrimaryLabelColor;
+            titleLabel.TextAlign = ContentAlignment.MiddleCenter;
+
+            DataGridView linesAndCfgs = new DataGridView();
+            linesAndCfgs.BackgroundColor = currentPreset.InputBoxColor;
+            linesAndCfgs.ForeColor = currentPreset.TextColor;
+            linesAndCfgs.Size = new Size(400, 200);
+            linesAndCfgs.Location = new Point(0, 10);
+            DataGridViewColumn linesColumn = new DataGridViewTextBoxColumn();
+            linesColumn.Name = "lineColumn";
+            linesColumn.HeaderText = "Lines";
+            linesColumn.DataPropertyName = "Lines";
+            linesColumn.ValueType = typeof(int);
+            DataGridViewColumn cfgColumn = new DataGridViewTextBoxColumn();
+            cfgColumn.Name = "cfgColumn";
+            cfgColumn.HeaderText = "Config";
+            cfgColumn.DataPropertyName = "Config";
+            cfgColumn.ValueType = typeof(int);
+            linesAndCfgs.Columns.Add(cfgColumn);
+            linesAndCfgs.Columns.Add(linesColumn);
+
+
+            upperPanel.Controls.Add(closeBtn);
+            viewcfgform.Controls.Add(upperPanel);
+            viewcfgform.Controls.Add(lowerPanel);
+            lowerPanel.Controls.Add(linesAndCfgs);
+            upperPanel.Controls.Add(titleLabel);
+            closeBtn.BringToFront();
+            viewCfgForm = viewcfgform;
+            viewcfgform.ShowDialog(this.FindForm());
+        }
     }
 }

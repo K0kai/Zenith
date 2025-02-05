@@ -41,6 +41,9 @@
             addCtn_btn = new Button();
             selectCtn_lbl = new Label();
             containerList_listbox = new ListBox();
+            viewCfg_btn = new Button();
+            viewItems_btn = new Button();
+            panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
             SuspendLayout();
@@ -59,6 +62,8 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(viewItems_btn);
+            panel1.Controls.Add(viewCfg_btn);
             panel1.Dock = DockStyle.Bottom;
             panel1.Location = new Point(0, 345);
             panel1.Name = "panel1";
@@ -95,8 +100,8 @@
             // 
             progress_lbl.AutoSize = true;
             progress_lbl.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            progress_lbl.ForeColor = Color.Lavender;
-            progress_lbl.Location = new Point(3, 89);
+            progress_lbl.ForeColor = Color.WhiteSmoke;
+            progress_lbl.Location = new Point(3, 90);
             progress_lbl.Name = "progress_lbl";
             progress_lbl.Size = new Size(64, 17);
             progress_lbl.TabIndex = 16;
@@ -107,8 +112,8 @@
             // 
             size_lbl.AutoSize = true;
             size_lbl.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            size_lbl.ForeColor = Color.Lavender;
-            size_lbl.Location = new Point(3, 63);
+            size_lbl.ForeColor = Color.WhiteSmoke;
+            size_lbl.Location = new Point(3, 64);
             size_lbl.Name = "size_lbl";
             size_lbl.Size = new Size(34, 17);
             size_lbl.TabIndex = 15;
@@ -119,8 +124,8 @@
             // 
             status_lbl.AutoSize = true;
             status_lbl.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            status_lbl.ForeColor = Color.Lavender;
-            status_lbl.Location = new Point(3, 36);
+            status_lbl.ForeColor = Color.WhiteSmoke;
+            status_lbl.Location = new Point(3, 37);
             status_lbl.Name = "status_lbl";
             status_lbl.Size = new Size(53, 17);
             status_lbl.TabIndex = 14;
@@ -129,8 +134,10 @@
             // 
             // release_cbbox
             // 
+            release_cbbox.BackColor = SystemColors.Window;
+            release_cbbox.FlatStyle = FlatStyle.Flat;
             release_cbbox.FormattingEnabled = true;
-            release_cbbox.Location = new Point(65, 9);
+            release_cbbox.Location = new Point(65, 10);
             release_cbbox.Name = "release_cbbox";
             release_cbbox.Size = new Size(49, 23);
             release_cbbox.TabIndex = 13;
@@ -139,8 +146,8 @@
             // 
             release_lbl.AutoSize = true;
             release_lbl.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            release_lbl.ForeColor = Color.Lavender;
-            release_lbl.Location = new Point(3, 10);
+            release_lbl.ForeColor = Color.WhiteSmoke;
+            release_lbl.Location = new Point(3, 11);
             release_lbl.Name = "release_lbl";
             release_lbl.Size = new Size(56, 17);
             release_lbl.TabIndex = 12;
@@ -208,6 +215,47 @@
             containerList_listbox.Size = new Size(149, 199);
             containerList_listbox.TabIndex = 0;
             // 
+            // viewCfg_btn
+            // 
+            viewCfg_btn.AutoSize = true;
+            viewCfg_btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            viewCfg_btn.BackColor = SystemColors.ControlDarkDark;
+            viewCfg_btn.BackgroundImageLayout = ImageLayout.None;
+            viewCfg_btn.Cursor = Cursors.Hand;
+            viewCfg_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            viewCfg_btn.FlatAppearance.BorderSize = 0;
+            viewCfg_btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
+            viewCfg_btn.FlatStyle = FlatStyle.Flat;
+            viewCfg_btn.ForeColor = SystemColors.ButtonFace;
+            viewCfg_btn.Location = new Point(3, 16);
+            viewCfg_btn.Margin = new Padding(25, 3, 25, 3);
+            viewCfg_btn.Name = "viewCfg_btn";
+            viewCfg_btn.Size = new Size(124, 25);
+            viewCfg_btn.TabIndex = 15;
+            viewCfg_btn.Text = "View Configurations";
+            viewCfg_btn.UseVisualStyleBackColor = false;
+            viewCfg_btn.Click += viewCfg_btn_Click;
+            // 
+            // viewItems_btn
+            // 
+            viewItems_btn.AutoSize = true;
+            viewItems_btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            viewItems_btn.BackColor = SystemColors.ControlDarkDark;
+            viewItems_btn.BackgroundImageLayout = ImageLayout.None;
+            viewItems_btn.Cursor = Cursors.Hand;
+            viewItems_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            viewItems_btn.FlatAppearance.BorderSize = 0;
+            viewItems_btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
+            viewItems_btn.FlatStyle = FlatStyle.Flat;
+            viewItems_btn.ForeColor = SystemColors.ButtonFace;
+            viewItems_btn.Location = new Point(3, 47);
+            viewItems_btn.Margin = new Padding(25, 3, 25, 3);
+            viewItems_btn.Name = "viewItems_btn";
+            viewItems_btn.Size = new Size(74, 25);
+            viewItems_btn.TabIndex = 16;
+            viewItems_btn.Text = "View Items";
+            viewItems_btn.UseVisualStyleBackColor = false;
+            // 
             // ContainerListGUI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -220,6 +268,8 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "ContainerListGUI";
             Text = "ContainerListGUI";
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             panel3.ResumeLayout(false);
@@ -242,5 +292,7 @@
         private Label status_lbl;
         private ComboBox release_cbbox;
         private Label progress_lbl;
+        private Button viewItems_btn;
+        private Button viewCfg_btn;
     }
 }

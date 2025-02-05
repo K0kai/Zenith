@@ -35,6 +35,7 @@
             itemValues_Box = new TextBox();
             lines_label = new Label();
             selectedLn_Label = new Label();
+            sendToCtn_btn = new Button();
             SuspendLayout();
             // 
             // title_Label
@@ -44,7 +45,7 @@
             title_Label.ForeColor = Color.Lavender;
             title_Label.Location = new Point(0, 0);
             title_Label.Name = "title_Label";
-            title_Label.Size = new Size(406, 35);
+            title_Label.Size = new Size(408, 35);
             title_Label.TabIndex = 1;
             title_Label.Text = "Title";
             title_Label.TextAlign = ContentAlignment.MiddleCenter;
@@ -57,7 +58,7 @@
             description_Label.ForeColor = Color.Lavender;
             description_Label.Location = new Point(0, 35);
             description_Label.Name = "description_Label";
-            description_Label.Size = new Size(406, 39);
+            description_Label.Size = new Size(408, 39);
             description_Label.TabIndex = 2;
             description_Label.Text = "Description";
             description_Label.TextAlign = ContentAlignment.MiddleCenter;
@@ -89,7 +90,7 @@
             sendItems_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             sendItems_btn.FlatStyle = FlatStyle.Flat;
             sendItems_btn.ForeColor = SystemColors.ButtonFace;
-            sendItems_btn.Location = new Point(168, 473);
+            sendItems_btn.Location = new Point(146, 473);
             sendItems_btn.Margin = new Padding(25, 3, 25, 3);
             sendItems_btn.Name = "sendItems_btn";
             sendItems_btn.Size = new Size(61, 21);
@@ -131,13 +132,33 @@
             selectedLn_Label.TabIndex = 10;
             selectedLn_Label.Text = "Selected Line: 0";
             // 
+            // sendToCtn_btn
+            // 
+            sendToCtn_btn.BackColor = SystemColors.ControlDarkDark;
+            sendToCtn_btn.BackgroundImageLayout = ImageLayout.None;
+            sendToCtn_btn.Cursor = Cursors.Hand;
+            sendToCtn_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            sendToCtn_btn.FlatAppearance.BorderSize = 0;
+            sendToCtn_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
+            sendToCtn_btn.FlatStyle = FlatStyle.Flat;
+            sendToCtn_btn.ForeColor = SystemColors.ButtonFace;
+            sendToCtn_btn.Location = new Point(281, 473);
+            sendToCtn_btn.Margin = new Padding(25, 3, 25, 3);
+            sendToCtn_btn.Name = "sendToCtn_btn";
+            sendToCtn_btn.Size = new Size(113, 21);
+            sendToCtn_btn.TabIndex = 11;
+            sendToCtn_btn.Text = "Send To Container";
+            sendToCtn_btn.UseVisualStyleBackColor = false;
+            sendToCtn_btn.Click += sendToCtn_btn_Click;
+            // 
             // ItemDumpingGUI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
             CancelButton = close_Btn;
-            ClientSize = new Size(406, 497);
+            ClientSize = new Size(408, 497);
+            Controls.Add(sendToCtn_btn);
             Controls.Add(selectedLn_Label);
             Controls.Add(lines_label);
             Controls.Add(sendItems_btn);
@@ -162,5 +183,6 @@
         private TextBox itemValues_Box;
         private Label lines_label;
         private Label selectedLn_Label;
+        private Button sendToCtn_btn;
     }
 }

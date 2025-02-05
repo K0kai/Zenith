@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.enums;
 using ArcherTools_0._0._1.forms;
 using MathNet.Numerics;
 
@@ -19,13 +20,22 @@ namespace ArcherTools_0._0._1.classes
             set
             {
                 selectedContainer = value;
-                OnPropertyChanged(nameof(SelectedContainer));
+                OnStaticPropertyChanged(nameof(SelectedContainer));
             }
         }
       
    
         private static Container selectedContainer;
-        public static int SelectedRelease {  get; set; }
+        public static int SelectedRelease
+        {
+            get => selectedRelease;
+            set
+            {
+                selectedRelease = value;
+                OnStaticPropertyChanged(nameof(SelectedRelease));
+            }
+        }
+
         private static int selectedRelease;
 
         public static List<Container> AllContainers { get; set; } = new List<Container>();
@@ -33,17 +43,61 @@ namespace ArcherTools_0._0._1.classes
 
         [JsonConverter(typeof(ConcurrentDictionaryConverter))]
         public ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> ReleasesAndItems { get; set; }
-        public int ExpectedSize { get; set; }
-        public string ContainerStatus { get; set; }
+        public ConcurrentDictionary<int, ConcurrentDictionary<int, string>> AttachedConfigurations
+        {
+            get => attachedConfigurations;
+            set
+            {                
+                attachedConfigurations = value;
+                OnPropertyChanged(nameof(AttachedConfigurations));
+            }
+        }
+        private ConcurrentDictionary<int, ConcurrentDictionary<int, string>> attachedConfigurations = new ConcurrentDictionary<int, ConcurrentDictionary<int, string>>();
+        public int ExpectedSize
+        {
+            get => expectedSize;
+            set
+            {
+                expectedSize = value;
+                OnPropertyChanged(nameof(ExpectedSize));
+            }
+        }
+        private int expectedSize;
+        public string ContainerStatus
+        {
+            get => containerStatus;
+            set
+            {
+                containerStatus = value;
+                OnPropertyChanged(nameof(ContainerStatus));
+            }
+        }
+        private string containerStatus;
 
         public static event PropertyChangedEventHandler? StaticPropertyChanged;
 
+        public event PropertyChangedEventHandler? PropertyChanged;
 
 
-        public static void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public static void OnStaticPropertyChanged([CallerMemberName] string propertyName = null)
         {
             StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
+            if (propertyName == "SelectedRelease")
+            {
+                if (SelectedContainer != null)
+                {
+                    if (ValidateSelectedContainerAndRelease() == 0)
+                    {
+                        SelectedContainer.UpdateContainerStatus();
+                    }
+                }
+            }
         }
+
         public ConcurrentDictionary<int, Item>? GetContainerItems(int release)
         {
             try
@@ -62,16 +116,16 @@ namespace ArcherTools_0._0._1.classes
         {
             try
             {
-                var convSelectedRelease = int.Parse((string)release);
+                var convSelectedRelease = (int)release;
                 if (SelectedContainer != null)
                 {
                     if (SelectedContainer.ReleasesAndItems != null)
                     {
-                        foreach (var releases in SelectedContainer.ReleasesAndItems.Keys)
+                        foreach (var releases in SelectedContainer.ReleasesAndItems.Keys.ToArray())
                         {
                             if (releases == convSelectedRelease)
                             {
-                                SelectedRelease = convSelectedRelease;
+                                SelectedRelease = convSelectedRelease;                                
                             }
                         }
                     }
@@ -100,7 +154,10 @@ namespace ArcherTools_0._0._1.classes
             {
                 AllContainers = new List<Container>();
             }
-            UpdateContainerStatus();
+            if (AttachedConfigurations == null)
+            {
+                AttachedConfigurations = new ConcurrentDictionary<int, ConcurrentDictionary<int, string>>();
+            }
         }
 
         public override string ToString()
@@ -113,6 +170,24 @@ namespace ArcherTools_0._0._1.classes
             AllContainers.Clear();
         }
 
+        internal static byte ValidateSelectedContainerAndRelease()
+        {
+            if (SelectedContainer != null)
+            {
+                if (SelectedRelease != null || SelectedRelease != 0)
+                {
+                    foreach (var releases in SelectedContainer.ReleasesAndItems.Keys.ToArray())
+                    {
+                        if (releases == SelectedRelease)
+                        {
+                            return (byte) ErrorEnum.ErrorCode.Success;
+                        }
+                    }
+                }
+            }
+            Debug.WriteLine($"Error validating: {SelectedContainer}'s release: {selectedRelease}");
+            return (byte) ErrorEnum.ErrorCode.UnknownError;
+        }
         public void UpdateContainerStatus()
         {
             if (SelectedContainer != null)
@@ -150,6 +225,15 @@ namespace ArcherTools_0._0._1.classes
             if (expectedSize > 0)
             {
                 ExpectedSize = expectedSize;
+            }
+        }
+
+        internal void CalculateExpectedSize()
+        {
+            if (SelectedContainer.attachedConfigurations != null)
+            {
+                var expectedSize = this.AttachedConfigurations[SelectedRelease].Count;
+                this.ExpectedSize = expectedSize;
             }
         }
 
@@ -210,15 +294,16 @@ namespace ArcherTools_0._0._1.classes
         public static void SetSelectedContainer(Container container)
         {
             SelectedContainer = container;
-            if (ReceivingGUI.containerListForm != null && SelectedContainer != null)
+            if (SelectedContainer.ReleasesAndItems.Count > 0)
             {
-                ReceivingGUI.containerListForm.Invalidate();
+                SetSelectedRelease(SelectedRelease = SelectedContainer.ReleasesAndItems.Keys.ToArray()[0]);
             }
         }
 
         public static void UndoSelectedContainer()
         {
-            SelectedContainer = null;
+            SelectedRelease = 0;
+            SelectedContainer = null;            
         }
 
         public async Task SerializeToFileAsync(string FilePath, bool overwrite = true)

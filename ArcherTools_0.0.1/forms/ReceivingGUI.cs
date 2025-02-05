@@ -37,14 +37,19 @@ namespace ArcherTools_0._0._1.forms
         {
             this.Close();
             this.Dispose();
+            
             _instance = null;
         }
+
+        
+
         private void onLoad(object sender, EventArgs e)
         {
             title_Label.Text = _title;
             description_Label.Text = _desc;
             overlayTip_lbl.Visible = false;
-            this.FindForm().FormClosing += Form_closing;
+            this.StartPosition = FormStartPosition.Manual;
+            this.FormClosing += ReceivingGUI_FormClosing;
             close_Btn.Location = new Point(this.FindForm().Size.Width - close_Btn.Size.Width, 0);
             foreach (Control ctrl in this.Controls)
             {
@@ -66,6 +71,20 @@ namespace ArcherTools_0._0._1.forms
 
                 }
             }
+            if (Properties.Settings.Default.ReceivingGUILocation != new Point(0, 0))
+            {
+                this.FindForm().Location = Properties.Settings.Default.ReceivingGUILocation;
+            }
+        }
+
+        private void ReceivingGUI_FormClosing(object? sender, FormClosingEventArgs e)
+        {
+            if (Properties.Settings.Default.ReceivingGUILocation != this.Location)
+            {
+                Properties.Settings.Default.ReceivingGUILocation = this.Location;
+                Properties.Settings.Default.Save();
+            }
+            
         }
 
         internal void updateVisibility(Control ctrl, bool visibility)
