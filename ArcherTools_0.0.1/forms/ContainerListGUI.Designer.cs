@@ -28,8 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             title_Label = new Label();
             panel1 = new Panel();
+            viewItems_btn = new Button();
+            viewCfg_btn = new Button();
             panel2 = new Panel();
             panel3 = new Panel();
             progress_lbl = new Label();
@@ -41,8 +44,8 @@
             addCtn_btn = new Button();
             selectCtn_lbl = new Label();
             containerList_listbox = new ListBox();
-            viewCfg_btn = new Button();
-            viewItems_btn = new Button();
+            viewcfg_Tooltip = new ToolTip(components);
+            viewitem_Tooltip = new ToolTip(components);
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
@@ -69,6 +72,47 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(370, 81);
             panel1.TabIndex = 10;
+            // 
+            // viewItems_btn
+            // 
+            viewItems_btn.AutoSize = true;
+            viewItems_btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            viewItems_btn.BackColor = SystemColors.ControlDarkDark;
+            viewItems_btn.BackgroundImageLayout = ImageLayout.None;
+            viewItems_btn.Cursor = Cursors.Hand;
+            viewItems_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            viewItems_btn.FlatAppearance.BorderSize = 0;
+            viewItems_btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
+            viewItems_btn.FlatStyle = FlatStyle.Flat;
+            viewItems_btn.ForeColor = SystemColors.ButtonFace;
+            viewItems_btn.Location = new Point(3, 47);
+            viewItems_btn.Margin = new Padding(25, 3, 25, 3);
+            viewItems_btn.Name = "viewItems_btn";
+            viewItems_btn.Size = new Size(74, 25);
+            viewItems_btn.TabIndex = 16;
+            viewItems_btn.Text = "View Items";
+            viewItems_btn.UseVisualStyleBackColor = false;
+            // 
+            // viewCfg_btn
+            // 
+            viewCfg_btn.AutoSize = true;
+            viewCfg_btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            viewCfg_btn.BackColor = SystemColors.ControlDarkDark;
+            viewCfg_btn.BackgroundImageLayout = ImageLayout.None;
+            viewCfg_btn.Cursor = Cursors.Hand;
+            viewCfg_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            viewCfg_btn.FlatAppearance.BorderSize = 0;
+            viewCfg_btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
+            viewCfg_btn.FlatStyle = FlatStyle.Flat;
+            viewCfg_btn.ForeColor = SystemColors.ButtonFace;
+            viewCfg_btn.Location = new Point(3, 16);
+            viewCfg_btn.Margin = new Padding(25, 3, 25, 3);
+            viewCfg_btn.Name = "viewCfg_btn";
+            viewCfg_btn.Size = new Size(124, 25);
+            viewCfg_btn.TabIndex = 15;
+            viewCfg_btn.Text = "View Configurations";
+            viewCfg_btn.UseVisualStyleBackColor = false;
+            viewCfg_btn.Click += viewCfg_btn_Click;
             // 
             // panel2
             // 
@@ -215,46 +259,17 @@
             containerList_listbox.Size = new Size(149, 199);
             containerList_listbox.TabIndex = 0;
             // 
-            // viewCfg_btn
+            // viewcfg_Tooltip
             // 
-            viewCfg_btn.AutoSize = true;
-            viewCfg_btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            viewCfg_btn.BackColor = SystemColors.ControlDarkDark;
-            viewCfg_btn.BackgroundImageLayout = ImageLayout.None;
-            viewCfg_btn.Cursor = Cursors.Hand;
-            viewCfg_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
-            viewCfg_btn.FlatAppearance.BorderSize = 0;
-            viewCfg_btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
-            viewCfg_btn.FlatStyle = FlatStyle.Flat;
-            viewCfg_btn.ForeColor = SystemColors.ButtonFace;
-            viewCfg_btn.Location = new Point(3, 16);
-            viewCfg_btn.Margin = new Padding(25, 3, 25, 3);
-            viewCfg_btn.Name = "viewCfg_btn";
-            viewCfg_btn.Size = new Size(124, 25);
-            viewCfg_btn.TabIndex = 15;
-            viewCfg_btn.Text = "View Configurations";
-            viewCfg_btn.UseVisualStyleBackColor = false;
-            viewCfg_btn.Click += viewCfg_btn_Click;
+            viewcfg_Tooltip.AutomaticDelay = 250;
+            viewcfg_Tooltip.ToolTipIcon = ToolTipIcon.Warning;
+            viewcfg_Tooltip.ToolTipTitle = "Attention";
             // 
-            // viewItems_btn
+            // viewitem_Tooltip
             // 
-            viewItems_btn.AutoSize = true;
-            viewItems_btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            viewItems_btn.BackColor = SystemColors.ControlDarkDark;
-            viewItems_btn.BackgroundImageLayout = ImageLayout.None;
-            viewItems_btn.Cursor = Cursors.Hand;
-            viewItems_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
-            viewItems_btn.FlatAppearance.BorderSize = 0;
-            viewItems_btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
-            viewItems_btn.FlatStyle = FlatStyle.Flat;
-            viewItems_btn.ForeColor = SystemColors.ButtonFace;
-            viewItems_btn.Location = new Point(3, 47);
-            viewItems_btn.Margin = new Padding(25, 3, 25, 3);
-            viewItems_btn.Name = "viewItems_btn";
-            viewItems_btn.Size = new Size(74, 25);
-            viewItems_btn.TabIndex = 16;
-            viewItems_btn.Text = "View Items";
-            viewItems_btn.UseVisualStyleBackColor = false;
+            viewitem_Tooltip.AutomaticDelay = 250;
+            viewitem_Tooltip.ToolTipIcon = ToolTipIcon.Warning;
+            viewitem_Tooltip.ToolTipTitle = "Attention";
             // 
             // ContainerListGUI
             // 
@@ -267,6 +282,8 @@
             Controls.Add(title_Label);
             FormBorderStyle = FormBorderStyle.None;
             Name = "ContainerListGUI";
+            ShowIcon = false;
+            ShowInTaskbar = false;
             Text = "ContainerListGUI";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
@@ -294,5 +311,7 @@
         private Label progress_lbl;
         private Button viewItems_btn;
         private Button viewCfg_btn;
+        private ToolTip viewcfg_Tooltip;
+        private ToolTip viewitem_Tooltip;
     }
 }

@@ -43,6 +43,8 @@ namespace ArcherTools_0._0._1.forms
             this.addCtn_btn.Click += addContainer_Clicked;
             this.delCtn_btn.Click += delContainer_Clicked;
             this.Invalidated += ContainerListGUI_Invalidated;
+            viewcfg_Tooltip.SetToolTip(viewCfg_btn, "Experimental, can only view, not edit");
+            viewitem_Tooltip.SetToolTip(viewItems_btn, "Feature not implemented yet");
 
 
             Label title = title_Label;
@@ -247,12 +249,26 @@ namespace ArcherTools_0._0._1.forms
                 {
                     ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> releasesAndItems = new ConcurrentDictionary<int, ConcurrentDictionary<int, Item>>();
                     ConcurrentDictionary<int, Item> itemList = new ConcurrentDictionary<int, Item>();
-                    if (dibf[1].Contains("ND"))
+                    switch (dibf[1].ToLower())
                     {
-                        dibf[1] = "100";
+                        case "nd":
+                            dibf[1] = 100.ToString();
+                        break;
+                        case "tef":
+                            dibf[1] = 101.ToString();
+                        break;
+                        case "byd":
+                            dibf[1] = 102.ToString();
+                        break;
+                        case "ima":
+                            dibf[1] = 103.ToString();
+                        break;
+                        default:
+                        break;
+
                     }
                     releasesAndItems.TryAdd(int.Parse(dibf[1]), itemList);
-                    var newCtn = new Container(dibf[0], releasesAndItems);
+                    var newCtn = new Container(dibf[0], dibf[2], releasesAndItems);
 
                     classes.Container.AddContainer(newCtn);
                     newCtn.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, newCtn.ContainerId));
@@ -279,74 +295,11 @@ namespace ArcherTools_0._0._1.forms
 
         private void viewCfg_btn_Click(object sender, EventArgs e)
         {
-            ColorConfig currentPreset = ColorPresets._instance.GetCurrentPreset();
-            Form viewcfgform = new Form();
-            viewcfgform.Name = classes.Container.SelectedContainer.ToString() + "'s Configurations.";
-            viewcfgform.BackColor = currentPreset.BackgroundColor;
-            viewcfgform.FormBorderStyle = FormBorderStyle.None;
-            viewcfgform.TopMost = true;
-            viewcfgform.Size = new Size(500, 300);
-
-            Panel lowerPanel = new Panel();
-            lowerPanel.Dock = DockStyle.Bottom;
-            lowerPanel.Name = "lowerPanel";
-            lowerPanel.BorderStyle = BorderStyle.FixedSingle;
-
-            Button closeBtn = new Button();
-            closeBtn.Text = "X";
-            closeBtn.Size = new Size(22, 23);
-            closeBtn.AutoSize = true;
-            closeBtn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            closeBtn.BackColor = currentPreset.DetailsColor;
-            closeBtn.ForeColor = currentPreset.TextColor;
-            closeBtn.FlatAppearance.MouseOverBackColor = Color.FromArgb(currentPreset.DetailsColorAsARGB + 10);
-            closeBtn.FlatStyle = FlatStyle.Flat;
-            closeBtn.Location = new Point(viewcfgform.Size.Width - closeBtn.Size.Width - 3, 0);
-            closeBtn.FlatAppearance.BorderSize = 0;
-            
-
-            Panel upperPanel = new Panel();
-            upperPanel.Dock = DockStyle.Top;
-            upperPanel.Name = "upperPanel";
-            upperPanel.BorderStyle = BorderStyle.FixedSingle;
-
-            Label titleLabel = new Label();
-            titleLabel.Dock = DockStyle.Top;
-            titleLabel.AutoSize = false;
-            titleLabel.Text = $"Viewing Configurations for: {classes.Container.SelectedContainer.ToString()}";
-            titleLabel.Name = "title_Label";
-            titleLabel.Font = new Font("Segoe UI", 12, FontStyle.Bold);
-            titleLabel.BackColor = Color.Transparent;
-            titleLabel.ForeColor = currentPreset.PrimaryLabelColor;
-            titleLabel.TextAlign = ContentAlignment.MiddleCenter;
-
-            DataGridView linesAndCfgs = new DataGridView();
-            linesAndCfgs.BackgroundColor = currentPreset.InputBoxColor;
-            linesAndCfgs.ForeColor = currentPreset.TextColor;
-            linesAndCfgs.Size = new Size(400, 200);
-            linesAndCfgs.Location = new Point(0, 10);
-            DataGridViewColumn linesColumn = new DataGridViewTextBoxColumn();
-            linesColumn.Name = "lineColumn";
-            linesColumn.HeaderText = "Lines";
-            linesColumn.DataPropertyName = "Lines";
-            linesColumn.ValueType = typeof(int);
-            DataGridViewColumn cfgColumn = new DataGridViewTextBoxColumn();
-            cfgColumn.Name = "cfgColumn";
-            cfgColumn.HeaderText = "Config";
-            cfgColumn.DataPropertyName = "Config";
-            cfgColumn.ValueType = typeof(int);
-            linesAndCfgs.Columns.Add(cfgColumn);
-            linesAndCfgs.Columns.Add(linesColumn);
-
-
-            upperPanel.Controls.Add(closeBtn);
-            viewcfgform.Controls.Add(upperPanel);
-            viewcfgform.Controls.Add(lowerPanel);
-            lowerPanel.Controls.Add(linesAndCfgs);
-            upperPanel.Controls.Add(titleLabel);
-            closeBtn.BringToFront();
-            viewCfgForm = viewcfgform;
-            viewcfgform.ShowDialog(this.FindForm());
+            if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
+            {
+                ViewContainerGUI viewContainerGUI = new ViewContainerGUI(classes.Container.SelectedContainer);
+                viewContainerGUI.ShowDialog(this);
+            }
         }
     }
 }

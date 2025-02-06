@@ -40,6 +40,7 @@ namespace ArcherTools_0._0._1.classes
 
         public static List<Container> AllContainers { get; set; } = new List<Container>();
         public string ContainerId { get; set; }
+        public string Owner {  get; set; }
 
         [JsonConverter(typeof(ConcurrentDictionaryConverter))]
         public ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> ReleasesAndItems { get; set; }
@@ -146,9 +147,10 @@ namespace ArcherTools_0._0._1.classes
             }
         }
 
-        public Container(string containerId, ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> releasesAndItems)
+        public Container(string containerId, string owner, ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> releasesAndItems)
         {
             this.ContainerId = containerId;
+            this.Owner = owner;
             this.ReleasesAndItems = releasesAndItems;
             if (AllContainers == null)
             {
@@ -158,6 +160,28 @@ namespace ArcherTools_0._0._1.classes
             {
                 AttachedConfigurations = new ConcurrentDictionary<int, ConcurrentDictionary<int, string>>();
             }
+        }
+        public Container()
+        {
+
+        }
+        public Container (string containerId, string owner)
+        {
+            this.ContainerId = containerId;
+            this.Owner = owner;
+            if (AllContainers == null)
+            {
+                AllContainers = new List<Container>();
+            }
+            if (AttachedConfigurations == null)
+            {
+                AttachedConfigurations = new ConcurrentDictionary<int, ConcurrentDictionary<int, string>>();
+            }
+            if (ReleasesAndItems == null)
+            {
+                ReleasesAndItems = new ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> ();
+            }
+
         }
 
         public override string ToString()

@@ -4,6 +4,7 @@ using ArcherTools_0._0._1.methods;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace ArcherTools_0._0._1.forms
 {
@@ -289,15 +290,14 @@ namespace ArcherTools_0._0._1.forms
                     {
                         var configs = new ConcurrentDictionary<int, string>();
                         var exHandler = new ExcelHandler(ConfigData._receivingConfig.ExcelFilePath);
-                        var Values = itemSeparation();
-                        var Lines = createListFromCount(Values);
-                        
-                        foreach (var line in Lines)
+                        var Configs = itemSeparation();
+                        var Lines = createListFromCount(Configs);
+
+                        for (int i = 0; i < Lines.Count; i++)
                         {
-                            foreach (var value in Values)
-                            {
-                                configs.AddOrUpdate(line, value, (key, value) => value);
-                            }
+                            var line = i < Lines.Count ? Lines[i] : -999;
+                            var config = i < Configs.Count ? Configs[i] : string.Empty;
+                            configs.AddOrUpdate(line, config, (key, oldValue) => oldValue = config);
                         }
                         classes.Container.SelectedContainer.AttachedConfigurations?.TryAdd(classes.Container.SelectedRelease, configs);
                         classes.Container.SelectedContainer.CalculateExpectedSize();

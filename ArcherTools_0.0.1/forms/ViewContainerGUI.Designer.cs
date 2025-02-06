@@ -31,119 +31,138 @@
             components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            dataGridView1 = new DataGridView();
-            Line = new DataGridViewTextBoxColumn();
-            Config = new DataGridViewTextBoxColumn();
-            containerIdDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            releasesAndItemsDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            attachedConfigurationsDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            expectedSizeDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
-            containerStatusDataGridViewTextBoxColumn = new DataGridViewTextBoxColumn();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViewContainerGUI));
             containerBindingSource = new BindingSource(components);
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            panel1 = new Panel();
+            title_Label = new Label();
+            panel2 = new Panel();
+            lineCfg_DtGridView = new DataGridView();
+            lineColumn = new DataGridViewTextBoxColumn();
+            configColumn = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)containerBindingSource).BeginInit();
+            panel1.SuspendLayout();
+            panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)lineCfg_DtGridView).BeginInit();
             SuspendLayout();
-            // 
-            // dataGridView1
-            // 
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.AutoGenerateColumns = false;
-            dataGridView1.BackgroundColor = SystemColors.AppWorkspace;
-            dataGridView1.BorderStyle = BorderStyle.None;
-            dataGridView1.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Line, Config, containerIdDataGridViewTextBoxColumn, releasesAndItemsDataGridViewTextBoxColumn, attachedConfigurationsDataGridViewTextBoxColumn, expectedSizeDataGridViewTextBoxColumn, containerStatusDataGridViewTextBoxColumn });
-            dataGridView1.DataSource = containerBindingSource;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.IndianRed;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-            dataGridView1.GridColor = Color.Orange;
-            dataGridView1.Location = new Point(119, 58);
-            dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(255, 192, 128);
-            dataGridViewCellStyle2.ForeColor = Color.FromArgb(128, 255, 128);
-            dataGridViewCellStyle2.SelectionBackColor = Color.Gray;
-            dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(255, 128, 255);
-            dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            dataGridView1.RowTemplate.DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
-            dataGridView1.RowTemplate.DefaultCellStyle.ForeColor = Color.FromArgb(255, 128, 128);
-            dataGridView1.RowTemplate.DefaultCellStyle.SelectionBackColor = Color.FromArgb(128, 128, 255);
-            dataGridView1.RowTemplate.DefaultCellStyle.SelectionForeColor = Color.Purple;
-            dataGridView1.Size = new Size(474, 239);
-            dataGridView1.TabIndex = 0;
-            // 
-            // Line
-            // 
-            Line.HeaderText = "Line";
-            Line.Name = "Line";
-            // 
-            // Config
-            // 
-            Config.HeaderText = "Config";
-            Config.Name = "Config";
-            // 
-            // containerIdDataGridViewTextBoxColumn
-            // 
-            containerIdDataGridViewTextBoxColumn.DataPropertyName = "ContainerId";
-            containerIdDataGridViewTextBoxColumn.HeaderText = "ContainerId";
-            containerIdDataGridViewTextBoxColumn.Name = "containerIdDataGridViewTextBoxColumn";
-            // 
-            // releasesAndItemsDataGridViewTextBoxColumn
-            // 
-            releasesAndItemsDataGridViewTextBoxColumn.DataPropertyName = "ReleasesAndItems";
-            releasesAndItemsDataGridViewTextBoxColumn.HeaderText = "ReleasesAndItems";
-            releasesAndItemsDataGridViewTextBoxColumn.Name = "releasesAndItemsDataGridViewTextBoxColumn";
-            // 
-            // attachedConfigurationsDataGridViewTextBoxColumn
-            // 
-            attachedConfigurationsDataGridViewTextBoxColumn.DataPropertyName = "AttachedConfigurations";
-            attachedConfigurationsDataGridViewTextBoxColumn.HeaderText = "AttachedConfigurations";
-            attachedConfigurationsDataGridViewTextBoxColumn.Name = "attachedConfigurationsDataGridViewTextBoxColumn";
-            // 
-            // expectedSizeDataGridViewTextBoxColumn
-            // 
-            expectedSizeDataGridViewTextBoxColumn.DataPropertyName = "ExpectedSize";
-            expectedSizeDataGridViewTextBoxColumn.HeaderText = "ExpectedSize";
-            expectedSizeDataGridViewTextBoxColumn.Name = "expectedSizeDataGridViewTextBoxColumn";
-            // 
-            // containerStatusDataGridViewTextBoxColumn
-            // 
-            containerStatusDataGridViewTextBoxColumn.DataPropertyName = "ContainerStatus";
-            containerStatusDataGridViewTextBoxColumn.HeaderText = "ContainerStatus";
-            containerStatusDataGridViewTextBoxColumn.Name = "containerStatusDataGridViewTextBoxColumn";
             // 
             // containerBindingSource
             // 
             containerBindingSource.DataSource = typeof(classes.Container);
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(title_Label);
+            panel1.Dock = DockStyle.Top;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(263, 54);
+            panel1.TabIndex = 1;
+            // 
+            // title_Label
+            // 
+            title_Label.Dock = DockStyle.Top;
+            title_Label.FlatStyle = FlatStyle.Flat;
+            title_Label.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            title_Label.ForeColor = Color.Lavender;
+            title_Label.Location = new Point(0, 0);
+            title_Label.Name = "title_Label";
+            title_Label.Size = new Size(263, 42);
+            title_Label.TabIndex = 2;
+            title_Label.Text = "Viewing Configurations for:";
+            title_Label.TextAlign = ContentAlignment.BottomCenter;
+            // 
+            // panel2
+            // 
+            panel2.AutoSize = true;
+            panel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            panel2.Controls.Add(lineCfg_DtGridView);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new Point(0, 54);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(263, 396);
+            panel2.TabIndex = 2;
+            // 
+            // lineCfg_DtGridView
+            // 
+            lineCfg_DtGridView.AllowUserToDeleteRows = false;
+            lineCfg_DtGridView.AllowUserToResizeColumns = false;
+            lineCfg_DtGridView.AllowUserToResizeRows = false;
+            lineCfg_DtGridView.BackgroundColor = Color.FromArgb(64, 64, 64);
+            lineCfg_DtGridView.BorderStyle = BorderStyle.Fixed3D;
+            lineCfg_DtGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            lineCfg_DtGridView.Columns.AddRange(new DataGridViewColumn[] { lineColumn, configColumn });
+            lineCfg_DtGridView.Dock = DockStyle.Fill;
+            lineCfg_DtGridView.GridColor = Color.WhiteSmoke;
+            lineCfg_DtGridView.Location = new Point(0, 0);
+            lineCfg_DtGridView.Name = "lineCfg_DtGridView";
+            lineCfg_DtGridView.RowHeadersVisible = false;
+            lineCfg_DtGridView.RowHeadersWidth = 30;
+            lineCfg_DtGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            lineCfg_DtGridView.Size = new Size(263, 396);
+            lineCfg_DtGridView.TabIndex = 0;
+            // 
+            // lineColumn
+            // 
+            lineColumn.DataPropertyName = "Lines";
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = Color.FromArgb(64, 64, 64);
+            dataGridViewCellStyle1.ForeColor = Color.LightYellow;
+            dataGridViewCellStyle1.Format = "N0";
+            dataGridViewCellStyle1.NullValue = "-999";
+            dataGridViewCellStyle1.SelectionBackColor = Color.Brown;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.Info;
+            lineColumn.DefaultCellStyle = dataGridViewCellStyle1;
+            lineColumn.HeaderText = "Lines";
+            lineColumn.Name = "lineColumn";
+            lineColumn.Resizable = DataGridViewTriState.False;
+            lineColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+            lineColumn.Width = 40;
+            // 
+            // configColumn
+            // 
+            configColumn.DataPropertyName = "Configs";
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(64, 64, 64);
+            dataGridViewCellStyle2.ForeColor = Color.LightYellow;
+            dataGridViewCellStyle2.Format = "00/0/0/0/0/0";
+            dataGridViewCellStyle2.NullValue = "10/0/0/0/0/0";
+            dataGridViewCellStyle2.SelectionBackColor = Color.Brown;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.Info;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            configColumn.DefaultCellStyle = dataGridViewCellStyle2;
+            configColumn.HeaderText = "Configs";
+            configColumn.Name = "configColumn";
+            configColumn.Resizable = DataGridViewTriState.False;
+            configColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
+            configColumn.Width = 175;
+            // 
             // ViewContainerGUI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(dataGridView1);
+            BackColor = Color.FromArgb(64, 64, 64);
+            ClientSize = new Size(263, 450);
+            Controls.Add(panel2);
+            Controls.Add(panel1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "ViewContainerGUI";
             Text = "ViewContainerGUI";
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            TopMost = true;
             ((System.ComponentModel.ISupportInitialize)containerBindingSource).EndInit();
+            panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)lineCfg_DtGridView).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
-
-        private DataGridView dataGridView1;
-        private DataGridViewTextBoxColumn Line;
-        private DataGridViewTextBoxColumn Config;
         private BindingSource containerBindingSource;
-        private DataGridViewTextBoxColumn containerIdDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn releasesAndItemsDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn attachedConfigurationsDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn expectedSizeDataGridViewTextBoxColumn;
-        private DataGridViewTextBoxColumn containerStatusDataGridViewTextBoxColumn;
+        private Panel panel1;
+        private Panel panel2;
+        private Label title_Label;
+        private DataGridView lineCfg_DtGridView;
+        private DataGridViewTextBoxColumn lineColumn;
+        private DataGridViewTextBoxColumn configColumn;
     }
 }
