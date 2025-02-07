@@ -60,7 +60,7 @@ namespace ArcherTools_0._0._1.methods
                 rcvGui.updateStatusLabel("Beginning receiving process...");
                 var autoCreateCfg = ConfigData._toolConfig.AutomaticCreateConfig;
                 var findDefaultCfg = ConfigData._toolConfig.CheckForDefault;
-                if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
+                if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0 && classes.Container.SelectedContainer.ReleasesAndItems[Container.SelectedRelease].Count > 0)
                 {
                     DialogResult importDoneItems = MessageBox.Show($"This container seems to have {classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Count} items attached to it, would you like to import them?", "Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (importDoneItems == DialogResult.Yes)
