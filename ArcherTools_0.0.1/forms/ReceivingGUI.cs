@@ -190,7 +190,8 @@ namespace ArcherTools_0._0._1.forms
                     updateStatusLabel("Status: Cleaning items 2/2");
                     Task cleanLines = Task.Run(() => { exHandler.SetColumn("DUMP", 3, new List<string>(), 2, true, lastFilledRow); });
                     Task.WaitAll(cleanLines);
-                    updateStatusLabel($"Status: Cleaned {numOfFilledRows} items successfully.");
+                    lastFilledRow = lastFilledRow > numOfFilledRows ? numOfFilledRows : lastFilledRow;
+                    updateStatusLabel($"Status: Cleaned {lastFilledRow}/{numOfFilledRows} items successfully.");
                     this.Cursor = Cursors.Default;
 
 
@@ -199,7 +200,7 @@ namespace ArcherTools_0._0._1.forms
             }
             catch (Exception ex)
             {
-
+                this.Cursor = Cursors.Default;
             }
         }
 

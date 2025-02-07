@@ -1,5 +1,6 @@
 ﻿using ArcherTools_0._0._1.enums;
 using OfficeOpenXml;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace ArcherTools_0._0._1.excel
@@ -141,7 +142,7 @@ namespace ArcherTools_0._0._1.excel
                 {
                     throw new InvalidOperationException($"Worksheet \"{worksheetName}\" has empty dimensions.");
                 }
-                int lastFilledRow = 0;
+                ConcurrentBag<int> lastRows = new ConcurrentBag<int>();
                 Parallel.For(startrow, excelWorksheet.Dimension.Rows, row =>
                 {
                     {
@@ -160,10 +161,16 @@ namespace ArcherTools_0._0._1.excel
                         }
                         if (!string.IsNullOrWhiteSpace(cellValue))
                         {
-                            lastFilledRow = row;
+                          lastRows.Add(row);
                         }
                     }
                 });
+                var lastFilledRow = 0;
+                if (lastRows.Any())
+                {
+                    lastFilledRow = lastRows.Max();
+                }
+                Debug.WriteLine($"This is the last filled row found: {lastFilledRow}");
                 return lastFilledRow;
             }
         }

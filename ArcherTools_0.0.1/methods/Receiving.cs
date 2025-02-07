@@ -60,119 +60,127 @@ namespace ArcherTools_0._0._1.methods
                 rcvGui.updateStatusLabel("Beginning receiving process...");
                 var autoCreateCfg = ConfigData._toolConfig.AutomaticCreateConfig;
                 var findDefaultCfg = ConfigData._toolConfig.CheckForDefault;
-                
-
-                if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
+                if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
                 {
-                    WindowHandler.WinToFocusByName("mstsc");
-                }
-                else
-                {
-                    MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    rcvGui.updateStatusLabel("Receiving Status: Discontinued.");
-                    return;
-                }
-
-                switch (WindowHandler.GetWindowPosition("10.0.1.29 - Remote Desktop Connection").X)
-                {
-                    case >= 3840:
-                        pwhMonitor = 3840;
-                        break;
-                    case >= 1920:
-                        pwhMonitor = 1920;
-                        break;
-                    default:
-                        pwhMonitor = 0;
-                        break;
-                }
-                rlReceiptLineBorder = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLineBorder);
-                rlReceiptLnFirstLn = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLnFirstLn);
-                rlItemSearchBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), itemSearchBox);
-                rlItemMtnIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemMtnIcon);
-                rlItemCfgIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemCfgIcon);
-                rlItemCfgPcsBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemConfigurationWindow), itemCfgPcsBox);
-                Point rlItemMtnClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Width - 20, rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.Y + 15);
-                Point rlItemCfgClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Width - 15, rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.Y + 15);
-
-                var inputSimulator = new InputSimulator();
-
-
-                ExcelHandler excelHandler = new ExcelHandler(rcvCfg.ExcelFilePath);
-
-                {
-                    string mainWorkSheet = "";
-                    string rcvDumpSheet = "";
-                    foreach (var sheet in rcvCfg.ExcelSheetNames)
+                    DialogResult importDoneItems = MessageBox.Show($"This container seems to have {classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Count} items attached to it, would you like to import them?", "Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (importDoneItems == DialogResult.Yes)
                     {
-                        if (sheet == "DUMP")
-                        {
-                            rcvDumpSheet = sheet;
-                            break;
-                        }
-                        if (sheet == "TEST CHECK")
-                        {
-                            mainWorkSheet = sheet;
-                        }
+                        receivedItems = classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Values.ToList();
                     }
-                    if (descendingStart)
+
+
+                    if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
                     {
-                        linesFromExcel.Reverse();
-                    }
-                    PrepareToReceive(excelHandler, rcvDumpSheet);
-                    excelHandler.SetCell(mainWorkSheet, 10, 3, 1);
-                    var cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);
-                    excelHandler.SetCell(mainWorkSheet, 10, 3, 5);
-                    cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);                   
-                    if (linesFromExcel == null || linesFromExcel.Count == 0)
-                    {
-                        rcvGui.updateStatusLabel("Receiving Interrupted: No lines were found in excel.");
-                        return;
-                    }
-                    var iteration = 1;
-                    if (startLine > 1)
-                    {
-                        iteration = startLine;
+                        WindowHandler.WinToFocusByName("mstsc");
                     }
                     else
                     {
-                        startLine = int.Parse(excelHandler.GetCell(rcvDumpSheet,2,3));
+                        MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        rcvGui.updateStatusLabel("Receiving Status: Discontinued.");
+                        return;
                     }
-                    int cntSize = containerSize();
-                    int cntRawSize = containerSize(true);
-                    Debug.WriteLine(cntSize);
-                    MouseHandler.MouseMoveTo(new Point(rlReceiptLnFirstLn.X + 30,rlReceiptLnFirstLn.Y));
-                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                    MouseHandler.MouseClick();
-                    inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.SHIFT);
-                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
-                    inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
-                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
-                    inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.MENU);
+
+                    switch (WindowHandler.GetWindowPosition("10.0.1.29 - Remote Desktop Connection").X)
+                    {
+                        case >= 3840:
+                            pwhMonitor = 3840;
+                            break;
+                        case >= 1920:
+                            pwhMonitor = 1920;
+                            break;
+                        default:
+                            pwhMonitor = 0;
+                            break;
+                    }
+                    rlReceiptLineBorder = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLineBorder);
+                    rlReceiptLnFirstLn = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLnFirstLn);
+                    rlItemSearchBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), itemSearchBox);
+                    rlItemMtnIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemMtnIcon);
+                    rlItemCfgIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemCfgIcon);
+                    rlItemCfgPcsBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemConfigurationWindow), itemCfgPcsBox);
+                    Point rlItemMtnClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Width - 20, rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.Y + 15);
+                    Point rlItemCfgClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Width - 15, rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.Y + 15);
+
+                    var inputSimulator = new InputSimulator();
+
+
+                    ExcelHandler excelHandler = new ExcelHandler(rcvCfg.ExcelFilePath);
+
+                    {
+                        string mainWorkSheet = "";
+                        string rcvDumpSheet = "";
+                        foreach (var sheet in rcvCfg.ExcelSheetNames)
+                        {
+                            if (sheet == "DUMP")
+                            {
+                                rcvDumpSheet = sheet;
+                                break;
+                            }
+                            if (sheet == "TEST CHECK")
+                            {
+                                mainWorkSheet = sheet;
+                            }
+                        }
+                        if (descendingStart)
+                        {
+                            linesFromExcel.Reverse();
+                        }
+                        PrepareToReceive(excelHandler, rcvDumpSheet);
+                        excelHandler.SetCell(mainWorkSheet, 10, 3, 1);
+                        var cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);
+                        excelHandler.SetCell(mainWorkSheet, 10, 3, 5);
+                        cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);
+                        if (linesFromExcel == null || linesFromExcel.Count == 0)
+                        {
+                            rcvGui.updateStatusLabel("Receiving Interrupted: No lines were found in excel.");
+                            return;
+                        }
+                        var iteration = 1;
+                        if (startLine > 1)
+                        {
+                            iteration = startLine;
+                        }
+                        else
+                        {
+                            startLine = int.Parse(excelHandler.GetCell(rcvDumpSheet, 2, 3));
+                        }
+                        int cntSize = containerSize();
+                        int cntRawSize = containerSize(true);
+                        Debug.WriteLine(cntSize);
+                        MouseHandler.MouseMoveTo(new Point(rlReceiptLnFirstLn.X + 30, rlReceiptLnFirstLn.Y));
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                        MouseHandler.MouseClick();
+                        inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.SHIFT);
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
+                        inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
+                        inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.MENU);
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    Task.Run(() =>
-                    {
-                        _ = checkForEnd();
-                    });
+                        Task.Run(() =>
+                        {
+                            _ = checkForEnd();
+                        });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 
-                    foreach (var line in linesFromExcel)
-                    {
-                        try {
-                            rcvGui.updateVisibility(rcvGui.overlayTip_lbl, true);
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                            MouseHandler.MouseMoveTo(rlReceiptLnFirstLn);
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
-                            MouseHandler.MouseClick();
-                            inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                            //var checkItem = iterateThroughListItems();
-                            rcvGui.updateStatusLabel($"Receiving Item: {iteration} out of {cntRawSize}");
-                            var checkItem = iterateThroughListLines(cntSize, line);  
-                            if (endProcess) { AfterEndProcess(rcvGui, line); return; }
-                            excelHandler.SetCell(mainWorkSheet, 10, 3, line);
-                            Dictionary<string, string> currentItemInfo = new Dictionary<string, string>
+                        foreach (var line in linesFromExcel)
+                        {
+                            try
+                            {
+                                rcvGui.updateVisibility(rcvGui.overlayTip_lbl, true);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                MouseHandler.MouseMoveTo(rlReceiptLnFirstLn);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
+                                MouseHandler.MouseClick();
+                                inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                                //var checkItem = iterateThroughListItems();
+                                rcvGui.updateStatusLabel($"Receiving Item: {iteration} out of {cntRawSize}");
+                                var checkItem = iterateThroughListLines(cntSize, line);
+                                if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+                                excelHandler.SetCell(mainWorkSheet, 10, 3, line);
+                                Dictionary<string, string> currentItemInfo = new Dictionary<string, string>
                     {
                         {"number_pieces", excelHandler.GetCell(mainWorkSheet, 4, 3) },
                         {"cases_per_pallet", excelHandler.GetCell(mainWorkSheet, 4, 8) },
@@ -186,104 +194,62 @@ namespace ArcherTools_0._0._1.methods
                         {"case_width", excelHandler.GetCell(mainWorkSheet , 17, 9) },
                         {"case_depth", excelHandler.GetCell(mainWorkSheet, 19, 9) }
                     };
-                            var skipItem = false;
-                            var copiedItem = Clipboard.GetText();
-                            foreach (var itemInfoValue in currentItemInfo)
-                            {
-                                if (itemInfoValue.Value == "#VALUE!" || itemInfoValue.Value == "#VALOR!" || itemInfoValue.Value == "#N/D")
-                                {                                    
-                                    var newFailedItem = new Item(copiedItem);
-                                    failedItems.TryAdd(line, newFailedItem);
-                                    skipItem = true;
-                                    Debug.WriteLine("Invalid Item.");
-                                    break;
-                                }
-                            }
-                            foreach (var item in receivedItems)
-                            {
-                                if (item.itemCode == copiedItem)
+                                var skipItem = false;
+                                var copiedItem = Clipboard.GetText();
+                                foreach (var itemInfoValue in currentItemInfo)
                                 {
-                                    skipItem = true;
-                                    Debug.WriteLine("Equal Item, skipping.");
-                                }
-                            }
-                            if (skipItem)
-                            {                                
-                                iteration++;
-                                continue;
-                            }
-                            if (endProcess) { AfterEndProcess(rcvGui, line); return; }
-                            if (checkItem)
-                            {
-                                MouseHandler.MouseMoveTo(rlItemSearchBox); MouseHandler.MouseClick();
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                                string currentItemCode = Clipboard.GetText();
-                                KeystrokeHandler.TypeText(currentItemCode);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                                inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                MouseHandler.MouseMoveTo(rlItemMtnIcon); MouseHandler.MouseClick();
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                MouseHandler.MouseMoveTo(rlItemCfgIcon); MouseHandler.MouseClick();
-
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                if (endProcess) { AfterEndProcess(rcvGui, line); return; }
-                                bool pcCheck;
-                                if (findDefaultCfg)
-                                {
-                                    pcCheck = checkPCsForDefault();
-                                }
-                                else
-                                {
-                                    pcCheck = checkPCs(currentItemInfo["number_pieces"]);
-                                }
-                                //Start Item Config
-                                if (pcCheck)
-                                {
-                                    
-                                    //Tabbing
-                                    tabBetween(3);
-                                    inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
-                                    KeystrokeHandler.TypeText(currentItemInfo["cases_per_pallet"]);
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.75));
-                                    inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                                    inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
-                                    KeystrokeHandler.TypeText(currentItemInfo["cases_per_tier"]);
-                                    if (endProcess) { AfterEndProcess(rcvGui, line);  return; }                                   
-                                    tabBetween(7);
-                                    KeystrokeHandler.TypeText(currentItemInfo["pallet_weight"]);
-                                    tabBetween(2);
-                                    KeystrokeHandler.TypeText(currentItemInfo["pallet_height"]);
-                                    tabBetween(2);
-                                    KeystrokeHandler.TypeText(currentItemInfo["pallet_width"]);
-                                    tabBetween(2);
-                                    KeystrokeHandler.TypeText(currentItemInfo["pallet_depth"]);
-                                    tabBetween(4);
-                                    KeystrokeHandler.TypeText(currentItemInfo["case_weight"]);
-                                    tabBetween(2);
-                                    KeystrokeHandler.TypeText(currentItemInfo["case_height"]);
-                                    tabBetween(2);
-                                    KeystrokeHandler.TypeText(currentItemInfo["case_width"]);
-                                    tabBetween(2);
-                                    KeystrokeHandler.TypeText(currentItemInfo["case_depth"]);
-                                    if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
-
-                                }
-                                else
-                                {
-                                    if (!autoCreateCfg)
+                                    if (itemInfoValue.Value == "#VALUE!" || itemInfoValue.Value == "#VALOR!" || itemInfoValue.Value == "#N/D")
                                     {
-                                        var newItem = new Item(copiedItem);
-                                        failedItems.TryAdd(line, newItem);
-                                        rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {line}");
+                                        var newFailedItem = new Item(copiedItem);
+                                        UpdateReceivedItems(line, newFailedItem, true);
+                                        skipItem = true;
+                                        Debug.WriteLine("Invalid Item.");
+                                        break;
+                                    }
+                                }
+                                foreach (var item in receivedItems)
+                                {
+                                    if (item.itemCode == copiedItem)
+                                    {
+                                        skipItem = true;
+                                        Debug.WriteLine("Equal Item, skipping.");
+                                    }
+                                }
+                                if (skipItem)
+                                {
+                                    iteration++;
+                                    continue;
+                                }
+                                if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+                                if (checkItem)
+                                {
+                                    MouseHandler.MouseMoveTo(rlItemSearchBox); MouseHandler.MouseClick();
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                                    string currentItemCode = Clipboard.GetText();
+                                    KeystrokeHandler.TypeText(currentItemCode);
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                                    inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                    MouseHandler.MouseMoveTo(rlItemMtnIcon); MouseHandler.MouseClick();
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                    MouseHandler.MouseMoveTo(rlItemCfgIcon); MouseHandler.MouseClick();
+
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                    if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+                                    bool pcCheck;
+                                    if (findDefaultCfg)
+                                    {
+                                        pcCheck = checkPCsForDefault();
                                     }
                                     else
                                     {
-                                        if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
-                                        CreateNewConfig(int.Parse(currentItemInfo["number_pieces"]), inputSimulator);
-                                        if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
+                                        pcCheck = checkPCs(currentItemInfo["number_pieces"]);
+                                    }
+                                    //Start Item Config
+                                    if (pcCheck)
+                                    {
+
+                                        //Tabbing
                                         tabBetween(3);
                                         inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
@@ -291,14 +257,10 @@ namespace ArcherTools_0._0._1.methods
                                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.75));
                                         inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
                                         inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
-                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));                                        
+                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                         KeystrokeHandler.TypeText(currentItemInfo["cases_per_tier"]);
-                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
-                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
-                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
-                                        KeystrokeHandler.TypeText(currentItemInfo["number_pieces"]);
-                                        tabBetween(6);
+                                        if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+                                        tabBetween(7);
                                         KeystrokeHandler.TypeText(currentItemInfo["pallet_weight"]);
                                         tabBetween(2);
                                         KeystrokeHandler.TypeText(currentItemInfo["pallet_height"]);
@@ -314,46 +276,93 @@ namespace ArcherTools_0._0._1.methods
                                         KeystrokeHandler.TypeText(currentItemInfo["case_width"]);
                                         tabBetween(2);
                                         KeystrokeHandler.TypeText(currentItemInfo["case_depth"]);
-                                        if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
+                                        if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+
                                     }
+                                    else
+                                    {
+                                        if (!autoCreateCfg)
+                                        {
+                                            var newItem = new Item(copiedItem);
+                                            UpdateReceivedItems(line, newItem, true);
+                                            rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {line}");
+                                        }
+                                        else
+                                        {
+                                            if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+                                            CreateNewConfig(int.Parse(currentItemInfo["number_pieces"]), inputSimulator);
+                                            if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+                                            tabBetween(3);
+                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
+                                            KeystrokeHandler.TypeText(currentItemInfo["cases_per_pallet"]);
+                                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.75));
+                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
+                                            KeystrokeHandler.TypeText(currentItemInfo["cases_per_tier"]);
+                                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
+                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
+                                            KeystrokeHandler.TypeText(currentItemInfo["number_pieces"]);
+                                            tabBetween(6);
+                                            KeystrokeHandler.TypeText(currentItemInfo["pallet_weight"]);
+                                            tabBetween(2);
+                                            KeystrokeHandler.TypeText(currentItemInfo["pallet_height"]);
+                                            tabBetween(2);
+                                            KeystrokeHandler.TypeText(currentItemInfo["pallet_width"]);
+                                            tabBetween(2);
+                                            KeystrokeHandler.TypeText(currentItemInfo["pallet_depth"]);
+                                            tabBetween(4);
+                                            KeystrokeHandler.TypeText(currentItemInfo["case_weight"]);
+                                            tabBetween(2);
+                                            KeystrokeHandler.TypeText(currentItemInfo["case_height"]);
+                                            tabBetween(2);
+                                            KeystrokeHandler.TypeText(currentItemInfo["case_width"]);
+                                            tabBetween(2);
+                                            KeystrokeHandler.TypeText(currentItemInfo["case_depth"]);
+                                            if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+                                        }
+                                    }
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+
+                                    if (endProcess) { AfterEndProcess(rcvGui, line); return; }
+
+                                    inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
+                                    var newIt = new Item(copiedItem);
+                                    UpdateReceivedItems(line, newIt);
+                                    iteration++;
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                    MouseHandler.MouseMoveTo(rlItemCfgClose); MouseHandler.MouseClick();
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                    MouseHandler.MouseMoveTo(rlItemMtnClose); MouseHandler.MouseClick();
+
                                 }
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-
-                                if (endProcess) { AfterEndProcess(rcvGui, line);  return; }
-
-                                inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
-                                var newIt = new Item(copiedItem);
-                                receivedItems.Add(newIt);
-                                iteration++;
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                MouseHandler.MouseMoveTo(rlItemCfgClose); MouseHandler.MouseClick();
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                MouseHandler.MouseMoveTo(rlItemMtnClose); MouseHandler.MouseClick();
-
                             }
-                        }
-                        catch(Exception ex)
-                        {
-                            rcvGui.updateStatusLabel($"Status: An error ocurred, ending receiving now\nDetails: {ex.StackTrace}\n{ex.Message}");
-                            if (failedItems.Count <= 0)
+                            catch (Exception ex)
                             {
-                                receivingCleanUp();
-                                Debug.WriteLine("cleaning all items");
+                                rcvGui.updateStatusLabel($"Status: An error ocurred, ending receiving now\nDetails: {ex.StackTrace}\n{ex.Message}");
+                                if (failedItems.Count <= 0)
+                                {
+                                    receivingCleanUp();
+                                    Debug.WriteLine("cleaning all items");
+                                }
+                                else
+                                {
+                                    receivingCleanUp(false);
+                                    Debug.WriteLine("cleaning all except failed");
+                                }
+                                return;
                             }
-                            else
-                            {
-                                receivingCleanUp(false);
-                                Debug.WriteLine("cleaning all except failed");
-                            }
-                            return;
                         }
-                        }
-                    string statusTxt = "";
+                        string statusTxt = "";
                         if (endProcess)
                         {
                             statusTxt += "Receiving Incomplete: ";
                         }
-                        else {
+                        else
+                        {
                             statusTxt += "Receiving Complete: ";
                         }
                         if (failedItems.Count <= 0)
@@ -363,29 +372,30 @@ namespace ArcherTools_0._0._1.methods
                         else
                         {
                             statusTxt += $"There were {failedItems.Count} failed items.";
-                        foreach (var item in failedItems)
-                        {
-                            Debug.WriteLine($"Item {item.Value.itemCode} failed at line: {item.Key}.");
-                        }
+                            foreach (var item in failedItems)
+                            {
+                                Debug.WriteLine($"Item {item.Value.itemCode} failed at line: {item.Key}.");
+                            }
                         }
                         rcvGui.updateStatusLabel(statusTxt);
                         if (failedItems.Count <= 0)
-                    {
-                        receivingCleanUp();
+                        {
+                            receivingCleanUp();
+                        }
+                        else
+                        {
+                            receivingCleanUp(false);
+                        }
+
                     }
-                    else
-                    {
-                        receivingCleanUp(false);
-                    }
-                        
-                    }
-                
+
                 }
-            else
-            {
-                throw new Exception("Config is invalid, cannot continue receiving.");
+                else
+                {
+                    throw new Exception("Config is invalid, cannot continue receiving.");
+                }
             }
-            }
+        }
 
         private static void CreateNewConfig(int pcs, InputSimulator ips)
         {
@@ -446,6 +456,7 @@ namespace ArcherTools_0._0._1.methods
                     {
                         var currentContainer = Container.SelectedContainer;
                         currentContainer.AddItemToRelease(Container.SelectedRelease, Line, Item);
+                        currentContainer.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, currentContainer.ContainerId));
                     }
                     return Task.CompletedTask;
                 }

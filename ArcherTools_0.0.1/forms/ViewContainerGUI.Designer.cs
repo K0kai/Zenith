@@ -28,26 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViewContainerGUI));
-            containerBindingSource = new BindingSource(components);
             panel1 = new Panel();
             title_Label = new Label();
             panel2 = new Panel();
             lineCfg_DtGridView = new DataGridView();
             lineColumn = new DataGridViewTextBoxColumn();
             configColumn = new DataGridViewTextBoxColumn();
-            ((System.ComponentModel.ISupportInitialize)containerBindingSource).BeginInit();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)lineCfg_DtGridView).BeginInit();
             SuspendLayout();
-            // 
-            // containerBindingSource
-            // 
-            containerBindingSource.DataSource = typeof(classes.Container);
             // 
             // panel1
             // 
@@ -148,7 +141,6 @@
             Name = "ViewContainerGUI";
             Text = "ViewContainerGUI";
             TopMost = true;
-            ((System.ComponentModel.ISupportInitialize)containerBindingSource).EndInit();
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)lineCfg_DtGridView).EndInit();
@@ -157,7 +149,6 @@
         }
 
         #endregion
-        private BindingSource containerBindingSource;
         private Panel panel1;
         private Panel panel2;
         private Label title_Label;

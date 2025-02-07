@@ -88,6 +88,7 @@ namespace ArcherTools_0._0._1.forms
             if (e.PropertyName == "SelectedRelease")
             {
                 UpdateSelectedRelease();
+                classes.Container.SelectedContainer.UpdateContainerStatus();
             }
             if (e.PropertyName == "ExpectedSize")
             {
