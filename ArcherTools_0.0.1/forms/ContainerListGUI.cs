@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using ArcherTools_0._0._1.boxes;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.classes;
+using ArcherTools_0._0._1.logging;
 
 namespace ArcherTools_0._0._1.forms
 {
@@ -12,7 +13,7 @@ namespace ArcherTools_0._0._1.forms
 
         public static Form _instanceForm;
         public static Form viewCfgForm;
-        public static ContainerListGUI _instance;        
+        public static ContainerListGUI _instance;
         private static BindingSource containerBs = new BindingSource();
 
         public ContainerListGUI(string title)
@@ -254,18 +255,18 @@ namespace ArcherTools_0._0._1.forms
                     {
                         case "nd":
                             dibf[1] = 100.ToString();
-                        break;
+                            break;
                         case "tef":
                             dibf[1] = 101.ToString();
-                        break;
+                            break;
                         case "byd":
                             dibf[1] = 102.ToString();
-                        break;
+                            break;
                         case "ima":
                             dibf[1] = 103.ToString();
-                        break;
+                            break;
                         default:
-                        break;
+                            break;
 
                     }
                     releasesAndItems.TryAdd(int.Parse(dibf[1]), itemList);
@@ -301,6 +302,25 @@ namespace ArcherTools_0._0._1.forms
                 ViewContainerGUI viewContainerGUI = new ViewContainerGUI(classes.Container.SelectedContainer);
                 viewContainerGUI.ShowDialog(this);
             }
+        }
+
+        private void generateReport_Btn_Click(object sender, EventArgs e)
+        {
+            if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
+            {
+                ContainerReport ctnReport = new ContainerReport(classes.Container.SelectedContainer, classes.Container.SelectedRelease);
+                ctnReport.GenerateReport();
+            }
+            else
+            {
+                MessageBox.Show("Could not validate container and release.\nPlease try reselecting.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void getEmail_btn_Click(object sender, EventArgs e)
+        {
+            ContainerReport ctnReport = new ContainerReport(classes.Container.SelectedContainer, classes.Container.SelectedRelease);
+            ctnReport.GenerateEmailMessage();
         }
     }
 }

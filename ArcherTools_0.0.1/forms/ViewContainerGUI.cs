@@ -24,7 +24,7 @@ namespace ArcherTools_0._0._1.forms
             _container = container;
             _releaseAsNum = classes.Container.SelectedRelease;
             this.Load += ViewContainerGUI_Load;
-            this.Text = $"{container.ContainerId}-{classes.Container.SelectedRelease}-{container.Owner}";
+            this.Text = $"{container.ContainerId}-{classes.Container.ReleaseToString(classes.Container.SelectedRelease)}-{container.Owner}";
 
         }
 

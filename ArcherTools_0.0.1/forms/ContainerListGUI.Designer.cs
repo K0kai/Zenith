@@ -35,6 +35,7 @@
             viewCfg_btn = new Button();
             panel2 = new Panel();
             panel3 = new Panel();
+            generateReport_Btn = new Button();
             progress_lbl = new Label();
             size_lbl = new Label();
             status_lbl = new Label();
@@ -46,6 +47,7 @@
             containerList_listbox = new ListBox();
             viewcfg_Tooltip = new ToolTip(components);
             viewitem_Tooltip = new ToolTip(components);
+            getEmail_btn = new Button();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
@@ -129,6 +131,8 @@
             // 
             // panel3
             // 
+            panel3.Controls.Add(getEmail_btn);
+            panel3.Controls.Add(generateReport_Btn);
             panel3.Controls.Add(progress_lbl);
             panel3.Controls.Add(size_lbl);
             panel3.Controls.Add(status_lbl);
@@ -139,6 +143,27 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(212, 256);
             panel3.TabIndex = 11;
+            // 
+            // generateReport_Btn
+            // 
+            generateReport_Btn.AutoSize = true;
+            generateReport_Btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            generateReport_Btn.BackColor = SystemColors.ControlDarkDark;
+            generateReport_Btn.BackgroundImageLayout = ImageLayout.None;
+            generateReport_Btn.Cursor = Cursors.Hand;
+            generateReport_Btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            generateReport_Btn.FlatAppearance.BorderSize = 0;
+            generateReport_Btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
+            generateReport_Btn.FlatStyle = FlatStyle.Flat;
+            generateReport_Btn.ForeColor = SystemColors.ButtonFace;
+            generateReport_Btn.Location = new Point(9, 228);
+            generateReport_Btn.Margin = new Padding(25, 3, 25, 3);
+            generateReport_Btn.Name = "generateReport_Btn";
+            generateReport_Btn.Size = new Size(52, 25);
+            generateReport_Btn.TabIndex = 17;
+            generateReport_Btn.Text = "Report";
+            generateReport_Btn.UseVisualStyleBackColor = false;
+            generateReport_Btn.Click += generateReport_Btn_Click;
             // 
             // progress_lbl
             // 
@@ -271,6 +296,27 @@
             viewitem_Tooltip.ToolTipIcon = ToolTipIcon.Warning;
             viewitem_Tooltip.ToolTipTitle = "Attention";
             // 
+            // getEmail_btn
+            // 
+            getEmail_btn.AutoSize = true;
+            getEmail_btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            getEmail_btn.BackColor = SystemColors.ControlDarkDark;
+            getEmail_btn.BackgroundImageLayout = ImageLayout.None;
+            getEmail_btn.Cursor = Cursors.Hand;
+            getEmail_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            getEmail_btn.FlatAppearance.BorderSize = 0;
+            getEmail_btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
+            getEmail_btn.FlatStyle = FlatStyle.Flat;
+            getEmail_btn.ForeColor = SystemColors.ButtonFace;
+            getEmail_btn.Location = new Point(72, 228);
+            getEmail_btn.Margin = new Padding(25, 3, 25, 3);
+            getEmail_btn.Name = "getEmail_btn";
+            getEmail_btn.Size = new Size(46, 25);
+            getEmail_btn.TabIndex = 18;
+            getEmail_btn.Text = "Email";
+            getEmail_btn.UseVisualStyleBackColor = false;
+            getEmail_btn.Click += getEmail_btn_Click;
+            // 
             // ContainerListGUI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -313,5 +359,7 @@
         private Button viewCfg_btn;
         private ToolTip viewcfg_Tooltip;
         private ToolTip viewitem_Tooltip;
+        private Button generateReport_Btn;
+        private Button getEmail_btn;
     }
 }

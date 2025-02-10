@@ -67,6 +67,7 @@ namespace ArcherTools_0._0._1.methods
                     {
                         receivedItems = classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Values.ToList();
                     }
+                }
 
 
                     if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
@@ -395,7 +396,7 @@ namespace ArcherTools_0._0._1.methods
                     throw new Exception("Config is invalid, cannot continue receiving.");
                 }
             }
-        }
+        
 
         private static void CreateNewConfig(int pcs, InputSimulator ips)
         {

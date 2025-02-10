@@ -328,6 +328,8 @@ namespace ArcherTools_0._0._1.forms
         private void CtnComboBox_SelectionChangeCommitted(object? sender, EventArgs e)
         {
             classes.Container.SetSelectedContainer((classes.Container) (sender as ComboBox).SelectedItem);
+            UpdateSelectedRelease(sendToCtnForm.Controls.Find("release_ComboBox", true).FirstOrDefault() as ComboBox);
+            
         }
 
         private void SelectCtnForm_FormClosed(object? sender, FormClosedEventArgs e)
@@ -347,6 +349,7 @@ namespace ArcherTools_0._0._1.forms
                 UpdateSelectedCtn(thisForm.Controls.Find("container_ComboBox", true).FirstOrDefault() as ComboBox);
                 if (SelectedRelease != 0)
                 {
+                    
                     UpdateSelectedRelease(thisForm.Controls.Find("release_ComboBox", true).FirstOrDefault() as ComboBox);
                 }
             }
@@ -373,6 +376,10 @@ namespace ArcherTools_0._0._1.forms
 
         private static void UpdateSelectedRelease(ComboBox cbBox)
         {
+            var bs = new BindingSource();
+            bs.DataSource = classes.Container.SelectedContainer.ReleasesAndItems.Keys.ToArray();
+            cbBox = sendToCtnForm.Controls.Find("release_ComboBox", true).FirstOrDefault() as ComboBox;
+            cbBox.DataSource = bs;
             cbBox.SelectedItem = classes.Container.SelectedRelease;
             cbBox.SelectedIndex = cbBox.Items.IndexOf(cbBox.SelectedItem);
         }

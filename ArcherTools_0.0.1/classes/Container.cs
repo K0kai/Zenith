@@ -9,6 +9,7 @@ using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.enums;
 using ArcherTools_0._0._1.forms;
 using MathNet.Numerics;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace ArcherTools_0._0._1.classes
 {
@@ -150,7 +151,7 @@ namespace ArcherTools_0._0._1.classes
         public Container(string containerId, string owner, ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> releasesAndItems)
         {
             this.ContainerId = containerId;
-            this.Owner = owner;
+            this.Owner = owner.ToUpper();
             this.ReleasesAndItems = releasesAndItems;
             if (AllContainers == null)
             {
@@ -168,7 +169,7 @@ namespace ArcherTools_0._0._1.classes
         public Container (string containerId, string owner)
         {
             this.ContainerId = containerId;
-            this.Owner = owner;
+            this.Owner = owner.ToUpper();
             if (AllContainers == null)
             {
                 AllContainers = new List<Container>();
@@ -214,32 +215,39 @@ namespace ArcherTools_0._0._1.classes
         }
         public void UpdateContainerStatus()
         {
-            if (SelectedContainer != null)
+            if (this.ContainerId == SelectedContainer.ContainerId)
             {
-                if (SelectedContainer != null && SelectedRelease == null)
+                if (SelectedContainer != null)
                 {
-                    ContainerStatus = "No Release Selected";
-                    return;
-                }
-                else
-                {
-                    if (SelectedContainer.ContainerId == this.ContainerId)
+                    if (SelectedContainer != null && SelectedRelease == null)
                     {
-                        if (ReleasesAndItems[SelectedRelease].Count == 0)
+                        ContainerStatus = "No Release Selected";
+                        return;
+                    }
+                    else
+                    {
+                        if (SelectedContainer.ContainerId == this.ContainerId)
                         {
-                            ContainerStatus = "Empty";
-                            return;
-                        }
-                        else if (ReleasesAndItems[SelectedRelease].Count >= ExpectedSize)
-                        {
-                            ContainerStatus = "Complete";
-                        }
-                        else
-                        {
-                            ContainerStatus = "Incomplete";
+                            if (ReleasesAndItems[SelectedRelease].Count == 0)
+                            {
+                                ContainerStatus = "Empty";
+                                return;
+                            }
+                            else if (ReleasesAndItems[SelectedRelease].Count >= ExpectedSize)
+                            {
+                                ContainerStatus = "Complete";
+                            }
+                            else
+                            {
+                                ContainerStatus = "Incomplete";
+                            }
                         }
                     }
                 }
+            }
+            else
+            {
+                MessageBox.Show("Failed to calculate container status, the passed container does not match the currently selected container", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             
         }
@@ -251,6 +259,55 @@ namespace ArcherTools_0._0._1.classes
                 ExpectedSize = expectedSize;
             }
         }
+
+        public static string? ReleaseToString(int release)
+        {
+            string stringRelease;
+            switch (release)
+            {
+                case 100:
+                    stringRelease = "ND";
+                    break;
+                case 101:
+                    stringRelease = "TEF";
+                    break;
+                case 102:
+                    stringRelease = "BYD";
+                    break;
+                case 103:
+                    stringRelease = "IMA";
+                    break;
+                default:
+                    stringRelease = release.ToString();
+                    break;
+            }
+            return stringRelease;
+        }
+
+        public static int? ReleaseToInt(string release)
+        {
+            int intRelease = 0;
+            switch (release.ToLower())
+            {
+                case "nd":
+                    intRelease = 100;
+                    break;
+                case "tef":
+                    intRelease = 101;
+                    break;
+                case "byd":
+                    intRelease = 102;
+                    break;
+                case "ima":
+                    intRelease = 103;
+                    break;
+                default:
+                    intRelease = int.Parse(release);
+                    break;
+            }
+            return intRelease;
+        }
+        
 
         internal void CalculateExpectedSize()
         {
