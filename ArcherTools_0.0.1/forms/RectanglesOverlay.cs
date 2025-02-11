@@ -243,7 +243,6 @@ namespace ArcherTools_0._0._1.boxes
                     mouseTrackLabel.Destroy();
                     mouseTrackLabel = null;
                 }
-                rectOv.Dispose();
                 return pwhRects;
             }
 

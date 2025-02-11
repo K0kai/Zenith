@@ -84,6 +84,7 @@ namespace ArcherTools_0._0._1.classes
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
         }
         public static void OnStaticPropertyChanged([CallerMemberName] string propertyName = null)
         {

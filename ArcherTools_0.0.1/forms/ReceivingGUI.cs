@@ -20,6 +20,7 @@ namespace ArcherTools_0._0._1.forms
         internal static Form containerListForm;
         private Point mouseDownLocation;
         internal bool containerWindowEnabled = false;
+        internal bool isCleaning;
         public ReceivingGUI(string title, string desc)
         {
             InitializeComponent();
@@ -172,35 +173,41 @@ namespace ArcherTools_0._0._1.forms
 
         private async void cleanExcel_Btn_Click(object sender, EventArgs e)
         {
-            updateStatusLabel("Status: Starting cleaning process");
-            var configDataValidation = Receiving.validateConfigData();
-            var excelDataValidation = Receiving.validateExcel();
-            try
+            if (!isCleaning)
             {
-                if (configDataValidation && excelDataValidation)
+                isCleaning = true;
+                updateStatusLabel("Status: Starting cleaning process");
+                var configDataValidation = Receiving.validateConfigData();
+                var excelDataValidation = Receiving.validateExcel();
+                try
                 {
-                    this.Cursor = Cursors.WaitCursor;
-                    ReceivingConfig rcvConfig = ConfigData._receivingConfig;
-                    ExcelHandler exHandler = new ExcelHandler(rcvConfig.ExcelFilePath);
-                    var lastFilledRow = exHandler.GetLastFilledRow("DUMP", 3, 2);
-                    var numOfFilledRows = exHandler.GetColumn("DUMP", 3, 2).Count;
-                    updateStatusLabel("Status: Cleaning items 1/2");
-                    Task cleanItems = Task.Run(() => { exHandler.SetColumn("DUMP", 4, new List<string>(), 2, true, lastFilledRow); });
-                    Task.WaitAll(cleanItems);
-                    updateStatusLabel("Status: Cleaning items 2/2");
-                    Task cleanLines = Task.Run(() => { exHandler.SetColumn("DUMP", 3, new List<string>(), 2, true, lastFilledRow); });
-                    Task.WaitAll(cleanLines);
-                    lastFilledRow = lastFilledRow > numOfFilledRows ? numOfFilledRows : lastFilledRow;
-                    updateStatusLabel($"Status: Cleaned {lastFilledRow}/{numOfFilledRows} items successfully.");
-                    this.Cursor = Cursors.Default;
+                    if (configDataValidation && excelDataValidation)
+                    {
+                        this.Cursor = Cursors.WaitCursor;
+                        ReceivingConfig rcvConfig = ConfigData._receivingConfig;
+                        ExcelHandler exHandler = new ExcelHandler(rcvConfig.ExcelFilePath);
+                        var lastFilledRow = exHandler.GetLastFilledRow("DUMP", 3, 2);
+                        var numOfFilledRows = exHandler.GetColumn("DUMP", 3, 2).Count;
+                        updateStatusLabel("Status: Cleaning items 1/2");
+                        Task cleanItems = Task.Run(() => { exHandler.SetColumn("DUMP", 4, new List<string>(), 2, true, lastFilledRow); });
+                        Task.WaitAll(cleanItems);
+                        updateStatusLabel("Status: Cleaning items 2/2");
+                        Task cleanLines = Task.Run(() => { exHandler.SetColumn("DUMP", 3, new List<string>(), 2, true, lastFilledRow); });
+                        Task.WaitAll(cleanLines);
+                        lastFilledRow = lastFilledRow > numOfFilledRows ? numOfFilledRows : lastFilledRow;
+                        updateStatusLabel($"Status: Cleaned {lastFilledRow}/{numOfFilledRows} items successfully.");
+                        this.Cursor = Cursors.Default;
 
 
+                    }
+                    else { updateStatusLabel($"Status: Failure at data validation.\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation}"); throw new DataException($"Failed at validations:\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); }
+                    isCleaning = false;
                 }
-                else { updateStatusLabel($"Status: Failure at data validation.\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation}"); throw new DataException($"Failed at validations:\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); }
-            }
-            catch (Exception ex)
-            {
-                this.Cursor = Cursors.Default;
+                catch (Exception ex)
+                {
+                    this.Cursor = Cursors.Default;
+                    isCleaning = false;
+                }
             }
         }
 

@@ -17,6 +17,7 @@ namespace ArcherTools_0._0._1.forms
         private Point mouseDownLocation;
         internal static string previousText;
         internal static Form sendToCtnForm;
+        
 
         public ItemDumpingGUI(string title, string desc)
         {

@@ -28,6 +28,7 @@ namespace ArcherTools_0._0._1
 
         internal const int GWL_EXSTYLE = -20;
         internal const uint WS_EX_TOPMOST = 0x00000008;
+        private const int SW_RESTORE = 9;
 
         // Delegate for EnumWindowsProc
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -79,21 +80,48 @@ namespace ArcherTools_0._0._1
             return Rectangle.Empty;
         }
 
-        public static Rectangle GetWindowPosition(string windowTitle)
+        public static Rectangle? GetWindowPosition(string processName)
         {
-            IntPtr hWnd = FindWindow(null, windowTitle);
-            if (hWnd == IntPtr.Zero)
+            Process[] processes = Process.GetProcessesByName(processName);
+
+            foreach (Process process in processes)
             {
-                throw new Exception("Window not found!");
+                IntPtr hWnd = process.MainWindowHandle;
+
+                if (hWnd != IntPtr.Zero)
+                {
+                    if (GetWindowRect(hWnd, out RECT rect))
+                    {
+                        return new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+                    }
+                }
             }
 
-            if (GetWindowRect(hWnd, out RECT rect))
+            return null; // Process not found or no visible window
+        }
+
+        public static void BringProcessToFront(string processName)
+        {
+            Process[] processes = Process.GetProcessesByName(processName);
+
+            if (processes.Length > 0)
             {
-                return new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+                foreach (Process process in processes)
+                {
+                    IntPtr hWnd = process.MainWindowHandle;
+
+                    if (hWnd != IntPtr.Zero)
+                    {
+                        ShowWindow(hWnd, SW_RESTORE); // Restore if minimized
+                        SetForegroundWindow(hWnd);    // Bring to front
+                        Console.WriteLine($"Brought '{processName}' to foreground.");
+                        return;
+                    }
+                }
             }
             else
             {
-                throw new Exception("Failed to get window rectangle!");
+                Console.WriteLine($"Process '{processName}' not found.");
             }
         }
 

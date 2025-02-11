@@ -46,7 +46,9 @@ namespace ArcherTools_0._0._1.logging
             try
             {
                 this.ReportTime = DateTime.Now;
+                _Container.CalculateExpectedSize();
                 _Container.UpdateContainerStatus();
+                
                 this.Body = $"Ctr#{this._Container.ContainerId}-{classes.Container.ReleaseToString(_ContainerRelease)}";
 
                 if (_Container.ContainerStatus != "Complete")
@@ -102,7 +104,11 @@ namespace ArcherTools_0._0._1.logging
                 {
                     _message += getSplitMessage[i] + " ";
                 }
-                Clipboard.SetText(_message);
+                try
+                {
+                    Clipboard.SetText(_message);
+                }
+                catch { }
                 Debug.WriteLine(_message);
                 return Task.CompletedTask;
             }

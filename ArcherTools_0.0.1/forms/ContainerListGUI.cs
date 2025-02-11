@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Windows.Forms;
 using ArcherTools_0._0._1.boxes;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.classes;
@@ -44,9 +45,14 @@ namespace ArcherTools_0._0._1.forms
             this.addCtn_btn.Click += addContainer_Clicked;
             this.delCtn_btn.Click += delContainer_Clicked;
             this.Invalidated += ContainerListGUI_Invalidated;
-            viewcfg_Tooltip.SetToolTip(viewCfg_btn, "Experimental, can only view, not edit");
-            viewitem_Tooltip.SetToolTip(viewItems_btn, "Feature not implemented yet");
+            obsolete_Tooltip.SetToolTip(viewCfg_btn, "Experimental, can only view, not edit");
+            obsolete_Tooltip.SetToolTip(viewItems_btn, "Feature not implemented yet");
 
+            foreach (ToolStripMenuItem tsmi in containerMenuStrip.Items)
+            {
+                tsmi.MouseEnter += ToolStripMenuItem_MouseEnter;
+                tsmi.MouseLeave += ToolStripMenuItem_MouseLeave;
+            }
 
             Label title = title_Label;
             title.ForeColor = currentPreset.PrimaryLabelColor;
@@ -70,6 +76,7 @@ namespace ArcherTools_0._0._1.forms
             containerBs.DataSource = classes.Container.AllContainers;
             classes.Container.StaticPropertyChanged += Container_StaticPropertyChanged;
             this.containerList_listbox.DataSource = containerBs;
+            containerList_listbox.MouseDown += ContainerList_listbox_MouseDown;
 
             if (classes.Container.SelectedContainer != null)
             {
@@ -77,6 +84,25 @@ namespace ArcherTools_0._0._1.forms
             }
 
             this.Invalidate();
+        }
+
+        private void ContainerList_listbox_MouseDown(object? sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var listBox = sender as ListBox;
+                // Check if the mouse is over a valid item in the ListBox
+                int index = listBox.IndexFromPoint(e.Location);
+                if (index != ListBox.NoMatches)
+                {
+                    // Set the selected index based on the right-clicked item
+                    listBox.SelectedIndex = index;
+                    listBox.SelectedItem = listBox.Items[index];
+                    classes.Container.SetSelectedContainer((Container)listBox.SelectedItem);
+                    // Show the context menu at the mouse location
+                    containerMenuStrip.Show(listBox, e.Location);
+                }
+            }
         }
 
         private void SelectedContainer_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -321,6 +347,54 @@ namespace ArcherTools_0._0._1.forms
         {
             ContainerReport ctnReport = new ContainerReport(classes.Container.SelectedContainer, classes.Container.SelectedRelease);
             ctnReport.GenerateEmailMessage();
+        }
+
+        private async void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (classes.Container.SelectedContainer != null)
+            {
+                var currentSelectedContainer = classes.Container.SelectedContainer;
+                DialogResult dr = MessageBox.Show($"Are you sure you want to delete {currentSelectedContainer.ToString()}?\nThis action is irreversible.", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (dr == DialogResult.Yes)
+                {
+                    await classes.Container.DeleteContainerFileAsync(currentSelectedContainer);
+                    classes.Container.RemoveContainer(currentSelectedContainer);
+                }
+            }
+        }
+
+        private void ToolStripMenuItem_MouseLeave(object sender, EventArgs e)
+        {
+            ToolStripMenuItem toolStripMenuItem = sender as ToolStripMenuItem;
+            toolStripMenuItem.ForeColor = Color.WhiteSmoke;
+        }
+        private void ToolStripMenuItem_MouseEnter(object sender, EventArgs e)
+        {
+            ToolStripMenuItem toolStripMenuItem = sender as ToolStripMenuItem;
+            toolStripMenuItem.ForeColor = Color.Black;
+        }
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void itemsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
+            {
+                classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Clear();
+                classes.Container.SelectedContainer.CalculateExpectedSize();
+                classes.Container.SelectedContainer.UpdateContainerStatus();
+            }
+        }
+
+        private void configurationsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
+            {
+                classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Clear();
+                classes.Container.SelectedContainer.CalculateExpectedSize();
+                classes.Container.SelectedContainer.UpdateContainerStatus();
+            }
         }
     }
 }

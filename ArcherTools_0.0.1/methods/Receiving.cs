@@ -30,7 +30,7 @@ namespace ArcherTools_0._0._1.methods
         internal static List<ControlType> requiredCtrlTypes = new List<ControlType> { ControlType.ReceiptLineWindow, ControlType.ItemSearchWindow, ControlType.PowerHouseUpperTab, ControlType.ItemConfigurationWindow };
 
         internal static List<int> linesFromExcel;
-        internal static List<Item> receivedItems = new List<Item>();
+        internal static ConcurrentDictionary<int, Item> receivedItems = new ConcurrentDictionary<int, Item>();
         internal static ConcurrentDictionary<int, Item> failedItems = new ConcurrentDictionary<int, Item>();
 
         internal static int pwhMonitor;
@@ -62,38 +62,42 @@ namespace ArcherTools_0._0._1.methods
                 var findDefaultCfg = ConfigData._toolConfig.CheckForDefault;
                 if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0 && classes.Container.SelectedContainer.ReleasesAndItems[Container.SelectedRelease].Count > 0)
                 {
+                    Debug.WriteLine("Ask to import items.");
                     DialogResult importDoneItems = MessageBox.Show($"This container seems to have {classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Count} items attached to it, would you like to import them?", "Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (importDoneItems == DialogResult.Yes)
                     {
-                        receivedItems = classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Values.ToList();
+                        receivedItems = classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease];
                     }
                 }
 
 
-                    if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
-                    {
-                        WindowHandler.WinToFocusByName("mstsc");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        rcvGui.updateStatusLabel("Receiving Status: Discontinued.");
-                        return;
-                    }
+                var processes = Process.GetProcessesByName("mstsc");
+                if (processes.Length > 0)
+                {
+                    WindowHandler.WinToFocusByName(processes[0].ProcessName);
+                }
+                else
+                {
+                    MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    rcvGui.updateStatusLabel("Receiving Status: Discontinued.");
+                    return;
+                }
 
-                    switch (WindowHandler.GetWindowPosition("10.0.1.29 - Remote Desktop Connection").X)
-                    {
-                        case >= 3840:
-                            pwhMonitor = 3840;
-                            break;
-                        case >= 1920:
-                            pwhMonitor = 1920;
-                            break;
-                        default:
-                            pwhMonitor = 0;
-                            break;
-                    }
-                    rlReceiptLineBorder = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLineBorder);
+
+                switch (WindowHandler.GetWindowPosition(processes[0].ProcessName).Value.X)
+                {
+                    case >= 3840:
+                        pwhMonitor = 3840;
+                        break;
+                    case >= 1920:
+                        pwhMonitor = 1920;
+                        break;
+                    default:
+                        pwhMonitor = 0;
+                        break;
+                }
+                
+                rlReceiptLineBorder = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLineBorder);
                     rlReceiptLnFirstLn = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLnFirstLn);
                     rlItemSearchBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), itemSearchBox);
                     rlItemMtnIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemMtnIcon);
@@ -102,9 +106,8 @@ namespace ArcherTools_0._0._1.methods
                     Point rlItemMtnClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Width - 20, rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.Y + 15);
                     Point rlItemCfgClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Width - 15, rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.Y + 15);
 
-                    var inputSimulator = new InputSimulator();
-
-
+                    var ips = new InputSimulator();
+                    
                     ExcelHandler excelHandler = new ExcelHandler(rcvCfg.ExcelFilePath);
 
                     {
@@ -151,12 +154,7 @@ namespace ArcherTools_0._0._1.methods
                         MouseHandler.MouseMoveTo(new Point(rlReceiptLnFirstLn.X + 30, rlReceiptLnFirstLn.Y));
                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                         MouseHandler.MouseClick();
-                        inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.SHIFT);
-                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
-                        inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
-                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
-                        inputSimulator.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.MENU);
-
+                        EnsureUnstuckKeys();
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         Task.Run(() =>
                         {
@@ -169,13 +167,24 @@ namespace ArcherTools_0._0._1.methods
                         {
                             try
                             {
+                            if (receivedItems.Keys.Contains(line))
+                            {
+                                continue;
+                            }
                                 rcvGui.updateVisibility(rcvGui.overlayTip_lbl, true);
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                                 MouseHandler.MouseMoveTo(rlReceiptLnFirstLn);
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                 MouseHandler.MouseClick();
-                                inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                            /*
+                            ips.Keyboard.KeyDown(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                            Thread.Sleep(100);
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                            Thread.Sleep(100);
+                            ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                            */
+                            ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                                 //var checkItem = iterateThroughListItems();
                                 rcvGui.updateStatusLabel($"Receiving Item: {iteration} out of {cntRawSize}");
                                 var checkItem = iterateThroughListLines(cntSize, line);
@@ -208,14 +217,7 @@ namespace ArcherTools_0._0._1.methods
                                         break;
                                     }
                                 }
-                                foreach (var item in receivedItems)
-                                {
-                                    if (item.itemCode == copiedItem)
-                                    {
-                                        skipItem = true;
-                                        Debug.WriteLine("Equal Item, skipping.");
-                                    }
-                                }
+                                
                                 if (skipItem)
                                 {
                                     iteration++;
@@ -229,7 +231,7 @@ namespace ArcherTools_0._0._1.methods
                                     string currentItemCode = Clipboard.GetText();
                                     KeystrokeHandler.TypeText(currentItemCode);
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                                    inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
+                                    ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                                     MouseHandler.MouseMoveTo(rlItemMtnIcon); MouseHandler.MouseClick();
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
@@ -252,12 +254,12 @@ namespace ArcherTools_0._0._1.methods
 
                                         //Tabbing
                                         tabBetween(3);
-                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                        ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                         KeystrokeHandler.TypeText(currentItemInfo["cases_per_pallet"]);
                                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.75));
-                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                                        inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                        ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                                        ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                         KeystrokeHandler.TypeText(currentItemInfo["cases_per_tier"]);
                                         if (endProcess) { AfterEndProcess(rcvGui, line); return; }
@@ -291,20 +293,20 @@ namespace ArcherTools_0._0._1.methods
                                         else
                                         {
                                             if (endProcess) { AfterEndProcess(rcvGui, line); return; }
-                                            CreateNewConfig(int.Parse(currentItemInfo["number_pieces"]), inputSimulator);
+                                            CreateNewConfig(int.Parse(currentItemInfo["number_pieces"]), ips);
                                             if (endProcess) { AfterEndProcess(rcvGui, line); return; }
                                             tabBetween(3);
-                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                             KeystrokeHandler.TypeText(currentItemInfo["cases_per_pallet"]);
                                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.75));
-                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                             KeystrokeHandler.TypeText(currentItemInfo["cases_per_tier"]);
                                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
-                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                                            inputSimulator.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
+                                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                             KeystrokeHandler.TypeText(currentItemInfo["number_pieces"]);
                                             tabBetween(6);
@@ -329,9 +331,15 @@ namespace ArcherTools_0._0._1.methods
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
 
                                     if (endProcess) { AfterEndProcess(rcvGui, line); return; }
-
-                                    inputSimulator.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
-                                    var newIt = new Item(copiedItem);
+                                /*
+                                ips.Keyboard.KeyDown(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                                Thread.Sleep(100);
+                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.VK_S);
+                                Thread.Sleep(100);
+                                ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                                */
+                                ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
+                                var newIt = new Item(copiedItem);
                                     UpdateReceivedItems(line, newIt);
                                     iteration++;
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
@@ -400,10 +408,13 @@ namespace ArcherTools_0._0._1.methods
 
         private static void CreateNewConfig(int pcs, InputSimulator ips)
         {
+            /*
             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
             ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.INSERT);
             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.3));
             ips.Keyboard.TextEntry($"{pcs}PC");
+            */
+            ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
         }
         private static int containerSize(bool rawSize = false)
         {
@@ -452,12 +463,11 @@ namespace ArcherTools_0._0._1.methods
             {
                 try
                 {
-                    receivedItems.Add(Item);
+                    receivedItems.TryAdd(Line,Item);
                     if (Container.SelectedContainer != null)
                     {
                         var currentContainer = Container.SelectedContainer;
                         currentContainer.AddItemToRelease(Container.SelectedRelease, Line, Item);
-                        currentContainer.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, currentContainer.ContainerId));
                     }
                     return Task.CompletedTask;
                 }
@@ -598,67 +608,49 @@ namespace ArcherTools_0._0._1.methods
             
             InputSimulator ips = new InputSimulator();
             int numIteration = 0;
-
+            Clipboard.Clear();
+            EnsureUnstuckKeys();            
             while (true)
             {
-                try {  
-                        for (int i = 1; i <= containerSize; i++)
+                try {
+                    for (int j = 1; j <= 3; j++)
+                    {
+                        /*
+                        ips.Keyboard.KeyDown(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                        Thread.Sleep(100);
+                        ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                        Thread.Sleep(100);
+                        ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                        */
+                        ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                    }
+                    var copiedLineAsText = Clipboard.GetText();
+                    if (!string.IsNullOrEmpty(copiedLineAsText) && !string.IsNullOrWhiteSpace(copiedLineAsText))
+                    {
+                        var copiedLine = int.Parse(Clipboard.GetText());
+                        if (copiedLine != neededLine)
                         {
-                        if (numIteration >= 100 || endProcess)
-                        {
-                            endProcess = true;
-                            throw new Exception("Iteration timeout");
-                        }
-                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.2));
-                            ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                            var copiedLine = int.Parse(Clipboard.GetText());
-                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.10));
-                            if (copiedLine == neededLine)
+                            if (copiedLine > neededLine)
                             {
-                            var lineMatch = false;
-                            for (int x = 1; x <= 3; x++)
-                            {
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
-                                ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.2));
-                                copiedLine = int.Parse(Clipboard.GetText());
-                                if (copiedLine != neededLine)
-                                {
-                                    lineMatch = false;
-                                    break;
-                                }
-                                else { lineMatch = true;}
-                            }
-                            if (!lineMatch)
-                            {
-                                continue;
-                            }
-                                EnsureUnstuckKeys();
-                                Clipboard.Clear();
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
-                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
-
-                                for (int z = 1; z <= 3; z++)
-                                {
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.4));
-                                    ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
-                                }                                
-                                
-                                return true;
+                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.UP);
                             }
                             else if (copiedLine < neededLine)
                             {
                                 ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.DOWN);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
-                            }
-                            else if (copiedLine > neededLine)
-                            {
-                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.UP);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.1));
                             }
                         }
+                        else
+                        {
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
+                            ips.Keyboard.KeyDown(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                            Thread.Sleep(100);
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.VK_C);
+                            Thread.Sleep(100);
+                            ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
+                            return true;
+                        }
+                    }
+                    
                      
 
                 } catch (Exception ex)
@@ -683,6 +675,8 @@ namespace ArcherTools_0._0._1.methods
         private static void EnsureUnstuckKeys()
         {
             InputSimulator ips = new InputSimulator();
+            ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.END);
+            Thread.Sleep(200);
             ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
             Thread.Sleep(200);
             ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.SHIFT);
@@ -743,10 +737,12 @@ namespace ArcherTools_0._0._1.methods
         {
             ToolConfig toolCfg = ConfigData._toolConfig;
             byte PwhMonitor = 1;
-           // #if !DEBUG
-            if (WindowHandler.FindWindow(null, "10.0.1.29 - Remote Desktop Connection") != IntPtr.Zero)
+            // #if !DEBUG
+
+            var processes = Process.GetProcessesByName("mstsc");
+            if (processes.Length > 0)
             {
-                WindowHandler.WinToFocusByName("mstsc");
+                WindowHandler.WinToFocusByName(processes[0].ProcessName);
             }
             else
             {
@@ -755,7 +751,7 @@ namespace ArcherTools_0._0._1.methods
             }
 
 
-            switch (WindowHandler.GetWindowPosition("10.0.1.29 - Remote Desktop Connection").X)
+            switch (WindowHandler.GetWindowPosition(processes[0].ProcessName).Value.X)
             {
                 case >= 3840:
                     PwhMonitor = 3;
@@ -878,7 +874,7 @@ namespace ArcherTools_0._0._1.methods
         {
             endProcess = false;
             receivedItems.Clear();            
-            receivedItems = new List<Item>();
+            receivedItems = new ConcurrentDictionary<int, Item> ();
             if (clearFailed)
             {
                 failedItems.Clear();

@@ -72,17 +72,16 @@
             // 
             // introlabel
             // 
-            introlabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
             introlabel.AutoEllipsis = true;
-            introlabel.AutoSize = true;
+            introlabel.Dock = DockStyle.Bottom;
             introlabel.Font = new Font("Franklin Gothic Medium Cond", 14.25F);
             introlabel.ForeColor = Color.Lavender;
-            introlabel.Location = new Point(227, 123);
+            introlabel.Location = new Point(0, 101);
             introlabel.Name = "introlabel";
-            introlabel.Size = new Size(43, 24);
+            introlabel.Size = new Size(509, 46);
             introlabel.TabIndex = 1;
             introlabel.Text = "Sup.";
-            introlabel.TextAlign = ContentAlignment.TopCenter;
+            introlabel.TextAlign = ContentAlignment.BottomCenter;
             // 
             // copyrights
             // 

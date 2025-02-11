@@ -35,6 +35,7 @@
             viewCfg_btn = new Button();
             panel2 = new Panel();
             panel3 = new Panel();
+            getEmail_btn = new Button();
             generateReport_Btn = new Button();
             progress_lbl = new Label();
             size_lbl = new Label();
@@ -45,12 +46,18 @@
             addCtn_btn = new Button();
             selectCtn_lbl = new Label();
             containerList_listbox = new ListBox();
-            viewcfg_Tooltip = new ToolTip(components);
-            viewitem_Tooltip = new ToolTip(components);
-            getEmail_btn = new Button();
+            obsolete_Tooltip = new ToolTip(components);
+            success_Tooltip = new ToolTip(components);
+            containerMenuStrip = new ContextMenuStrip(components);
+            toExcelToolStripMenuItem = new ToolStripMenuItem();
+            clearToolStripMenuItem = new ToolStripMenuItem();
+            itemsToolStripMenuItem = new ToolStripMenuItem();
+            configurationsToolStripMenuItem = new ToolStripMenuItem();
+            deleteToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
+            containerMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
             // title_Label
@@ -144,6 +151,27 @@
             panel3.Size = new Size(212, 256);
             panel3.TabIndex = 11;
             // 
+            // getEmail_btn
+            // 
+            getEmail_btn.AutoSize = true;
+            getEmail_btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            getEmail_btn.BackColor = SystemColors.ControlDarkDark;
+            getEmail_btn.BackgroundImageLayout = ImageLayout.None;
+            getEmail_btn.Cursor = Cursors.Hand;
+            getEmail_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            getEmail_btn.FlatAppearance.BorderSize = 0;
+            getEmail_btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
+            getEmail_btn.FlatStyle = FlatStyle.Flat;
+            getEmail_btn.ForeColor = SystemColors.ButtonFace;
+            getEmail_btn.Location = new Point(68, 215);
+            getEmail_btn.Margin = new Padding(25, 3, 25, 3);
+            getEmail_btn.Name = "getEmail_btn";
+            getEmail_btn.Size = new Size(46, 25);
+            getEmail_btn.TabIndex = 18;
+            getEmail_btn.Text = "Email";
+            getEmail_btn.UseVisualStyleBackColor = false;
+            getEmail_btn.Click += getEmail_btn_Click;
+            // 
             // generateReport_Btn
             // 
             generateReport_Btn.AutoSize = true;
@@ -156,7 +184,7 @@
             generateReport_Btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
             generateReport_Btn.FlatStyle = FlatStyle.Flat;
             generateReport_Btn.ForeColor = SystemColors.ButtonFace;
-            generateReport_Btn.Location = new Point(9, 228);
+            generateReport_Btn.Location = new Point(5, 215);
             generateReport_Btn.Margin = new Padding(25, 3, 25, 3);
             generateReport_Btn.Name = "generateReport_Btn";
             generateReport_Btn.Size = new Size(52, 25);
@@ -235,7 +263,7 @@
             delCtn_btn.FlatAppearance.MouseOverBackColor = Color.IndianRed;
             delCtn_btn.FlatStyle = FlatStyle.Flat;
             delCtn_btn.ForeColor = SystemColors.ButtonFace;
-            delCtn_btn.Location = new Point(130, 234);
+            delCtn_btn.Location = new Point(118, 234);
             delCtn_btn.Margin = new Padding(25, 3, 25, 3);
             delCtn_btn.Name = "delCtn_btn";
             delCtn_btn.Size = new Size(22, 25);
@@ -255,7 +283,7 @@
             addCtn_btn.FlatAppearance.MouseOverBackColor = Color.OliveDrab;
             addCtn_btn.FlatStyle = FlatStyle.Flat;
             addCtn_btn.ForeColor = SystemColors.ButtonFace;
-            addCtn_btn.Location = new Point(3, 234);
+            addCtn_btn.Location = new Point(13, 234);
             addCtn_btn.Margin = new Padding(25, 3, 25, 3);
             addCtn_btn.Name = "addCtn_btn";
             addCtn_btn.Size = new Size(25, 25);
@@ -284,38 +312,79 @@
             containerList_listbox.Size = new Size(149, 199);
             containerList_listbox.TabIndex = 0;
             // 
-            // viewcfg_Tooltip
+            // obsolete_Tooltip
             // 
-            viewcfg_Tooltip.AutomaticDelay = 250;
-            viewcfg_Tooltip.ToolTipIcon = ToolTipIcon.Warning;
-            viewcfg_Tooltip.ToolTipTitle = "Attention";
+            obsolete_Tooltip.AutomaticDelay = 250;
+            obsolete_Tooltip.ToolTipIcon = ToolTipIcon.Warning;
+            obsolete_Tooltip.ToolTipTitle = "Attention";
             // 
-            // viewitem_Tooltip
+            // success_Tooltip
             // 
-            viewitem_Tooltip.AutomaticDelay = 250;
-            viewitem_Tooltip.ToolTipIcon = ToolTipIcon.Warning;
-            viewitem_Tooltip.ToolTipTitle = "Attention";
+            success_Tooltip.AutomaticDelay = 100;
+            success_Tooltip.ToolTipIcon = ToolTipIcon.Info;
+            success_Tooltip.ToolTipTitle = "Success";
             // 
-            // getEmail_btn
+            // containerMenuStrip
             // 
-            getEmail_btn.AutoSize = true;
-            getEmail_btn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            getEmail_btn.BackColor = SystemColors.ControlDarkDark;
-            getEmail_btn.BackgroundImageLayout = ImageLayout.None;
-            getEmail_btn.Cursor = Cursors.Hand;
-            getEmail_btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
-            getEmail_btn.FlatAppearance.BorderSize = 0;
-            getEmail_btn.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark;
-            getEmail_btn.FlatStyle = FlatStyle.Flat;
-            getEmail_btn.ForeColor = SystemColors.ButtonFace;
-            getEmail_btn.Location = new Point(72, 228);
-            getEmail_btn.Margin = new Padding(25, 3, 25, 3);
-            getEmail_btn.Name = "getEmail_btn";
-            getEmail_btn.Size = new Size(46, 25);
-            getEmail_btn.TabIndex = 18;
-            getEmail_btn.Text = "Email";
-            getEmail_btn.UseVisualStyleBackColor = false;
-            getEmail_btn.Click += getEmail_btn_Click;
+            containerMenuStrip.BackColor = Color.FromArgb(48, 48, 48);
+            containerMenuStrip.Items.AddRange(new ToolStripItem[] { toExcelToolStripMenuItem, clearToolStripMenuItem, deleteToolStripMenuItem });
+            containerMenuStrip.Name = "containerMenuStrip";
+            containerMenuStrip.RenderMode = ToolStripRenderMode.Professional;
+            containerMenuStrip.Size = new Size(159, 70);
+            // 
+            // toExcelToolStripMenuItem
+            // 
+            toExcelToolStripMenuItem.BackColor = Color.FromArgb(64, 64, 64);
+            toExcelToolStripMenuItem.ForeColor = Color.WhiteSmoke;
+            toExcelToolStripMenuItem.Image = Properties.Resources.excel;
+            toExcelToolStripMenuItem.Name = "toExcelToolStripMenuItem";
+            toExcelToolStripMenuItem.Size = new Size(158, 22);
+            toExcelToolStripMenuItem.Text = "To Worksheet";
+            // 
+            // clearToolStripMenuItem
+            // 
+            clearToolStripMenuItem.BackColor = Color.FromArgb(64, 64, 64);
+            clearToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { itemsToolStripMenuItem, configurationsToolStripMenuItem });
+            clearToolStripMenuItem.ForeColor = Color.WhiteSmoke;
+            clearToolStripMenuItem.Image = Properties.Resources.bin;
+            clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            clearToolStripMenuItem.Size = new Size(158, 22);
+            clearToolStripMenuItem.Text = "Clear";
+            clearToolStripMenuItem.ToolTipText = "This action is irreversible.";
+            clearToolStripMenuItem.Click += clearToolStripMenuItem_Click;
+            // 
+            // itemsToolStripMenuItem
+            // 
+            itemsToolStripMenuItem.BackColor = Color.FromArgb(64, 64, 64);
+            itemsToolStripMenuItem.ForeColor = Color.WhiteSmoke;
+            itemsToolStripMenuItem.Name = "itemsToolStripMenuItem";
+            itemsToolStripMenuItem.Size = new Size(153, 22);
+            itemsToolStripMenuItem.Text = "Items";
+            itemsToolStripMenuItem.Click += itemsToolStripMenuItem_Click;
+            // 
+            // configurationsToolStripMenuItem
+            // 
+            configurationsToolStripMenuItem.BackColor = Color.FromArgb(64, 64, 64);
+            configurationsToolStripMenuItem.ForeColor = Color.WhiteSmoke;
+            configurationsToolStripMenuItem.Name = "configurationsToolStripMenuItem";
+            configurationsToolStripMenuItem.Size = new Size(153, 22);
+            configurationsToolStripMenuItem.Text = "Configurations";
+            configurationsToolStripMenuItem.Click += configurationsToolStripMenuItem_Click;
+            // 
+            // deleteToolStripMenuItem
+            // 
+            deleteToolStripMenuItem.BackColor = Color.FromArgb(64, 64, 64);
+            deleteToolStripMenuItem.ForeColor = Color.WhiteSmoke;
+            deleteToolStripMenuItem.Image = Properties.Resources.delete;
+            deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            deleteToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+Del";
+            deleteToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Delete;
+            deleteToolStripMenuItem.Size = new Size(158, 22);
+            deleteToolStripMenuItem.Text = "Delete";
+            deleteToolStripMenuItem.ToolTipText = "This action is irreversible.";
+            deleteToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
+            deleteToolStripMenuItem.MouseEnter += ToolStripMenuItem_MouseEnter;
+            deleteToolStripMenuItem.MouseLeave += ToolStripMenuItem_MouseLeave;
             // 
             // ContainerListGUI
             // 
@@ -337,6 +406,7 @@
             panel2.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            containerMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -357,9 +427,15 @@
         private Label progress_lbl;
         private Button viewItems_btn;
         private Button viewCfg_btn;
-        private ToolTip viewcfg_Tooltip;
-        private ToolTip viewitem_Tooltip;
+        private ToolTip obsolete_Tooltip;
+        private ToolTip success_Tooltip;
         private Button generateReport_Btn;
         private Button getEmail_btn;
+        private ContextMenuStrip containerMenuStrip;
+        private ToolStripMenuItem toExcelToolStripMenuItem;
+        private ToolStripMenuItem clearToolStripMenuItem;
+        private ToolStripMenuItem deleteToolStripMenuItem;
+        private ToolStripMenuItem itemsToolStripMenuItem;
+        private ToolStripMenuItem configurationsToolStripMenuItem;
     }
 }
