@@ -302,8 +302,7 @@ namespace ArcherTools_0._0._1.forms
                         }
                         classes.Container.SelectedContainer.AttachedConfigurations?.TryAdd(classes.Container.SelectedRelease, configs);
                         classes.Container.SelectedContainer.CalculateExpectedSize();
-                        classes.Container.SelectedContainer.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder,classes.Container.SelectedContainer.ToString()));
-
+                        
                        
 
                     }

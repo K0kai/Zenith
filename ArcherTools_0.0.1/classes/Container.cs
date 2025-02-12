@@ -1,15 +1,12 @@
 ﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.enums;
 using ArcherTools_0._0._1.forms;
-using MathNet.Numerics;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace ArcherTools_0._0._1.classes
 {
@@ -83,8 +80,7 @@ namespace ArcherTools_0._0._1.classes
 
         public void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));            
         }
         public static void OnStaticPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -95,6 +91,7 @@ namespace ArcherTools_0._0._1.classes
                 {
                     if (ValidateSelectedContainerAndRelease() == 0)
                     {
+                        SelectedContainer.CalculateExpectedSize();
                         SelectedContainer.UpdateContainerStatus();
                     }
                 }
@@ -138,14 +135,6 @@ namespace ArcherTools_0._0._1.classes
             {
                 Debug.WriteLine(ex.StackTrace);
                 Debug.WriteLine($"Failed to select release from string: {release}");
-            }
-        }
-        public void AddItemToRelease(int release, int line, Item item)
-        {
-            if (this.ReleasesAndItems != null)
-            {
-                var ReleaseItems = this.ReleasesAndItems[release];
-                ReleaseItems.TryAdd(line, item);
             }
         }
 
@@ -314,23 +303,55 @@ namespace ArcherTools_0._0._1.classes
         {
             if (SelectedContainer.attachedConfigurations != null)
             {
-                var expectedSize = this.AttachedConfigurations[SelectedRelease].Count;
-                this.ExpectedSize = expectedSize;
+                try
+                {
+                    var expectedSize = !this.AttachedConfigurations.ContainsKey(selectedRelease) || this.AttachedConfigurations[SelectedRelease].Count == null ? 0 : this.AttachedConfigurations[SelectedRelease].Count;
+                    this.ExpectedSize = expectedSize;
+                }
+                catch (Exception ex)
+                {
+                }
             }
         }
 
+        public void AddItem(int release, int line, Item value)
+        {
+            if (this.ReleasesAndItems[release].TryAdd(line, value))
+            {
+                this.OnPropertyChanged(nameof(ReleasesAndItems));
+                SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
+                Debug.WriteLine("Adding item");
+            }           
+        }
         public static void AddContainer(Container container)
         {
             if (AllContainers == null)
             {
                 AllContainers = new List<Container>();
             }
-            List<string> ContainerNames = new List<string>();
             foreach (var cont in AllContainers)
             {
-                ContainerNames.Add(cont.ContainerId);
+                if (cont.ContainerId == container.ContainerId)
+                {
+                    try
+                    {
+                        if (cont.Owner.Trim() != container.Owner.Trim())
+                        {
+                            MessageBox.Show($"This container already exists and is owned by another customer\n(Old:{cont.ContainerId}-{cont.Owner} vs New:{container.ContainerId}-{container.Owner}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        var newRelease = new ConcurrentDictionary<int, Item>();
+                        cont.ReleasesAndItems.TryAdd(container.ReleasesAndItems.Keys.ToArray()[0], newRelease);
+                        return;
+                    }
+                    
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Failed to add new release.");
+                    }
+                }
             }
-            if (ContainerNames.Contains(container.ContainerId)) {return; } 
+             
             AllContainers.Add(container);
             try
             {
@@ -358,9 +379,7 @@ namespace ArcherTools_0._0._1.classes
                     {
                         if (cont.ContainerId == container.ContainerId)
                         {
-                            Debug.WriteLine("Before: "+ AllContainers.Count);
                             AllContainers.Remove(cont);
-                            Debug.WriteLine("After: " + AllContainers.Count);
                             break;
                         }
                     }

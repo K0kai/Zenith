@@ -340,6 +340,7 @@
             toExcelToolStripMenuItem.Name = "toExcelToolStripMenuItem";
             toExcelToolStripMenuItem.Size = new Size(158, 22);
             toExcelToolStripMenuItem.Text = "To Worksheet";
+            toExcelToolStripMenuItem.Click += toExcelToolStripMenuItem_Click;
             // 
             // clearToolStripMenuItem
             // 

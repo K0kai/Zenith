@@ -113,8 +113,7 @@ namespace ArcherTools_0._0._1.cfg
         public ReceivingConfig() { }
 
         public ReceivingConfig(ReceivingConfig rcvCfgOverride)
-        {        
-            
+        {
                 ExcelFilePath = rcvCfgOverride.ExcelFilePath;
             if (rcvCfgOverride.ExcelFilePath != null)
             {

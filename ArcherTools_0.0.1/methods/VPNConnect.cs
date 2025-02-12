@@ -4,8 +4,6 @@ using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.enums;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using static ArcherTools_0._0._1.WindowHandler;
 
 namespace ArcherTools_0._0._1.methods
 {
@@ -74,9 +72,9 @@ namespace ArcherTools_0._0._1.methods
                         var user = ConfigData._userConfig.vpnUsername;
                         var pas = ConfigData._userConfig.vpnPassword;
                         KeystrokeHandler.TypeText(user);
-                        KeystrokeHandler.sendKeystroke(enums.KeysEnum.SendKey.Tab);
+                        KeystrokeHandler.sendKeystroke(KeysEnum.SendKey.Tab);
                         KeystrokeHandler.TypeText(pas);
-                        KeystrokeHandler.sendKeystroke(enums.KeysEnum.SendKey.Enter);
+                        KeystrokeHandler.sendKeystroke(KeysEnum.SendKey.Enter);
                         return true;
                     }
 

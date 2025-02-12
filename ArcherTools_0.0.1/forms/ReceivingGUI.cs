@@ -1,10 +1,6 @@
-﻿using ArcherTools_0._0._1.boxes;
-using ArcherTools_0._0._1.cfg;
-using ArcherTools_0._0._1.classes;
+﻿using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.excel;
 using ArcherTools_0._0._1.methods;
-using SixLabors.ImageSharp.PixelFormats;
-using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
 
@@ -92,7 +88,17 @@ namespace ArcherTools_0._0._1.forms
         {
             try
             {
-                ctrl.Visible = visibility;
+                if (ctrl.InvokeRequired)
+                {
+                    ctrl.Invoke((MethodInvoker)delegate
+                    {                      
+                      ctrl.Visible = visibility;                
+                    });
+                }
+                else
+                {
+                    ctrl.Visible = visibility;
+                }
             }
             catch (Exception ex)
             {
@@ -109,7 +115,13 @@ namespace ArcherTools_0._0._1.forms
             var boxNames = new List<string> { "Container", "Release", "Owner" };
             if (cfgdata && excel && rects)
             {
-                Receiving.MainCall();
+                var thread = new Thread(() =>
+                {
+                    Receiving.MainCall();
+                });
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.IsBackground = true;
+                thread.Start();
             }
             else
             {
@@ -168,7 +180,63 @@ namespace ArcherTools_0._0._1.forms
             {
                 Thread.Sleep(delay);
             }
-            status_Label.Text = text;
+            if (status_Label.InvokeRequired)
+            {
+                status_Label.Invoke((MethodInvoker)delegate
+                {
+                    status_Label.Text = text;
+                });
+
+            }
+            else
+            {
+                status_Label.Text = text;
+            }
+        }
+
+        public void setProgressBar(int value)
+        {
+            if (rcvProgress_pgBar.InvokeRequired)
+            {
+                rcvProgress_pgBar.Invoke((MethodInvoker)delegate
+                {
+                    rcvProgress_pgBar.Value = value;
+                });
+            }
+            else
+            {
+                rcvProgress_pgBar.Value = value;
+            }
+        }
+
+        public void incrementProgressBar(int value)
+        {
+            if (rcvProgress_pgBar.InvokeRequired)
+            {
+                rcvProgress_pgBar.Invoke((MethodInvoker)delegate
+                {
+                    rcvProgress_pgBar.Value += value;
+                });
+            }
+            else
+            {
+                rcvProgress_pgBar.Value += value;
+            }
+        }
+
+        public void setProgressBarMaximum(int value)
+        {
+            if (rcvProgress_pgBar.InvokeRequired)
+            {
+                rcvProgress_pgBar.Invoke((MethodInvoker)delegate
+                {
+                    rcvProgress_pgBar.Maximum = value;
+                });
+            }
+            else
+            {
+                rcvProgress_pgBar.Maximum = value;
+            }
         }
 
         private async void cleanExcel_Btn_Click(object sender, EventArgs e)
@@ -179,35 +247,38 @@ namespace ArcherTools_0._0._1.forms
                 updateStatusLabel("Status: Starting cleaning process");
                 var configDataValidation = Receiving.validateConfigData();
                 var excelDataValidation = Receiving.validateExcel();
-                try
+                var thread = new Thread(() =>
                 {
-                    if (configDataValidation && excelDataValidation)
+                    Thread.CurrentThread.IsBackground = true;                    
+                    try
                     {
-                        this.Cursor = Cursors.WaitCursor;
-                        ReceivingConfig rcvConfig = ConfigData._receivingConfig;
-                        ExcelHandler exHandler = new ExcelHandler(rcvConfig.ExcelFilePath);
-                        var lastFilledRow = exHandler.GetLastFilledRow("DUMP", 3, 2);
-                        var numOfFilledRows = exHandler.GetColumn("DUMP", 3, 2).Count;
-                        updateStatusLabel("Status: Cleaning items 1/2");
-                        Task cleanItems = Task.Run(() => { exHandler.SetColumn("DUMP", 4, new List<string>(), 2, true, lastFilledRow); });
-                        Task.WaitAll(cleanItems);
-                        updateStatusLabel("Status: Cleaning items 2/2");
-                        Task cleanLines = Task.Run(() => { exHandler.SetColumn("DUMP", 3, new List<string>(), 2, true, lastFilledRow); });
-                        Task.WaitAll(cleanLines);
-                        lastFilledRow = lastFilledRow > numOfFilledRows ? numOfFilledRows : lastFilledRow;
-                        updateStatusLabel($"Status: Cleaned {lastFilledRow}/{numOfFilledRows} items successfully.");
-                        this.Cursor = Cursors.Default;
 
-
+                        if (configDataValidation && excelDataValidation)
+                        {
+                            ReceivingConfig rcvConfig = ConfigData._receivingConfig;
+                            ExcelHandler exHandler = new ExcelHandler(rcvConfig.ExcelFilePath);
+                            var lastFilledRow = exHandler.GetLastFilledRow("DUMP", 3, 2);
+                            var numOfFilledRows = exHandler.GetColumn("DUMP", 3, 2).Count;
+                            updateStatusLabel("Status: Cleaning items 1/2");
+                            Task cleanItems = Task.Run(() => { exHandler.SetColumn("DUMP", 4, new List<string>(), 2, true, lastFilledRow); });
+                            Task.WaitAll(cleanItems);
+                            updateStatusLabel("Status: Cleaning items 2/2");
+                            Task cleanLines = Task.Run(() => { exHandler.SetColumn("DUMP", 3, new List<string>(), 2, true, lastFilledRow); });
+                            Task.WaitAll(cleanLines);
+                            lastFilledRow = lastFilledRow > numOfFilledRows ? numOfFilledRows : lastFilledRow;
+                            updateStatusLabel($"Status: Cleaned {lastFilledRow}/{numOfFilledRows} items successfully.");
+                        }
+                        else { updateStatusLabel($"Status: Failure at data validation.\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation}"); throw new DataException($"Failed at validations:\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); }
+                        isCleaning = false;
                     }
-                    else { updateStatusLabel($"Status: Failure at data validation.\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation}"); throw new DataException($"Failed at validations:\n{nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); }
-                    isCleaning = false;
-                }
-                catch (Exception ex)
-                {
-                    this.Cursor = Cursors.Default;
-                    isCleaning = false;
-                }
+                    catch (Exception ex)
+                    {
+                        isCleaning = false;
+                        Debug.WriteLine(ex.StackTrace);
+                    }
+                });
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
             }
         }
 

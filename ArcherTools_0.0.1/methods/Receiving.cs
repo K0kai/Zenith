@@ -36,6 +36,7 @@ namespace ArcherTools_0._0._1.methods
         internal static int pwhMonitor;
         internal static int baseDelay = 500;
         internal static bool endProcess = false;
+        internal static int iteration = 0;
 
         private static void PrepareToReceive(ExcelHandler exHandler, string worksheetName)
         {
@@ -46,7 +47,7 @@ namespace ArcherTools_0._0._1.methods
             linesFromExcel = listLine;            
         }
 
-        public static async void MainCall(int startLine = 1, bool descendingStart = false)
+        public static async Task MainCall(int startLine = 1, bool descendingStart = false)
         {
             var validConfig = validateConfigData();
             var validRect = validateRectanglePositions();
@@ -57,7 +58,7 @@ namespace ArcherTools_0._0._1.methods
                 ReceivingConfig rcvCfg = ConfigData._receivingConfig;
                 ReceivingGUI rcvGui = ReceivingGUI._instance;
 
-                rcvGui.updateStatusLabel("Beginning receiving process...");
+                rcvGui?.updateStatusLabel("Beginning receiving process...");
                 var autoCreateCfg = ConfigData._toolConfig.AutomaticCreateConfig;
                 var findDefaultCfg = ConfigData._toolConfig.CheckForDefault;
                 if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0 && classes.Container.SelectedContainer.ReleasesAndItems[Container.SelectedRelease].Count > 0)
@@ -79,7 +80,7 @@ namespace ArcherTools_0._0._1.methods
                 else
                 {
                     MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    rcvGui.updateStatusLabel("Receiving Status: Discontinued.");
+                    rcvGui?.updateStatusLabel("Receiving Status: Discontinued.");
                     return;
                 }
 
@@ -136,10 +137,10 @@ namespace ArcherTools_0._0._1.methods
                         cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);
                         if (linesFromExcel == null || linesFromExcel.Count == 0)
                         {
-                            rcvGui.updateStatusLabel("Receiving Interrupted: No lines were found in excel.");
+                            rcvGui?.updateStatusLabel("Receiving Interrupted: No lines were found in excel.");
                             return;
                         }
-                        var iteration = 1;
+                        iteration = 1;
                         if (startLine > 1)
                         {
                             iteration = startLine;
@@ -150,28 +151,38 @@ namespace ArcherTools_0._0._1.methods
                         }
                         int cntSize = containerSize();
                         int cntRawSize = containerSize(true);
+                        rcvGui?.setProgressBarMaximum(cntRawSize);
+                        rcvGui?.setProgressBar(0);
                         Debug.WriteLine(cntSize);
                         MouseHandler.MouseMoveTo(new Point(rlReceiptLnFirstLn.X + 30, rlReceiptLnFirstLn.Y));
                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                         MouseHandler.MouseClick();
                         EnsureUnstuckKeys();
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                        Task.Run(() =>
+                        var tsk1 = Task.Run(async () =>
                         {
-                            _ = checkForEnd();
+                            Debug.WriteLine("running task 1");
+                            checkForEnd();
+                        });
+                        var tsk2 = Task.Run(async () =>
+                        {
+                            Debug.WriteLine("running task 2");
+                            UpdateProgressBar();
                         });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 
-                        foreach (var line in linesFromExcel)
+
+                    foreach (var line in linesFromExcel)
                         {
                             try
                             {
                             if (receivedItems.Keys.Contains(line))
                             {
+                                iteration++;
                                 continue;
                             }
-                                rcvGui.updateVisibility(rcvGui.overlayTip_lbl, true);
+                                rcvGui?.updateVisibility(rcvGui.overlayTip_lbl, true);
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                                 MouseHandler.MouseMoveTo(rlReceiptLnFirstLn);
                                 Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
@@ -186,7 +197,7 @@ namespace ArcherTools_0._0._1.methods
                             ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                                 //var checkItem = iterateThroughListItems();
-                                rcvGui.updateStatusLabel($"Receiving Item: {iteration} out of {cntRawSize}");
+                                rcvGui?.updateStatusLabel($"Receiving Item: {iteration} out of {cntRawSize}");
                                 var checkItem = iterateThroughListLines(cntSize, line);
                                 if (endProcess) { AfterEndProcess(rcvGui, line); return; }
                                 excelHandler.SetCell(mainWorkSheet, 10, 3, line);
@@ -210,7 +221,7 @@ namespace ArcherTools_0._0._1.methods
                                 {
                                     if (itemInfoValue.Value == "#VALUE!" || itemInfoValue.Value == "#VALOR!" || itemInfoValue.Value == "#N/D")
                                     {
-                                        var newFailedItem = new Item(copiedItem);
+                                        var newFailedItem = new Item(copiedItem, "", "", "", "", "", classes.Container.SelectedContainer?.Owner);
                                         UpdateReceivedItems(line, newFailedItem, true);
                                         skipItem = true;
                                         Debug.WriteLine("Invalid Item.");
@@ -286,7 +297,7 @@ namespace ArcherTools_0._0._1.methods
                                     {
                                         if (!autoCreateCfg)
                                         {
-                                            var newItem = new Item(copiedItem);
+                                            var newItem = new Item(copiedItem, "","","","","", Container.SelectedContainer?.Owner);
                                             UpdateReceivedItems(line, newItem, true);
                                             rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {line}");
                                         }
@@ -339,7 +350,7 @@ namespace ArcherTools_0._0._1.methods
                                 ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
                                 */
                                 ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
-                                var newIt = new Item(copiedItem);
+                                var newIt = new Item(copiedItem, "", "", "", "", "", Container.SelectedContainer?.Owner);
                                     UpdateReceivedItems(line, newIt);
                                     iteration++;
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
@@ -462,13 +473,13 @@ namespace ArcherTools_0._0._1.methods
             if (!fail)
             {
                 try
-                {
-                    receivedItems.TryAdd(Line,Item);
+                {                    
                     if (Container.SelectedContainer != null)
                     {
                         var currentContainer = Container.SelectedContainer;
-                        currentContainer.AddItemToRelease(Container.SelectedRelease, Line, Item);
+                        currentContainer.AddItem(Container.SelectedRelease, Line, Item);                       
                     }
+                    receivedItems.TryAdd(Line, Item);
                     return Task.CompletedTask;
                 }
                 catch (Exception ex)
@@ -495,7 +506,8 @@ namespace ArcherTools_0._0._1.methods
             rcvGuiInstance.updateStatusLabel($"Receiving Interrupted: Stopped at Line: {Line}");
             rcvGuiInstance.updateVisibility(rcvGuiInstance.overlayTip_lbl, false);
         }
-        private static bool checkForEnd()        {
+
+        private static async Task<bool> checkForEnd(){
             InputSimulator ips = new InputSimulator();            
             while (true)
             {
@@ -508,6 +520,23 @@ namespace ArcherTools_0._0._1.methods
                 }
                 Thread.Sleep(25);
 
+            }
+            
+        }
+
+        private static async Task UpdateProgressBar()
+        {
+            while (true)
+            {
+                if (endProcess)
+                {
+                    break;
+                }
+                if (ReceivingGUI._instance != null)
+                {
+                    ReceivingGUI._instance.setProgressBar(iteration);
+                    Thread.Sleep(5000);
+                }
             }
             
         }
@@ -525,7 +554,8 @@ namespace ArcherTools_0._0._1.methods
 
         private static bool checkPCsForDefault()
         {
-            Thread.Sleep((int)Math.Ceiling(baseDelay * 1.2));
+            InputSimulator ips = new InputSimulator();
+            Thread.Sleep((int)Math.Ceiling(baseDelay * 2.0));
             for (int i = 0; i < 5; i++)
             {
                 Point mouseto = new Point(0, 0);
@@ -537,7 +567,7 @@ namespace ArcherTools_0._0._1.methods
                 if (mouseto == new Point(0, 0))
                 {
                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.4));
-                    KeystrokeHandler.sendKeystroke(KeysEnum.SendKey.Down);
+                    ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.DOWN);
                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                 }
                 else
@@ -550,13 +580,14 @@ namespace ArcherTools_0._0._1.methods
         
         private static bool checkPCs(string pcs)
         {
+            InputSimulator ips = new InputSimulator();
             int intPcs = int.Parse(pcs);
             for (int i = 0; i < 5; i++)
             {
                 try
                 {
                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.8));
-                    KeystrokeHandler.sendKeystroke(KeysEnum.SendKey.C, KeysEnum.SendKey.Ctrl);
+                    ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
                     var charsToRemove = new string[] { "P", "C", "S", "p", "c", "s" };
                     string copiedPcs = Clipboard.GetText();
                     foreach (string c in charsToRemove)
@@ -573,7 +604,7 @@ namespace ArcherTools_0._0._1.methods
                     }
                     else
                     {
-                        KeystrokeHandler.sendKeystroke(KeysEnum.SendKey.Down);
+                        ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.DOWN);
                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                     }
                 }
@@ -613,6 +644,10 @@ namespace ArcherTools_0._0._1.methods
             while (true)
             {
                 try {
+                    if (endProcess)
+                    {
+                        return false;
+                    }
                     for (int j = 1; j <= 3; j++)
                     {
                         /*
@@ -633,10 +668,12 @@ namespace ArcherTools_0._0._1.methods
                             if (copiedLine > neededLine)
                             {
                                 ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.UP);
+                                Thread.Sleep(100);
                             }
                             else if (copiedLine < neededLine)
                             {
                                 ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.DOWN);
+                                Thread.Sleep(100);
                             }
                         }
                         else

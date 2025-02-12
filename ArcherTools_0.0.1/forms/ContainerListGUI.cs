@@ -1,11 +1,11 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows.Forms;
 using ArcherTools_0._0._1.boxes;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.classes;
+using ArcherTools_0._0._1.excel;
 using ArcherTools_0._0._1.logging;
+using ArcherTools_0._0._1.methods;
 
 namespace ArcherTools_0._0._1.forms
 {
@@ -176,6 +176,21 @@ namespace ArcherTools_0._0._1.forms
                 if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
                 {
                     _instance.release_cbbox.SelectedIndex = _instance.release_cbbox.Items.IndexOf(classes.Container.SelectedRelease);
+                    UpdateContainerProgress();
+                }
+            }
+        }
+
+        private static void UpdateContainerProgress()
+        {
+            if (_instanceForm != null)
+            {
+                if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
+                {
+                    var releasesAndItems = classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease];
+                    var attachedConfigs = classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease];
+                    var percentage = releasesAndItems.Count != 0 && attachedConfigs.Count != 0 ? Math.Round(((decimal)releasesAndItems.Count / (decimal)attachedConfigs.Count) * 100, 1) : 0;
+                    _instance.progress_lbl.Text = _instance.progress_lbl.Text.Split(':')[0] + $": {decimal.ToInt32(percentage)}%";
                 }
             }
         }
@@ -295,11 +310,11 @@ namespace ArcherTools_0._0._1.forms
                             break;
 
                     }
+                    dibf[0].ToUpper();
                     releasesAndItems.TryAdd(int.Parse(dibf[1]), itemList);
                     var newCtn = new Container(dibf[0], dibf[2], releasesAndItems);
 
                     classes.Container.AddContainer(newCtn);
-                    newCtn.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, newCtn.ContainerId));
                 }
             }
         }
@@ -389,12 +404,60 @@ namespace ArcherTools_0._0._1.forms
 
         private void configurationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
+            if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
             {
                 classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Clear();
                 classes.Container.SelectedContainer.CalculateExpectedSize();
                 classes.Container.SelectedContainer.UpdateContainerStatus();
             }
         }
+
+        private void toExcelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
+            {
+                List<int> lines;
+                List<string> values;
+                classes.Container Ctr = classes.Container.SelectedContainer;
+                lines = Ctr.AttachedConfigurations[classes.Container.SelectedRelease].Keys.ToList();
+                values = Ctr.AttachedConfigurations[classes.Container.SelectedRelease].Values.ToList();
+                if (lines.Count > 0 && values.Count > 0)
+                {
+                    try
+                    {
+                        var configDataValidation = Receiving.validateConfigData();
+                        var excelDataValidation = Receiving.validateExcel();
+                        if (configDataValidation && excelDataValidation)
+                        {
+                            Debug.WriteLine("check success");
+                            ReceivingConfig rcvCfg = ConfigData._receivingConfig;
+                            ExcelHandler excelHandler = new ExcelHandler(rcvCfg.ExcelFilePath);
+                            if (rcvCfg.ExcelSheetNames.Contains("DUMP"))
+                            {
+                                var workSheetName = "DUMP";
+                                Task setValues = Task.Run(() =>
+                                {
+                                    excelHandler.SetColumn(workSheetName, 4, values, 2);
+                                });
+                                Task.WaitAll(setValues);
+                                Task setLines = Task.Run(() => { excelHandler.SetColumn(workSheetName, 3, lines, 2); });
+                                Task.WaitAll(setLines);
+                                ReceivingGUI._instance.updateStatusLabel("Status: Success");
+                                Debug.WriteLine("done");
+                            }
+                        }
+                        else { ReceivingGUI._instance.updateStatusLabel($"Status: Failed at data validation: {nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); throw new Exception($"Failed at checks: {nameof(configDataValidation)}: {configDataValidation}, {nameof(excelDataValidation)}: {excelDataValidation} "); }
+                    }
+                    catch (Exception ex)
+                    {
+                        ReceivingGUI._instance.updateStatusLabel($"Status: Failed to send items with error: {ex.StackTrace} || {ex.Message}");
+                        Debug.WriteLine($"Something went wrong at item translocation\n{ex.StackTrace}\n{ex.Message}");
+                    }
+
+                }
+            }
+
+        }
     }
 }
+

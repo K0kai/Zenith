@@ -40,6 +40,7 @@
             panel1 = new Panel();
             description_Label = new Label();
             title_Label = new Label();
+            rcvProgress_pgBar = new ProgressBar();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -135,7 +136,7 @@
             status_Label.Dock = DockStyle.Bottom;
             status_Label.Font = new Font("Segoe UI Semibold", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             status_Label.ForeColor = Color.Lavender;
-            status_Label.Location = new Point(0, 247);
+            status_Label.Location = new Point(0, 203);
             status_Label.Name = "status_Label";
             status_Label.Size = new Size(312, 44);
             status_Label.TabIndex = 9;
@@ -171,7 +172,7 @@
             panel1.Controls.Add(startscript_Btn);
             panel1.Location = new Point(12, 118);
             panel1.Name = "panel1";
-            panel1.Size = new Size(312, 291);
+            panel1.Size = new Size(312, 247);
             panel1.TabIndex = 6;
             // 
             // description_Label
@@ -198,6 +199,15 @@
             title_Label.Text = "Title";
             title_Label.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // rcvProgress_pgBar
+            // 
+            rcvProgress_pgBar.ForeColor = Color.IndianRed;
+            rcvProgress_pgBar.Location = new Point(69, 375);
+            rcvProgress_pgBar.Name = "rcvProgress_pgBar";
+            rcvProgress_pgBar.Size = new Size(204, 23);
+            rcvProgress_pgBar.Style = ProgressBarStyle.Continuous;
+            rcvProgress_pgBar.TabIndex = 31;
+            // 
             // ReceivingGUI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -205,6 +215,7 @@
             BackColor = Color.FromArgb(64, 64, 64);
             CancelButton = close_Btn;
             ClientSize = new Size(336, 426);
+            Controls.Add(rcvProgress_pgBar);
             Controls.Add(overlayTip_lbl);
             Controls.Add(close_Btn);
             Controls.Add(description_Label);
@@ -233,5 +244,6 @@
         private Panel panel1;
         private Label description_Label;
         private Label title_Label;
+        private ProgressBar rcvProgress_pgBar;
     }
 }

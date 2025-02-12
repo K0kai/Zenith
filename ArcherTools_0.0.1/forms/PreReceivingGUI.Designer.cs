@@ -36,6 +36,8 @@
             status_Label = new Label();
             imaprercv_Btn = new Button();
             close_Btn = new Button();
+            miscManifest_lbl = new Label();
+            button1 = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -66,13 +68,15 @@
             // panel1
             // 
             panel1.AutoSize = true;
+            panel1.Controls.Add(button1);
+            panel1.Controls.Add(miscManifest_lbl);
             panel1.Controls.Add(imaFile_lbl);
             panel1.Controls.Add(viewCtn_btn);
             panel1.Controls.Add(status_Label);
             panel1.Controls.Add(imaprercv_Btn);
             panel1.Location = new Point(12, 117);
             panel1.Name = "panel1";
-            panel1.Size = new Size(432, 265);
+            panel1.Size = new Size(433, 265);
             panel1.TabIndex = 11;
             // 
             // imaFile_lbl
@@ -81,9 +85,9 @@
             imaFile_lbl.Cursor = Cursors.Hand;
             imaFile_lbl.Font = new Font("Segoe UI Semibold", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             imaFile_lbl.ForeColor = Color.WhiteSmoke;
-            imaFile_lbl.Location = new Point(101, 4);
+            imaFile_lbl.Location = new Point(0, 0);
             imaFile_lbl.Name = "imaFile_lbl";
-            imaFile_lbl.Size = new Size(229, 15);
+            imaFile_lbl.Size = new Size(207, 15);
             imaFile_lbl.TabIndex = 11;
             imaFile_lbl.Text = "IMA Manifest:";
             imaFile_lbl.TextAlign = ContentAlignment.BottomCenter;
@@ -99,7 +103,7 @@
             viewCtn_btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             viewCtn_btn.FlatStyle = FlatStyle.Flat;
             viewCtn_btn.ForeColor = SystemColors.ButtonFace;
-            viewCtn_btn.Location = new Point(164, 74);
+            viewCtn_btn.Location = new Point(63, 70);
             viewCtn_btn.Margin = new Padding(25, 3, 25, 3);
             viewCtn_btn.Name = "viewCtn_btn";
             viewCtn_btn.Size = new Size(101, 22);
@@ -114,7 +118,7 @@
             status_Label.ForeColor = Color.Lavender;
             status_Label.Location = new Point(0, 250);
             status_Label.Name = "status_Label";
-            status_Label.Size = new Size(432, 15);
+            status_Label.Size = new Size(433, 15);
             status_Label.TabIndex = 9;
             status_Label.Text = "Status: Waiting...";
             status_Label.TextAlign = ContentAlignment.BottomCenter;
@@ -129,7 +133,7 @@
             imaprercv_Btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
             imaprercv_Btn.FlatStyle = FlatStyle.Flat;
             imaprercv_Btn.ForeColor = SystemColors.ButtonFace;
-            imaprercv_Btn.Location = new Point(134, 22);
+            imaprercv_Btn.Location = new Point(33, 18);
             imaprercv_Btn.Margin = new Padding(25, 3, 25, 3);
             imaprercv_Btn.Name = "imaprercv_Btn";
             imaprercv_Btn.Size = new Size(159, 44);
@@ -152,6 +156,38 @@
             close_Btn.TabIndex = 12;
             close_Btn.Text = "X";
             close_Btn.UseVisualStyleBackColor = false;
+            // 
+            // miscManifest_lbl
+            // 
+            miscManifest_lbl.BackColor = Color.Transparent;
+            miscManifest_lbl.Cursor = Cursors.Hand;
+            miscManifest_lbl.Font = new Font("Segoe UI Semibold", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            miscManifest_lbl.ForeColor = Color.WhiteSmoke;
+            miscManifest_lbl.Location = new Point(213, 0);
+            miscManifest_lbl.Name = "miscManifest_lbl";
+            miscManifest_lbl.Size = new Size(217, 15);
+            miscManifest_lbl.TabIndex = 12;
+            miscManifest_lbl.Text = "Misc. Manifest:";
+            miscManifest_lbl.TextAlign = ContentAlignment.BottomCenter;
+            // 
+            // button1
+            // 
+            button1.BackColor = SystemColors.ControlDarkDark;
+            button1.BackgroundImageLayout = ImageLayout.None;
+            button1.Cursor = Cursors.Hand;
+            button1.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button1.ForeColor = SystemColors.ButtonFace;
+            button1.Location = new Point(278, 18);
+            button1.Margin = new Padding(25, 3, 25, 3);
+            button1.Name = "button1";
+            button1.Size = new Size(90, 44);
+            button1.TabIndex = 13;
+            button1.Text = "Manifest CFG Creation";
+            button1.UseVisualStyleBackColor = false;
             // 
             // PreReceivingGUI
             // 
@@ -183,5 +219,7 @@
         private Button imaprercv_Btn;
         private Label imaFile_lbl;
         private Button close_Btn;
+        private Label miscManifest_lbl;
+        private Button button1;
     }
 }
