@@ -200,12 +200,12 @@ namespace ArcherTools_0._0._1.forms
             {
                 rcvProgress_pgBar.Invoke((MethodInvoker)delegate
                 {
-                    rcvProgress_pgBar.Value = value;
+                    rcvProgress_pgBar.Value = value > rcvProgress_pgBar.Maximum ? rcvProgress_pgBar.Maximum : value;
                 });
             }
             else
             {
-                rcvProgress_pgBar.Value = value;
+                rcvProgress_pgBar.Value = value > rcvProgress_pgBar.Maximum ? rcvProgress_pgBar.Maximum : value;
             }
         }
 

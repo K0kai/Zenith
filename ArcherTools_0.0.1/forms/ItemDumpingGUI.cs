@@ -34,7 +34,8 @@ namespace ArcherTools_0._0._1.forms
             this.FormClosed += onClose;
 
             this.itemValues_Box.TextChanged += textBoxChanged;
-            this.itemValues_Box.MouseClick += textBoxClicked;
+            this.itemValues_Box.MouseClick += textBoxSelectionChangedClick;
+            this.itemValues_Box.KeyUp += textBoxSelectionChangedKeyPress;
             centerLabels();
 
 
@@ -101,9 +102,17 @@ namespace ArcherTools_0._0._1.forms
             return currentLine;
         }
 
-        private void textBoxClicked(object sender, MouseEventArgs e)
+        private void textBoxSelectionChangedClick(object sender, EventArgs e)
         {
             selectedLn_Label.Text = $"Selected Line: {getSelectedLine() + 1}";
+        }
+
+        private void textBoxSelectionChangedKeyPress(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
+            {
+                selectedLn_Label.Text = $"Selected Line: {getSelectedLine() + 1}";
+            }
         }
 
 
@@ -300,14 +309,19 @@ namespace ArcherTools_0._0._1.forms
                             var config = i < Configs.Count ? Configs[i] : string.Empty;
                             configs.AddOrUpdate(line, config, (key, oldValue) => oldValue = config);
                         }
-                        classes.Container.SelectedContainer.AttachedConfigurations?.TryAdd(classes.Container.SelectedRelease, configs);
+                        if (classes.Container.SelectedContainer.AttachedConfigurations.TryAdd(classes.Container.SelectedRelease, configs))
+                        {
+                            
+                        }
+                        else
+                        {
+                            if (classes.Container.SelectedContainer.AttachedConfigurations.ContainsKey(classes.Container.SelectedRelease))
+                            {
+                                classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease] = configs;
+                            }
+                        }                        
                         classes.Container.SelectedContainer.CalculateExpectedSize();
-                        
-                       
-
                     }
-
-
                 }
             }          
 

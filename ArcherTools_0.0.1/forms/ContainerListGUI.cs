@@ -188,8 +188,8 @@ namespace ArcherTools_0._0._1.forms
                 if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
                 {
                     var releasesAndItems = classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease];
-                    var attachedConfigs = classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease];
-                    var percentage = releasesAndItems.Count != 0 && attachedConfigs.Count != 0 ? Math.Round(((decimal)releasesAndItems.Count / (decimal)attachedConfigs.Count) * 100, 1) : 0;
+                    var attachedConfigs = classes.Container.SelectedContainer.AttachedConfigurations.ContainsKey(classes.Container.SelectedRelease) ? classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Count : 0; ;
+                    var percentage = releasesAndItems.Count != 0 && attachedConfigs != 0 ? Math.Round(((decimal)releasesAndItems.Count / (decimal)attachedConfigs) * 100, 1) : 0;
                     _instance.progress_lbl.Text = _instance.progress_lbl.Text.Split(':')[0] + $": {decimal.ToInt32(percentage)}%";
                 }
             }

@@ -41,7 +41,7 @@
             mainPanel.Dock = DockStyle.Fill;
             mainPanel.Location = new Point(0, 0);
             mainPanel.Name = "mainPanel";
-            mainPanel.Size = new Size(297, 396);
+            mainPanel.Size = new Size(493, 526);
             mainPanel.TabIndex = 0;
             // 
             // MainArcherWindow
@@ -49,7 +49,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
-            ClientSize = new Size(297, 396);
+            ClientSize = new Size(493, 526);
             Controls.Add(mainPanel);
             ForeColor = Color.Lavender;
             Icon = (Icon)resources.GetObject("$this.Icon");

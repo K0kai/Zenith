@@ -46,11 +46,10 @@ namespace ArcherTools_0._0._1
             {
                 _mainForm.Location = Properties.Settings.Default.ToolHubLocation;
             }
-            if (Properties.Settings.Default.ToolHubSize != new Size(0, 0))
-            {
-                _mainForm.Size = Properties.Settings.Default.ToolHubSize;
-            }
-            
+            _mainForm.Size = Properties.Settings.Default.ToolHubSize;
+
+
+
             ucSize = _mainForm.Size;
             this.Cursor = Cursors.Default;
             connectToVpn_Btn.SetToolTip(vpnConnect_btn, "Obsolete function as of December 2024.");
@@ -78,7 +77,8 @@ namespace ArcherTools_0._0._1
                 {
                     classes.Container.DeserializeAllContainers();
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     Debug.WriteLine(ex.StackTrace);
                 }
 
@@ -92,7 +92,7 @@ namespace ArcherTools_0._0._1
         private void OnFormClosed(object sender, EventArgs e)
         {
             Properties.Settings.Default.ToolHubSize = _mainForm.Size;
-            Properties.Settings.Default.ToolHubLocation = _mainForm.Location;            
+            Properties.Settings.Default.ToolHubLocation = _mainForm.Location;
             Properties.Settings.Default.Save();
         }
         private void OnInvalidated(object sender, EventArgs e)
@@ -166,7 +166,7 @@ namespace ArcherTools_0._0._1
             {
                 ReceivingGUI._instance.Focus();
             }
-            
+
 
 
         }
@@ -202,6 +202,36 @@ namespace ArcherTools_0._0._1
             this.FindForm().Visible = false;
             rcvGUI.ShowDialog(this);
             this.FindForm().Visible = true;
+        }
+
+        private void methods_Btn_Click(object sender, EventArgs e)
+        {
+            foreach (Control control in ToolsListPanel.Controls)
+            {
+                control.Visible = true;
+            }
+            methods_Btn.Visible = false;
+            ToolsListPanel.Padding = new Padding(50, 0, 50, 0);
+            CenterControl(ToolsListPanel);
+            
+        }
+
+        private void return_Btn_Click(object sender, EventArgs e)
+        {
+            foreach (Control control in ToolsListPanel.Controls)
+            {
+                control.Visible = false;
+            }
+            methods_Btn.Visible = true;
+            return_Btn.Visible = false;
+            ToolsListPanel.Padding = new Padding(0, 0, 0, 0);
+            CenterControl(ToolsListPanel);
+            
+        }
+
+        private void ToolHub_SizeChanged(object sender, EventArgs e)
+        {
+            CenterControl(ToolsListPanel);
         }
     }
 }

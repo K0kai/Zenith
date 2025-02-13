@@ -16,6 +16,7 @@ namespace ArcherTools_0._0._1.methods
         internal static Point receiptLineBorder = new Point(18, 33);
         internal static Point receiptLnFirstLn = new Point(55, 52);
         internal static Point itemSearchBox = new Point(190, 90);
+        internal static Point ownerInputBox = new Point(160, 70);
         internal static Point itemMtnIcon = new Point(355, 54);
         internal static Point itemCfgIcon = new Point(264, 54);
         internal static Point itemCfgPcsBox = new Point(160, 38);
@@ -23,6 +24,7 @@ namespace ArcherTools_0._0._1.methods
         internal static Point rlReceiptLineBorder = new Point();
         internal static Point rlReceiptLnFirstLn = new Point();
         internal static Point rlItemSearchBox = new Point();
+        internal static Point rlOwnerInputBox = new Point();
         internal static Point rlItemMtnIcon = new Point();
         internal static Point rlItemCfgIcon = new Point();
         internal static Point rlItemCfgPcsBox = new Point();
@@ -99,13 +101,14 @@ namespace ArcherTools_0._0._1.methods
                 }
                 
                 rlReceiptLineBorder = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLineBorder);
-                    rlReceiptLnFirstLn = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLnFirstLn);
-                    rlItemSearchBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), itemSearchBox);
-                    rlItemMtnIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemMtnIcon);
-                    rlItemCfgIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemCfgIcon);
-                    rlItemCfgPcsBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemConfigurationWindow), itemCfgPcsBox);
-                    Point rlItemMtnClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Width - 20, rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.Y + 15);
-                    Point rlItemCfgClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Width - 15, rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.Y + 15);
+                rlReceiptLnFirstLn = toRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLnFirstLn);
+                rlItemSearchBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), itemSearchBox);
+                rlOwnerInputBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), ownerInputBox);
+                rlItemMtnIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemMtnIcon);
+                rlItemCfgIcon = toRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemCfgIcon);
+                rlItemCfgPcsBox = toRelativePoint(rcvCfg.getRectByType(ControlType.ItemConfigurationWindow), itemCfgPcsBox);
+                Point rlItemMtnClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Width - 20, rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow).getRectangle().Location.Y + 15);
+                Point rlItemCfgClose = new Point(pwhMonitor + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.X + rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Width - 15, rcvCfg.getRectByType(ControlType.ItemConfigurationWindow).getRectangle().Location.Y + 15);
 
                     var ips = new InputSimulator();
                     
@@ -149,7 +152,20 @@ namespace ArcherTools_0._0._1.methods
                         {
                             startLine = int.Parse(excelHandler.GetCell(rcvDumpSheet, 2, 3));
                         }
-                        int cntSize = containerSize();
+                    if (classes.Container.SelectedContainer != null)
+                    {
+                        var owner = classes.Container.SelectedContainer.Owner != null ? classes.Container.SelectedContainer.Owner : string.Empty;
+                        if (owner != string.Empty)
+                        {
+                            MouseHandler.MouseMoveTo(rlOwnerInputBox);
+                            MouseHandler.MouseClick();
+                            ips.Keyboard.TextEntry(owner);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
+                        }
+                    }
+                    int cntSize = containerSize();
                         int cntRawSize = containerSize(true);
                         rcvGui?.setProgressBarMaximum(cntRawSize);
                         rcvGui?.setProgressBar(0);
@@ -172,7 +188,7 @@ namespace ArcherTools_0._0._1.methods
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 
-
+                    
                     foreach (var line in linesFromExcel)
                         {
                             try
@@ -909,7 +925,7 @@ namespace ArcherTools_0._0._1.methods
 
         internal static void receivingCleanUp(bool clearFailed = true)
         {
-            endProcess = false;
+            endProcess = true;
             receivedItems.Clear();            
             receivedItems = new ConcurrentDictionary<int, Item> ();
             if (clearFailed)

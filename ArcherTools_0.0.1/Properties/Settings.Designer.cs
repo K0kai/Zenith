@@ -85,7 +85,7 @@ namespace ArcherTools_0._0._1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("660, 620")]
         public global::System.Drawing.Size ToolHubSize {
             get {
                 return ((global::System.Drawing.Size)(this["ToolHubSize"]));

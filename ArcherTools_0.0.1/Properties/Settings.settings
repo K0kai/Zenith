@@ -18,7 +18,7 @@
       <Value Profile="(Default)">Dark</Value>
     </Setting>
     <Setting Name="ToolHubSize" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">0, 0</Value>
+      <Value Profile="(Default)">660, 620</Value>
     </Setting>
   </Settings>
 </SettingsFile>

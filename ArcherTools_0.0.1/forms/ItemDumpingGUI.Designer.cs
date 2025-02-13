@@ -111,6 +111,7 @@
             itemValues_Box.ScrollBars = ScrollBars.Vertical;
             itemValues_Box.Size = new Size(382, 374);
             itemValues_Box.TabIndex = 0;
+            
             // 
             // lines_label
             // 
