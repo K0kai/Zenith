@@ -9,11 +9,12 @@ namespace ArcherTools_0._0._1
     public partial class ToolHub : UserControl
     {
         private MessageManager messageManager;
-        public static string programVersion = "0.1.0";
+        public static string programVersion = "0.1.1";
         private PageHandler _pageHandler = PageHandler.GetInstance();
         internal ToolHub instance;
         public static Form _mainForm;
         public static Size ucSize;
+        public static bool ContainersDeserialized = false;
 
         private void CenterControl(Control control)
         {
@@ -75,7 +76,11 @@ namespace ArcherTools_0._0._1
                 }
                 try
                 {
-                    classes.Container.DeserializeAllContainers();
+                    if (!ContainersDeserialized)
+                    {
+                        classes.Container.DeserializeAllContainers();
+                        ContainersDeserialized = true;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -224,6 +229,7 @@ namespace ArcherTools_0._0._1
             }
             methods_Btn.Visible = true;
             return_Btn.Visible = false;
+            settings_Btn.Visible = true;
             ToolsListPanel.Padding = new Padding(0, 0, 0, 0);
             CenterControl(ToolsListPanel);
             

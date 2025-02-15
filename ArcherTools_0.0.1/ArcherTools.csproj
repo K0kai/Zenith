@@ -20,6 +20,7 @@
     <PackageReference Include="InputSimulatorEx" Version="2.1.1" />
     <PackageReference Include="libpng_static" Version="1.6.39.1" />
     <PackageReference Include="NPOI" Version="2.7.2" />
+    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
   </ItemGroup>
 

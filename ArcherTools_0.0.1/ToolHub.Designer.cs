@@ -87,7 +87,7 @@
             copyrights.TabIndex = 0;
             copyrights.TabStop = true;
             copyrights.Tag = "https://github.com/K0kai";
-            copyrights.Text = "This tool was created by: K0kai (Luis Maia)";
+            copyrights.Text = "This tool was created by: K0kai";
             copyrights.TextAlign = ContentAlignment.TopCenter;
             copyrights.UseCompatibleTextRendering = true;
             copyrights.VisitedLinkColor = Color.FromArgb(255, 128, 128);
@@ -117,7 +117,7 @@
             receiveBtn.Location = new Point(25, 43);
             receiveBtn.Margin = new Padding(25, 3, 25, 3);
             receiveBtn.Name = "receiveBtn";
-            receiveBtn.Size = new Size(166, 34);
+            receiveBtn.Size = new Size(70, 34);
             receiveBtn.TabIndex = 2;
             receiveBtn.Text = "Receiving";
             receiveBtn.UseVisualStyleBackColor = false;
@@ -138,7 +138,7 @@
             ToolsListPanel.FlowDirection = FlowDirection.TopDown;
             ToolsListPanel.Location = new Point(0, 45);
             ToolsListPanel.Name = "ToolsListPanel";
-            ToolsListPanel.Size = new Size(216, 244);
+            ToolsListPanel.Size = new Size(158, 244);
             ToolsListPanel.TabIndex = 6;
             // 
             // methods_Btn
@@ -153,7 +153,7 @@
             methods_Btn.Location = new Point(25, 3);
             methods_Btn.Margin = new Padding(25, 3, 25, 3);
             methods_Btn.Name = "methods_Btn";
-            methods_Btn.Size = new Size(108, 34);
+            methods_Btn.Size = new Size(70, 34);
             methods_Btn.TabIndex = 8;
             methods_Btn.Text = "Methods";
             methods_Btn.UseVisualStyleBackColor = false;
@@ -171,7 +171,7 @@
             prercv_Btn.Location = new Point(25, 83);
             prercv_Btn.Margin = new Padding(25, 3, 25, 3);
             prercv_Btn.Name = "prercv_Btn";
-            prercv_Btn.Size = new Size(166, 34);
+            prercv_Btn.Size = new Size(92, 34);
             prercv_Btn.TabIndex = 7;
             prercv_Btn.Text = "Pre-Receiving";
             prercv_Btn.UseVisualStyleBackColor = false;
@@ -191,7 +191,7 @@
             vpnConnect_btn.Location = new Point(25, 123);
             vpnConnect_btn.Margin = new Padding(25, 3, 25, 3);
             vpnConnect_btn.Name = "vpnConnect_btn";
-            vpnConnect_btn.Size = new Size(126, 25);
+            vpnConnect_btn.Size = new Size(108, 25);
             vpnConnect_btn.TabIndex = 4;
             vpnConnect_btn.Text = "Connect to VPN";
             vpnConnect_btn.UseVisualStyleBackColor = false;
@@ -211,11 +211,10 @@
             settings_Btn.Location = new Point(25, 154);
             settings_Btn.Margin = new Padding(25, 3, 25, 3);
             settings_Btn.Name = "settings_Btn";
-            settings_Btn.Size = new Size(126, 25);
+            settings_Btn.Size = new Size(70, 25);
             settings_Btn.TabIndex = 5;
             settings_Btn.Text = "Settings";
             settings_Btn.UseVisualStyleBackColor = false;
-            settings_Btn.Visible = false;
             settings_Btn.Click += settings_Btn_Click;
             // 
             // testbutton
@@ -231,7 +230,7 @@
             testbutton.Location = new Point(25, 185);
             testbutton.Margin = new Padding(25, 3, 25, 3);
             testbutton.Name = "testbutton";
-            testbutton.Size = new Size(126, 25);
+            testbutton.Size = new Size(79, 25);
             testbutton.TabIndex = 6;
             testbutton.Text = "TestButton";
             testbutton.UseVisualStyleBackColor = false;

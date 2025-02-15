@@ -12,7 +12,10 @@ namespace ArcherTools_0._0._1
             {"Welcome back, Operator!", "welcome_operator"},
             {"I've been thinking, Operator…. I thought you'd want to know.", "thinking_ordis"},
             {"Viktor nation... how we feeling?", "viktor_nation" },
-            {"One must imagine Sisyphus happy.", "sisyphus" }
+            {"One must imagine Sisyphus happy.", "sisyphus" },
+            {"É sexta feira tô na bala", "e_sexta_feira" },
+            {"It is wednesday my dudes.", "wednesday" },
+            {"É quarta feira meus bacanos.", "wednesday" }
         };
          
     }
@@ -21,7 +24,6 @@ namespace ArcherTools_0._0._1
         private Dictionary<string, bool>? _possibleMessages;
         public MessageManager()
         {
-            _possibleMessages = new Dictionary<string, bool>();
             InitializeMessages();
         }
 

@@ -40,13 +40,22 @@ namespace ArcherTools_0._0._1.methods
         internal static bool endProcess = false;
         internal static int iteration = 0;
 
-        private static void PrepareToReceive(ExcelHandler exHandler, string worksheetName)
+        private static ErrorEnum.ErrorCode PrepareToReceive(ExcelHandler exHandler, string worksheetName)
         {
-            List<int> listLine = new List<int>();
-            var lineCol = exHandler.GetColumn(worksheetName, 3, 2);
-            listLine = lineCol.Select(int.Parse).ToList();
-            listLine.Sort();
-            linesFromExcel = listLine;            
+            try
+            {
+                List<int> listLine = new List<int>();
+                var lineCol = exHandler.GetColumn(worksheetName, 3, 2);
+                listLine = lineCol.Select(int.Parse).ToList();
+                listLine.Sort();
+                linesFromExcel = listLine;
+                return ErrorEnum.ErrorCode.Success;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.StackTrace);
+                return ErrorEnum.ErrorCode.UnknownError;
+            }
         }
 
         public static async Task MainCall(int startLine = 1, bool descendingStart = false)
@@ -63,13 +72,13 @@ namespace ArcherTools_0._0._1.methods
                 rcvGui?.updateStatusLabel("Beginning receiving process...");
                 var autoCreateCfg = ConfigData._toolConfig.AutomaticCreateConfig;
                 var findDefaultCfg = ConfigData._toolConfig.CheckForDefault;
-                if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0 && classes.Container.SelectedContainer.ReleasesAndItems[Container.SelectedRelease].Count > 0)
+                if (classes.Container.SelectedContainer != null && Container.SelectedRelease != 0 && classes.Container.SelectedContainer.ReleasesAndItems[Container.SelectedRelease].Count > 0)
                 {
                     Debug.WriteLine("Ask to import items.");
                     DialogResult importDoneItems = MessageBox.Show($"This container seems to have {classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Count} items attached to it, would you like to import them?", "Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (importDoneItems == DialogResult.Yes)
                     {
-                        receivedItems = classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease];
+                        receivedItems = new ConcurrentDictionary<int, Item>(classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease]);
                     }
                 }
 
@@ -133,7 +142,18 @@ namespace ArcherTools_0._0._1.methods
                         {
                             linesFromExcel.Reverse();
                         }
-                        PrepareToReceive(excelHandler, rcvDumpSheet);
+                    try
+                    {
+                        if (PrepareToReceive(excelHandler, rcvDumpSheet) != 0)
+                        {
+                            throw new AccessViolationException("Access Violation: Excel you're trying to access is likely already being used.");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        rcvGui.updateStatusLabel(e.Message);
+                        return;
+                    }
                         excelHandler.SetCell(mainWorkSheet, 10, 3, 1);
                         var cellvalue = excelHandler.GetCell(mainWorkSheet, 13, 4);
                         excelHandler.SetCell(mainWorkSheet, 10, 3, 5);
@@ -167,9 +187,8 @@ namespace ArcherTools_0._0._1.methods
                     }
                     int cntSize = containerSize();
                         int cntRawSize = containerSize(true);
-                        rcvGui?.setProgressBarMaximum(cntRawSize);
+                        rcvGui?.setProgressBarMaximum(cntRawSize++);
                         rcvGui?.setProgressBar(0);
-                        Debug.WriteLine(cntSize);
                         MouseHandler.MouseMoveTo(new Point(rlReceiptLnFirstLn.X + 30, rlReceiptLnFirstLn.Y));
                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                         MouseHandler.MouseClick();
@@ -469,7 +488,6 @@ namespace ArcherTools_0._0._1.methods
                         {
                             
                             highestNumber = int.Parse(row);
-                            Debug.WriteLine(row);
 
                         }
                     }
@@ -563,7 +581,7 @@ namespace ArcherTools_0._0._1.methods
             for (int i = start; i <= times; i++)
             {
                 inputSim.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.TAB);
-                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.4));
+                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
             }
         }
         

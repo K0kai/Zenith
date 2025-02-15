@@ -335,7 +335,7 @@ namespace ArcherTools_0._0._1.classes
                 {
                     try
                     {
-                        if (cont.Owner.Trim() != container.Owner.Trim())
+                        if (cont.Owner?.Trim() != container.Owner?.Trim())
                         {
                             MessageBox.Show($"This container already exists and is owned by another customer\n(Old:{cont.ContainerId}-{cont.Owner} vs New:{container.ContainerId}-{container.Owner}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;

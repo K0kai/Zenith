@@ -1,5 +1,7 @@
 ﻿
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -21,6 +23,14 @@ namespace ArcherTools_0._0._1.cfg
         private static string appCfgMainFolder = Path.Combine(documentsFolder, "Archer Tools");
         private static string appCfgInnerFolder = Path.Combine(appCfgMainFolder, "Zenith");
         public static string appContainersFolder = Path.Combine(appCfgInnerFolder, "Containers");
+
+        public static List<string> folders = new List<string>
+        {
+            documentsFolder,
+            appCfgMainFolder,
+            appCfgInnerFolder,
+            appContainersFolder
+        };
 
         public static string directoryPath = appCfgInnerFolder;
         public static string fileName = "Config.xml";
@@ -70,17 +80,12 @@ namespace ArcherTools_0._0._1.cfg
 
         public static void EnsureFolderExists()
         {
-            if (!Directory.Exists(appCfgMainFolder))
+            foreach (var folder in folders)
             {
-                Directory.CreateDirectory(appCfgMainFolder);
-            }
-            if (!Directory.Exists(appCfgInnerFolder))
-            {
-                Directory.CreateDirectory(appCfgInnerFolder);
-            }
-            if (!Directory.Exists(appContainersFolder))
-            {
-                Directory.CreateDirectory(appContainersFolder);
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
             }
         }
 

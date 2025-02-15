@@ -296,32 +296,33 @@ namespace ArcherTools_0._0._1.forms
 
                 if (dr == DialogResult.OK)
                 {
-                    if (Receiving.validateConfigData() && Receiving.validateExcel())
-                    {
-                        var configs = new ConcurrentDictionary<int, string>();
-                        var exHandler = new ExcelHandler(ConfigData._receivingConfig.ExcelFilePath);
-                        var Configs = itemSeparation();
-                        var Lines = createListFromCount(Configs);
-
-                        for (int i = 0; i < Lines.Count; i++)
-                        {
-                            var line = i < Lines.Count ? Lines[i] : -999;
-                            var config = i < Configs.Count ? Configs[i] : string.Empty;
-                            configs.AddOrUpdate(line, config, (key, oldValue) => oldValue = config);
-                        }
-                        if (classes.Container.SelectedContainer.AttachedConfigurations.TryAdd(classes.Container.SelectedRelease, configs))
-                        {
-                            
-                        }
-                        else
-                        {
-                            if (classes.Container.SelectedContainer.AttachedConfigurations.ContainsKey(classes.Container.SelectedRelease))
-                            {
-                                classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease] = configs;
-                            }
-                        }                        
-                        classes.Container.SelectedContainer.CalculateExpectedSize();
-                    }
+                    ConfigData.EnsureFolderExists();
+                    var configs = new ConcurrentDictionary<int, string>();
+                    var exHandler = new ExcelHandler(ConfigData._receivingConfig.ExcelFilePath);
+                    var Configs = itemSeparation();
+                    var Lines = createListFromCount(Configs);
+                    
+                    for (int i = 0; i < Lines.Count; i++)
+                    {                            
+                        var line = i < Lines.Count ? Lines[i] : -999;                          
+                        var config = i < Configs.Count ? Configs[i] : string.Empty;                           
+                       
+                        configs.AddOrUpdate(line, config, (key, oldValue) => oldValue = config);                        
+                    }                       
+                    if (classes.Container.SelectedContainer.AttachedConfigurations.TryAdd(classes.Container.SelectedRelease, configs))                        
+                    {                         
+                        
+                    }                       
+                    else                       
+                    {                           
+                        if (classes.Container.SelectedContainer.AttachedConfigurations.ContainsKey(classes.Container.SelectedRelease))                           
+                        {                              
+                            classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease] = configs;                           
+                        }                      
+                    }                      
+                    classes.Container.SelectedContainer.CalculateExpectedSize();                      
+                    classes.Container.SelectedContainer?.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, classes.Container.SelectedContainer.ContainerId));
+                   
                 }
             }          
 

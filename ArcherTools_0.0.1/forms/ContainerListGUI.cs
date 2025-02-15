@@ -315,6 +315,7 @@ namespace ArcherTools_0._0._1.forms
                     var newCtn = new Container(dibf[0], dibf[2], releasesAndItems);
 
                     classes.Container.AddContainer(newCtn);
+                    newCtn?.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, newCtn.ContainerId));
                 }
             }
         }
