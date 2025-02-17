@@ -180,9 +180,9 @@
             description_Label.Dock = DockStyle.Top;
             description_Label.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
             description_Label.ForeColor = Color.Lavender;
-            description_Label.Location = new Point(0, 30);
+            description_Label.Location = new Point(0, 44);
             description_Label.Name = "description_Label";
-            description_Label.Size = new Size(336, 42);
+            description_Label.Size = new Size(336, 28);
             description_Label.TabIndex = 8;
             description_Label.Text = "Description";
             description_Label.TextAlign = ContentAlignment.MiddleCenter;
@@ -194,7 +194,7 @@
             title_Label.ForeColor = Color.Lavender;
             title_Label.Location = new Point(0, 0);
             title_Label.Name = "title_Label";
-            title_Label.Size = new Size(336, 30);
+            title_Label.Size = new Size(336, 44);
             title_Label.TabIndex = 7;
             title_Label.Text = "Title";
             title_Label.TextAlign = ContentAlignment.MiddleCenter;

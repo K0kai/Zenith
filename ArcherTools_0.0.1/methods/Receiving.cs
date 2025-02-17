@@ -75,7 +75,7 @@ namespace ArcherTools_0._0._1.methods
                 if (classes.Container.SelectedContainer != null && Container.SelectedRelease != 0 && classes.Container.SelectedContainer.ReleasesAndItems[Container.SelectedRelease].Count > 0)
                 {
                     Debug.WriteLine("Ask to import items.");
-                    DialogResult importDoneItems = MessageBox.Show($"This container seems to have {classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Count} items attached to it, would you like to import them?", "Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    DialogResult importDoneItems = MessageBox.Show($"This container appears to have {classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Count} done items attached to it, would you like to import them?", "Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     if (importDoneItems == DialogResult.Yes)
                     {
                         receivedItems = new ConcurrentDictionary<int, Item>(classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease]);
@@ -165,7 +165,7 @@ namespace ArcherTools_0._0._1.methods
                         }
                         iteration = 1;
                         if (startLine > 1)
-                        {
+                        { 
                             iteration = startLine;
                         }
                         else
@@ -187,7 +187,7 @@ namespace ArcherTools_0._0._1.methods
                     }
                     int cntSize = containerSize();
                         int cntRawSize = containerSize(true);
-                        rcvGui?.setProgressBarMaximum(cntRawSize++);
+                        rcvGui?.setProgressBarMaximum(cntRawSize);
                         rcvGui?.setProgressBar(0);
                         MouseHandler.MouseMoveTo(new Point(rlReceiptLnFirstLn.X + 30, rlReceiptLnFirstLn.Y));
                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
@@ -454,12 +454,10 @@ namespace ArcherTools_0._0._1.methods
 
         private static void CreateNewConfig(int pcs, InputSimulator ips)
         {
-            /*
             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
             ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.INSERT);
             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.3));
             ips.Keyboard.TextEntry($"{pcs}PC");
-            */
             ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
         }
         private static int containerSize(bool rawSize = false)
@@ -470,6 +468,7 @@ namespace ArcherTools_0._0._1.methods
                 ExcelHandler exHandler = new ExcelHandler(ConfigData._receivingConfig.ExcelFilePath);
                 string worksheetName = ConfigData._receivingConfig.ExcelSheetNames[1];
                 var Column = exHandler.GetColumn(worksheetName, 3, 2);
+                Column.Select(x => !string.IsNullOrWhiteSpace(x) && string.IsNullOrEmpty(x)).ToList();
                 if (Column.Count <= 0)
                 {
                     throw new IndexOutOfRangeException("Item array cannot be zero or less than zero");
@@ -589,7 +588,7 @@ namespace ArcherTools_0._0._1.methods
         private static bool checkPCsForDefault()
         {
             InputSimulator ips = new InputSimulator();
-            Thread.Sleep((int)Math.Ceiling(baseDelay * 2.0));
+            Thread.Sleep((int)Math.Ceiling(baseDelay * 4.0));
             for (int i = 0; i < 5; i++)
             {
                 Point mouseto = new Point(0, 0);
@@ -814,6 +813,7 @@ namespace ArcherTools_0._0._1.methods
             if (processes.Length > 0)
             {
                 WindowHandler.WinToFocusByName(processes[0].ProcessName);
+                new InputSimulator().Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.END);
             }
             else
             {
@@ -891,6 +891,16 @@ namespace ArcherTools_0._0._1.methods
 
             DialogResult nextStepConfirm = MessageBox.Show("Now we are going to step two.\nPlease open any container's Receipt Lines window, once open, press ok to continue", "Next Step", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button1);
             if (nextStepConfirm != DialogResult.OK) { return; }
+            if (processes.Length > 0)
+            {
+                WindowHandler.WinToFocusByName(processes[0].ProcessName);
+                new InputSimulator().Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.END);
+            }
+            else
+            {
+                MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             Task rectsPt2 = Task.Run(() =>
             {
                 alteredRects = RectanglesOverlay.Show(pwhList, PwhMonitor);

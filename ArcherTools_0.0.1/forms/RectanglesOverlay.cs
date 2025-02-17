@@ -32,7 +32,7 @@ namespace ArcherTools_0._0._1.boxes
             this.DoubleBuffered = true;
             this.ShowInTaskbar = false;
 
-            pwhRects = importedPwhRects;            
+            pwhRects = importedPwhRects;
 
             this.MouseDown += GreatOverlay_MouseDown;
             this.MouseUp += GreatOverlay_MouseUp;
@@ -42,23 +42,38 @@ namespace ArcherTools_0._0._1.boxes
             this.Paint += GreatOverlay_Paint;
 
             thisForm = this;
-
-            _ = MonitorKeyPress(new InputSimulator());
+           
+            Task.Run(() =>
+            {
+                MonitorKeyPress(new InputSimulator());
+            });
         }
 
         private static async Task MonitorKeyPress(InputSimulator inputSimulator)
         {
             while (true)
-            {                
+            {
                 if (inputSimulator.InputDeviceState.IsKeyDown(VirtualKeyCode.END))
                 {
                     Debug.WriteLine("'End' key pressed. Exiting...");
-                    thisForm.Close();                  
+                    if (thisForm.InvokeRequired)
+                    {
+                        thisForm.Invoke((MethodInvoker)delegate
+                        {
+                            thisForm.Close();
+                        });
+                    }
+                    else
+                    {
+                        thisForm.Close();
+                    }
+                    inputSimulator.Keyboard.KeyUp(VirtualKeyCode.END);
                     break;
+                    
                 }
                 await Task.Delay(50);
             }
-        }
+       }
         private void GreatOverlay_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -139,7 +154,7 @@ namespace ArcherTools_0._0._1.boxes
                     this.Cursor = Cursors.Default;
                 }
             }
-            }
+        }
 
         private void GreatOverlay_MouseLeave(object sender, EventArgs e)
         {
@@ -149,7 +164,7 @@ namespace ArcherTools_0._0._1.boxes
                 mouseTrackLabel = null;
             }
         }
-        
+
 
         private void GreatOverlay_MouseUp(object sender, MouseEventArgs e)
         {
@@ -236,16 +251,17 @@ namespace ArcherTools_0._0._1.boxes
         public static List<PowerHouseRectangles> Show(List<PowerHouseRectangles> importedPwhRects, byte PwhMonitor = 1)
         {
             using (var rectOv = new RectanglesOverlay(importedPwhRects, PwhMonitor))
-            {     
+            {
                 rectOv.ShowDialog();
                 if (mouseTrackLabel != null)
                 {
                     mouseTrackLabel.Destroy();
                     mouseTrackLabel = null;
                 }
-                return pwhRects;
             }
 
+            return pwhRects;
         }
+
     }
 }

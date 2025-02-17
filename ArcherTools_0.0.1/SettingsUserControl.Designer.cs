@@ -44,6 +44,8 @@
             return_Btn = new Button();
             presetDropTimer = new System.Windows.Forms.Timer(components);
             overlayTip_lbl = new Label();
+            invSet_Btn = new Button();
+            label3 = new Label();
             toolsCfg_Panel.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -95,6 +97,8 @@
             // 
             // toolsCfg_Panel
             // 
+            toolsCfg_Panel.Controls.Add(label3);
+            toolsCfg_Panel.Controls.Add(invSet_Btn);
             toolsCfg_Panel.Controls.Add(checkfordefault_checkbox);
             toolsCfg_Panel.Controls.Add(autocreatecfg_checkbox);
             toolsCfg_Panel.Controls.Add(rcvSet_Btn);
@@ -108,7 +112,7 @@
             // 
             checkfordefault_checkbox.AutoSize = true;
             checkfordefault_checkbox.ForeColor = Color.Lavender;
-            checkfordefault_checkbox.Location = new Point(13, 97);
+            checkfordefault_checkbox.Location = new Point(13, 94);
             checkfordefault_checkbox.Name = "checkfordefault_checkbox";
             checkfordefault_checkbox.Size = new Size(118, 19);
             checkfordefault_checkbox.TabIndex = 32;
@@ -119,7 +123,7 @@
             // 
             autocreatecfg_checkbox.AutoSize = true;
             autocreatecfg_checkbox.ForeColor = Color.Lavender;
-            autocreatecfg_checkbox.Location = new Point(13, 72);
+            autocreatecfg_checkbox.Location = new Point(13, 69);
             autocreatecfg_checkbox.Name = "autocreatecfg_checkbox";
             autocreatecfg_checkbox.Size = new Size(111, 19);
             autocreatecfg_checkbox.TabIndex = 31;
@@ -249,6 +253,37 @@
             overlayTip_lbl.Text = "Press \"END\" key to move to next step";
             overlayTip_lbl.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // invSet_Btn
+            // 
+            invSet_Btn.Anchor = AnchorStyles.Top;
+            invSet_Btn.BackColor = SystemColors.ControlDarkDark;
+            invSet_Btn.BackgroundImageLayout = ImageLayout.None;
+            invSet_Btn.Cursor = Cursors.Hand;
+            invSet_Btn.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            invSet_Btn.FlatAppearance.BorderSize = 0;
+            invSet_Btn.FlatAppearance.MouseOverBackColor = Color.Indigo;
+            invSet_Btn.FlatStyle = FlatStyle.Flat;
+            invSet_Btn.ForeColor = SystemColors.ButtonFace;
+            invSet_Btn.Location = new Point(15, 129);
+            invSet_Btn.Margin = new Padding(25, 3, 25, 3);
+            invSet_Btn.Name = "invSet_Btn";
+            invSet_Btn.Size = new Size(109, 26);
+            invSet_Btn.TabIndex = 33;
+            invSet_Btn.Text = "Set up Inventory";
+            invSet_Btn.UseVisualStyleBackColor = false;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.BackColor = Color.Transparent;
+            label3.ForeColor = Color.WhiteSmoke;
+            label3.Location = new Point(6, 112);
+            label3.Name = "label3";
+            label3.Size = new Size(127, 15);
+            label3.TabIndex = 32;
+            label3.Text = "------------------------";
+            // 
             // SettingsUserControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -285,5 +320,7 @@
         private CheckBox checkfordefault_checkbox;
         private Label overlayTip_lbl;
         private Label selPreset_lbl;
+        private Button invSet_Btn;
+        private Label label3;
     }
 }

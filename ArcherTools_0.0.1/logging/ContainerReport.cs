@@ -55,9 +55,10 @@ namespace ArcherTools_0._0._1.logging
                         {
                             if (!_Container.ReleasesAndItems[_ContainerRelease].Keys.Contains(line.Key))
                             {
-                                this.Body += $"{line.Key.ToString()} ";
+                                this.Body += $"{line.Key.ToString()}, ";
                             }
                         }
+                        
                     }
                     else
                     {
@@ -98,6 +99,10 @@ namespace ArcherTools_0._0._1.logging
                 for (int i = 1; getSplitMessage.Length > i; i++)
                 {
                     _message += getSplitMessage[i] + " ";
+                }
+                if (_message.Contains("incomplete"))
+                {
+                    _message += $"\n\nIf this is intentional, you can safely void this email, the rest of the container is already done and the blank items were ignored";
                 }
                 try
                 {

@@ -14,7 +14,7 @@ namespace ArcherTools_0._0._1
             this.Load += onLoad;
             presetBs = new BindingSource();
             presetBs.DataSource = ColorPresets._instance.Presets;
-            
+
         }
 
         private void onLoad(object sender, EventArgs e)
@@ -33,7 +33,7 @@ namespace ArcherTools_0._0._1
                 checkfordefault_checkbox.Checked = toolCfg.CheckForDefault;
 
             }
-            
+
             overlayTip_lbl.Visible = false;
             updateSelectedPreset();
 
@@ -56,7 +56,7 @@ namespace ArcherTools_0._0._1
         {
             overlayTip_lbl.Visible = true;
             Task receiveSet = Task.Run(() =>
-            {                
+            {
                 Receiving.TrainCall();
             });
             Task.WaitAll(receiveSet);
@@ -110,7 +110,7 @@ namespace ArcherTools_0._0._1
         private void presetList_dropbtn_Click(object sender, EventArgs e)
         {
             presetDropTimer.Start();
-            
+
         }
 
 

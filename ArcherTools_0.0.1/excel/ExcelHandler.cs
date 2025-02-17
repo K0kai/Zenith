@@ -218,6 +218,7 @@ namespace ArcherTools_0._0._1.excel
                         }
                     }
                 });
+                Debug.WriteLine(columnData.Count);
                 return columnData;
             }
         }

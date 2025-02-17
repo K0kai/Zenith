@@ -14,18 +14,9 @@ namespace ArcherTools_0._0._1.cfg
         ItemSearchInquiry,
         ItemMaintenanceWindow,
         ItemConfigurationWindow,
-        NumPiecesInputBox,
-        PalletWeightInputBox,
-        PalletHeightInputBox,
-        PalletWidthInputBox,
-        PalletDepthInputBox,
-        CasesWeightInputBox,
-        CasesHeightInputBox,
-        CasesWidthInputBox,
-        CasesDepthInputBox,
-        CasesPerPalletInputBox,
-        CasesPerTierInputBox,
-        PowerHouseUpperTab
+        PowerHouseUpperTab,
+        ItemLocationsWindow,
+        InventoryWindow
     }
 
     [Serializable]
