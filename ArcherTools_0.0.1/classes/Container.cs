@@ -111,7 +111,6 @@ namespace ArcherTools_0._0._1.classes
                 return null;
             }
         }
-        
         public static void SetSelectedRelease(object? release)
         {
             try
@@ -204,6 +203,33 @@ namespace ArcherTools_0._0._1.classes
             Debug.WriteLine($"Error validating: {SelectedContainer}'s release: {selectedRelease}");
             return (byte) ErrorEnum.ErrorCode.UnknownError;
         }
+
+        public void UpdateContainerStatus(int release)
+        {
+            if (this.ContainerId != null && string.IsNullOrWhiteSpace(this.ContainerId))
+            {                
+                if (this.AttachedConfigurations[release].Keys.Contains(release) && this.ReleasesAndItems[release].Keys.Contains(release))
+                {
+                    this.CalculateExpectedSize(release);
+                    if (this.ReleasesAndItems[release].Count == 0)
+                    {
+                        this.ContainerStatus = "Empty";
+                        this.OnPropertyChanged(nameof(ContainerStatus));
+                    }
+                    else if (this.ReleasesAndItems[release].Count >= this.ExpectedSize)
+                    {
+                        this.ContainerStatus = "Complete";
+                        this.OnPropertyChanged(nameof(ContainerStatus));
+                    }
+                    else
+                    {
+                        this.ContainerStatus = "Incomplete";
+                        this.OnPropertyChanged(nameof(ContainerStatus));
+                    }
+                }
+                
+            }
+        }
         public void UpdateContainerStatus()
         {
             if (this.ContainerId == SelectedContainer.ContainerId)
@@ -213,6 +239,7 @@ namespace ArcherTools_0._0._1.classes
                     if (SelectedContainer != null && SelectedRelease == null)
                     {
                         ContainerStatus = "No Release Selected";
+                        this.OnPropertyChanged(nameof(ContainerStatus));
                         return;
                     }
                     else
@@ -222,19 +249,21 @@ namespace ArcherTools_0._0._1.classes
                             if (ReleasesAndItems[SelectedRelease].Count == 0)
                             {
                                 ContainerStatus = "Empty";
+                                this.OnPropertyChanged(nameof(ContainerStatus));
                                 return;
                             }
                             else if (ReleasesAndItems[SelectedRelease].Count >= ExpectedSize)
                             {
                                 ContainerStatus = "Complete";
+                                this.OnPropertyChanged(nameof(ContainerStatus));
                             }
                             else
                             {
                                 ContainerStatus = "Incomplete";
+                                this.OnPropertyChanged(nameof(ContainerStatus));
                             }
                         }
                     }
-                    this.OnPropertyChanged(nameof(ContainerStatus));
                 }
             }
             else
@@ -303,7 +332,7 @@ namespace ArcherTools_0._0._1.classes
 
         internal void CalculateExpectedSize()
         {
-            if (SelectedContainer.attachedConfigurations != null)
+            if (SelectedContainer.AttachedConfigurations != null)
             {
                 try
                 {
@@ -316,13 +345,30 @@ namespace ArcherTools_0._0._1.classes
             }
         }
 
+        public void CalculateExpectedSize(int release)
+        {
+            if (this.AttachedConfigurations != null)
+            {
+                try
+                {
+                    var expectedSize = !this.AttachedConfigurations.ContainsKey(release) || this.AttachedConfigurations[release].Count == null ? 0 : this.AttachedConfigurations[release].Count;
+                }
+                catch(Exception ex)
+                {
+
+                }
+            }
+        }
+
         public void AddItem(int release, int line, Item value)
         {
             if (this.ReleasesAndItems[release].TryAdd(line, value))
             {
+                this.UpdateContainerStatus(release);
                 this.OnPropertyChanged(nameof(ReleasesAndItems));
-                SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
                 Debug.WriteLine("Adding item");
+                SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
+                
             }           
         }
         public static void AddContainer(Container container)
