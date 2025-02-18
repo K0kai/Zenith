@@ -16,6 +16,8 @@ namespace ArcherTools_0._0._1.forms
         public static Form viewCfgForm;
         public static ContainerListGUI _instance;
         private static BindingSource containerBs = new BindingSource();
+        private static BindingSource releaseBs = new BindingSource();
+        private static bool HasSelectedRelease = false;
 
         public ContainerListGUI(string title)
         {
@@ -33,6 +35,7 @@ namespace ArcherTools_0._0._1.forms
             if (this.containerList_listbox.SelectedItem != null)
             {
                 classes.Container.SetSelectedRelease(release_cbbox.SelectedItem);
+                HasSelectedRelease = true;
             }
         }
 
@@ -400,6 +403,7 @@ namespace ArcherTools_0._0._1.forms
                 classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Clear();
                 classes.Container.SelectedContainer.CalculateExpectedSize();
                 classes.Container.SelectedContainer.UpdateContainerStatus();
+                classes.Container.SelectedContainer?.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, classes.Container.SelectedContainer.ContainerId));
             }
         }
 
@@ -410,6 +414,7 @@ namespace ArcherTools_0._0._1.forms
                 classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Clear();
                 classes.Container.SelectedContainer.CalculateExpectedSize();
                 classes.Container.SelectedContainer.UpdateContainerStatus();
+                classes.Container.SelectedContainer?.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, classes.Container.SelectedContainer.ContainerId));
             }
         }
 
@@ -458,6 +463,18 @@ namespace ArcherTools_0._0._1.forms
                 }
             }
 
+        }
+
+        private void getArraySizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Debug.WriteLine(classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Count);
+        }
+
+        private void radiobutton_CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton rdBtn = sender as RadioButton;        
+            containerBs.DataSource = classes.Container.GetContainersByStatus(rdBtn?.Text.Trim());
+            containerBs.ResetBindings(true);
         }
     }
 }

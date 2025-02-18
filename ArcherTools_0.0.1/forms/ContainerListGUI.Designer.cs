@@ -35,6 +35,11 @@
             viewCfg_btn = new Button();
             panel2 = new Panel();
             panel3 = new Panel();
+            filter_panel = new Panel();
+            filter_lbl = new Label();
+            empty_filter_rdBtn = new RadioButton();
+            complete_filter_rdBtn = new RadioButton();
+            incomplete_filter_rdBtn = new RadioButton();
             getEmail_btn = new Button();
             generateReport_Btn = new Button();
             progress_lbl = new Label();
@@ -54,9 +59,11 @@
             itemsToolStripMenuItem = new ToolStripMenuItem();
             configurationsToolStripMenuItem = new ToolStripMenuItem();
             deleteToolStripMenuItem = new ToolStripMenuItem();
+            getArraySizeToolStripMenuItem = new ToolStripMenuItem();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
+            filter_panel.SuspendLayout();
             containerMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -138,6 +145,7 @@
             // 
             // panel3
             // 
+            panel3.Controls.Add(filter_panel);
             panel3.Controls.Add(getEmail_btn);
             panel3.Controls.Add(generateReport_Btn);
             panel3.Controls.Add(progress_lbl);
@@ -150,6 +158,68 @@
             panel3.Name = "panel3";
             panel3.Size = new Size(212, 256);
             panel3.TabIndex = 11;
+            // 
+            // filter_panel
+            // 
+            filter_panel.Controls.Add(filter_lbl);
+            filter_panel.Controls.Add(empty_filter_rdBtn);
+            filter_panel.Controls.Add(complete_filter_rdBtn);
+            filter_panel.Controls.Add(incomplete_filter_rdBtn);
+            filter_panel.Location = new Point(5, 120);
+            filter_panel.Name = "filter_panel";
+            filter_panel.Size = new Size(204, 89);
+            filter_panel.TabIndex = 19;
+            // 
+            // filter_lbl
+            // 
+            filter_lbl.AutoSize = true;
+            filter_lbl.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            filter_lbl.ForeColor = Color.WhiteSmoke;
+            filter_lbl.Location = new Point(63, 0);
+            filter_lbl.Name = "filter_lbl";
+            filter_lbl.Size = new Size(60, 17);
+            filter_lbl.TabIndex = 20;
+            filter_lbl.Text = "Filter by:";
+            filter_lbl.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // empty_filter_rdBtn
+            // 
+            empty_filter_rdBtn.AutoSize = true;
+            empty_filter_rdBtn.ForeColor = Color.WhiteSmoke;
+            empty_filter_rdBtn.Location = new Point(3, 21);
+            empty_filter_rdBtn.Name = "empty_filter_rdBtn";
+            empty_filter_rdBtn.Size = new Size(59, 19);
+            empty_filter_rdBtn.TabIndex = 2;
+            empty_filter_rdBtn.TabStop = true;
+            empty_filter_rdBtn.Text = "Empty";
+            empty_filter_rdBtn.UseVisualStyleBackColor = true;
+            empty_filter_rdBtn.CheckedChanged += radiobutton_CheckedChanged;
+            // 
+            // complete_filter_rdBtn
+            // 
+            complete_filter_rdBtn.AutoSize = true;
+            complete_filter_rdBtn.ForeColor = Color.WhiteSmoke;
+            complete_filter_rdBtn.Location = new Point(3, 67);
+            complete_filter_rdBtn.Name = "complete_filter_rdBtn";
+            complete_filter_rdBtn.Size = new Size(77, 19);
+            complete_filter_rdBtn.TabIndex = 1;
+            complete_filter_rdBtn.TabStop = true;
+            complete_filter_rdBtn.Text = "Complete";
+            complete_filter_rdBtn.UseVisualStyleBackColor = true;
+            complete_filter_rdBtn.CheckedChanged += radiobutton_CheckedChanged;
+            // 
+            // incomplete_filter_rdBtn
+            // 
+            incomplete_filter_rdBtn.AutoSize = true;
+            incomplete_filter_rdBtn.ForeColor = Color.WhiteSmoke;
+            incomplete_filter_rdBtn.Location = new Point(3, 45);
+            incomplete_filter_rdBtn.Name = "incomplete_filter_rdBtn";
+            incomplete_filter_rdBtn.Size = new Size(85, 19);
+            incomplete_filter_rdBtn.TabIndex = 0;
+            incomplete_filter_rdBtn.TabStop = true;
+            incomplete_filter_rdBtn.Text = "Incomplete";
+            incomplete_filter_rdBtn.UseVisualStyleBackColor = true;
+            incomplete_filter_rdBtn.CheckedChanged += radiobutton_CheckedChanged;
             // 
             // getEmail_btn
             // 
@@ -327,10 +397,10 @@
             // containerMenuStrip
             // 
             containerMenuStrip.BackColor = Color.FromArgb(48, 48, 48);
-            containerMenuStrip.Items.AddRange(new ToolStripItem[] { toExcelToolStripMenuItem, clearToolStripMenuItem, deleteToolStripMenuItem });
+            containerMenuStrip.Items.AddRange(new ToolStripItem[] { toExcelToolStripMenuItem, clearToolStripMenuItem, deleteToolStripMenuItem, getArraySizeToolStripMenuItem });
             containerMenuStrip.Name = "containerMenuStrip";
             containerMenuStrip.RenderMode = ToolStripRenderMode.Professional;
-            containerMenuStrip.Size = new Size(159, 70);
+            containerMenuStrip.Size = new Size(159, 92);
             // 
             // toExcelToolStripMenuItem
             // 
@@ -387,6 +457,15 @@
             deleteToolStripMenuItem.MouseEnter += ToolStripMenuItem_MouseEnter;
             deleteToolStripMenuItem.MouseLeave += ToolStripMenuItem_MouseLeave;
             // 
+            // getArraySizeToolStripMenuItem
+            // 
+            getArraySizeToolStripMenuItem.BackColor = Color.FromArgb(64, 64, 64);
+            getArraySizeToolStripMenuItem.ForeColor = Color.WhiteSmoke;
+            getArraySizeToolStripMenuItem.Name = "getArraySizeToolStripMenuItem";
+            getArraySizeToolStripMenuItem.Size = new Size(158, 22);
+            getArraySizeToolStripMenuItem.Text = "Get Array Size";
+            getArraySizeToolStripMenuItem.Click += getArraySizeToolStripMenuItem_Click;
+            // 
             // ContainerListGUI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -407,6 +486,8 @@
             panel2.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            filter_panel.ResumeLayout(false);
+            filter_panel.PerformLayout();
             containerMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -438,5 +519,11 @@
         private ToolStripMenuItem deleteToolStripMenuItem;
         private ToolStripMenuItem itemsToolStripMenuItem;
         private ToolStripMenuItem configurationsToolStripMenuItem;
+        private ToolStripMenuItem getArraySizeToolStripMenuItem;
+        private Panel filter_panel;
+        private RadioButton empty_filter_rdBtn;
+        private RadioButton complete_filter_rdBtn;
+        private RadioButton incomplete_filter_rdBtn;
+        private Label filter_lbl;
     }
 }

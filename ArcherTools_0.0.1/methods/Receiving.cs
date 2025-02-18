@@ -43,7 +43,7 @@ namespace ArcherTools_0._0._1.methods
         private static ErrorEnum.ErrorCode PrepareToReceive(ExcelHandler exHandler, string worksheetName)
         {
             try
-            {
+            {                
                 List<int> listLine = new List<int>();
                 var lineCol = exHandler.GetColumn(worksheetName, 3, 2);
                 listLine = lineCol.Select(int.Parse).ToList();
@@ -72,14 +72,17 @@ namespace ArcherTools_0._0._1.methods
                 rcvGui?.updateStatusLabel("Beginning receiving process...");
                 var autoCreateCfg = ConfigData._toolConfig.AutomaticCreateConfig;
                 var findDefaultCfg = ConfigData._toolConfig.CheckForDefault;
+                receivedItems.Clear();
+                failedItems.Clear();
                 if (classes.Container.SelectedContainer != null && Container.SelectedRelease != 0 && classes.Container.SelectedContainer.ReleasesAndItems[Container.SelectedRelease].Count > 0)
                 {
                     Debug.WriteLine("Ask to import items.");
-                    DialogResult importDoneItems = MessageBox.Show($"This container appears to have {classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Count} done items attached to it, would you like to import them?", "Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                    DialogResult importDoneItems = MessageBox.Show($"This container appears to have {classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Count} completed items attached to it, would you like to import them?", "Import", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
                     if (importDoneItems == DialogResult.Yes)
                     {
                         receivedItems = new ConcurrentDictionary<int, Item>(classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease]);
                     }
+                    
                 }
 
 

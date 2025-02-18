@@ -80,7 +80,7 @@ namespace ArcherTools_0._0._1.classes
 
         public void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));            
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         public static void OnStaticPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -151,10 +151,10 @@ namespace ArcherTools_0._0._1.classes
             {
                 AttachedConfigurations = new ConcurrentDictionary<int, ConcurrentDictionary<int, string>>();
             }
+            AddContainer(this);
         }
         public Container()
         {
-
         }
         public Container (string containerId, string owner)
         {
@@ -172,6 +172,7 @@ namespace ArcherTools_0._0._1.classes
             {
                 ReleasesAndItems = new ConcurrentDictionary<int, ConcurrentDictionary<int, Item>> ();
             }
+            AddContainer(this);
 
         }
 
@@ -233,6 +234,7 @@ namespace ArcherTools_0._0._1.classes
                             }
                         }
                     }
+                    this.OnPropertyChanged(nameof(ContainerStatus));
                 }
             }
             else
@@ -395,10 +397,47 @@ namespace ArcherTools_0._0._1.classes
         public static void SetSelectedContainer(Container container)
         {
             SelectedContainer = container;
+            
             if (SelectedContainer.ReleasesAndItems.Count > 0)
             {
-                SetSelectedRelease(SelectedRelease = SelectedContainer.ReleasesAndItems.Keys.ToArray()[0]);
+                if (SelectedContainer.ReleasesAndItems.Keys.ToArray().Contains(SelectedRelease))
+                {
+                    return;
+                }
+                else
+                {
+                    SetDefaultRelease();
+                }
             }
+            if (ValidateSelectedContainerAndRelease() == 0)
+            {
+                container.UpdateContainerStatus();
+            }
+        }
+
+        private static void SetDefaultRelease()
+        {
+            if (SelectedContainer != null)
+            {
+                if (SelectedContainer.ReleasesAndItems.Count > 0)
+                {
+                    SetSelectedRelease(SelectedRelease = SelectedContainer.ReleasesAndItems.Keys.ToArray()[0]);
+                }
+            }
+        }
+
+        public static List<Container> GetContainersByStatus(string Status)
+        {
+            List<Container> sortedContainers = new List<Container>();
+            Debug.WriteLine(AllContainers.Count);
+            foreach (var container in AllContainers)
+            {
+                if (container?.ContainerStatus == Status)
+                {
+                    sortedContainers.Add(container);
+                }
+            }
+            return sortedContainers;
         }
 
         public static void UndoSelectedContainer()

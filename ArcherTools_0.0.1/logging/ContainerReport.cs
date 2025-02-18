@@ -102,7 +102,7 @@ namespace ArcherTools_0._0._1.logging
                 }
                 if (_message.Contains("incomplete"))
                 {
-                    _message += $"\n\nIf this is intentional, you can safely void this email, the rest of the container is already done and the blank items were ignored";
+                    _message += $"\n\nHowever if this is intended, you can safely ignore this warning, the rest of the container is already done and the blank items were skipped.";
                 }
                 try
                 {
