@@ -521,6 +521,7 @@ namespace ArcherTools_0._0._1.methods
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine(ex.Message);
                     return Task.FromException(ex);
                 }
             }
@@ -617,6 +618,7 @@ namespace ArcherTools_0._0._1.methods
         
         private static bool checkPCs(string pcs)
         {
+            Thread.Sleep((int)Math.Ceiling(baseDelay * 2.2));
             InputSimulator ips = new InputSimulator();
             int intPcs = int.Parse(pcs);
             for (int i = 0; i < 5; i++)

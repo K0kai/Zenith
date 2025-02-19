@@ -6,6 +6,7 @@ using ArcherTools_0._0._1.classes;
 using ArcherTools_0._0._1.excel;
 using ArcherTools_0._0._1.logging;
 using ArcherTools_0._0._1.methods;
+using Org.BouncyCastle.Asn1.X500;
 
 namespace ArcherTools_0._0._1.forms
 {
@@ -17,7 +18,6 @@ namespace ArcherTools_0._0._1.forms
         public static ContainerListGUI _instance;
         private static BindingSource containerBs = new BindingSource();
         private static BindingSource releaseBs = new BindingSource();
-        private static bool HasSelectedRelease = false;
 
         public ContainerListGUI(string title)
         {
@@ -35,7 +35,6 @@ namespace ArcherTools_0._0._1.forms
             if (this.containerList_listbox.SelectedItem != null)
             {
                 classes.Container.SetSelectedRelease(release_cbbox.SelectedItem);
-                HasSelectedRelease = true;
             }
         }
 
@@ -89,6 +88,7 @@ namespace ArcherTools_0._0._1.forms
             this.Invalidate();
         }
 
+        //feat. GPT
         private void ContainerList_listbox_MouseDown(object? sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -107,6 +107,7 @@ namespace ArcherTools_0._0._1.forms
                 }
             }
         }
+        // 
 
         private void SelectedContainer_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -114,7 +115,8 @@ namespace ArcherTools_0._0._1.forms
             {
                 UpdateSelectedContainerStatus();
                 UpdateSelectedRelease();
-            }            
+                refreshFilteredList();
+            }
             if (e.PropertyName == "ExpectedSize")
             {
                 UpdateExpectedSize();
@@ -123,6 +125,7 @@ namespace ArcherTools_0._0._1.forms
             {
                 UpdateContainerProgress();
             }
+            Debug.WriteLine(e.PropertyName);
         }
 
         private void Container_StaticPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -143,12 +146,18 @@ namespace ArcherTools_0._0._1.forms
                         _instance.release_cbbox.Text = "";
                     }
                 }
+                UpdateSelectedContainerStatus();
+                UpdateContainerProgress();
             }
             if (e.PropertyName == "SelectedRelease")
             {
                 UpdateSelectedRelease();
                 classes.Container.SelectedContainer?.UpdateContainerStatus(classes.Container.SelectedRelease);
                 UpdateSelectedContainerStatus();
+            }
+            if (e.PropertyName == "AllContainers")
+            {
+                refreshFilteredList();
             }
         }
 
@@ -171,7 +180,7 @@ namespace ArcherTools_0._0._1.forms
             if (_instanceForm != null)
             {
                 if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
-                { 
+                {
                     _instance.status_lbl.Text = _instance.status_lbl.Text.Split(':')[0] + $": {classes.Container.SelectedContainer.ContainerStatus}";
                 }
             }
@@ -198,7 +207,17 @@ namespace ArcherTools_0._0._1.forms
                     var releasesAndItems = classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease];
                     var attachedConfigs = classes.Container.SelectedContainer.AttachedConfigurations.ContainsKey(classes.Container.SelectedRelease) ? classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Count : 0; ;
                     var percentage = releasesAndItems.Count != 0 && attachedConfigs != 0 ? Math.Round(((decimal)releasesAndItems.Count / (decimal)attachedConfigs) * 100, 1) : 0;
-                    _instance.progress_lbl.Text = _instance.progress_lbl.Text.Split(':')[0] + $": {decimal.ToInt32(percentage)}%";
+                    if (_instance.progress_lbl.InvokeRequired)
+                    {
+                        _instance.progress_lbl.Invoke((MethodInvoker)delegate
+                        {
+                            _instance.progress_lbl.Text = _instance.progress_lbl.Text.Split(':')[0] + $": {decimal.ToInt32(percentage)}%";
+                        });
+                    }
+                    else
+                    {
+                        _instance.progress_lbl.Text = _instance.progress_lbl.Text.Split(':')[0] + $": {decimal.ToInt32(percentage)}%";
+                    }
                 }
             }
         }
@@ -275,6 +294,7 @@ namespace ArcherTools_0._0._1.forms
                     if (listbox.SelectedItem != null)
                     {
                         classes.Container.SetSelectedContainer((Container)listbox.SelectedItem);
+                        classes.Container.SelectedContainer.UpdateContainerStatus(classes.Container.SelectedRelease);
                         Debug.WriteLine(classes.Container.SelectedContainer.ToString());
                     }
                 }
@@ -313,6 +333,9 @@ namespace ArcherTools_0._0._1.forms
                             break;
                         case "ima":
                             dibf[1] = 103.ToString();
+                            break;
+                        case "bio":
+                            dibf[1] = 104.ToString();
                             break;
                         default:
                             break;
@@ -475,10 +498,26 @@ namespace ArcherTools_0._0._1.forms
 
         private void radiobutton_CheckedChanged(object sender, EventArgs e)
         {
-            RadioButton rdBtn = sender as RadioButton;        
+            RadioButton rdBtn = sender as RadioButton;
             containerBs.DataSource = classes.Container.GetContainersByStatus(rdBtn?.Text.Trim());
             containerBs.ResetBindings(true);
         }
+
+        private void refreshFilteredList()
+        {
+            List<RadioButton> radioButtons = new List<RadioButton>();
+            radioButtons = filter_panel.Controls.OfType<RadioButton>().ToList();
+            foreach (RadioButton radioButton in radioButtons)
+            {
+                if (radioButton.Checked == true)
+                {
+                    containerBs.DataSource = classes.Container.GetContainersByStatus(radioButton?.Text.Trim());
+                    containerBs.ResetBindings(true);
+                    break;
+                }
+            }
+        }
     }
 }
+
 

@@ -81,6 +81,7 @@ namespace ArcherTools_0._0._1.classes
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            
         }
         public static void OnStaticPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -234,24 +235,27 @@ namespace ArcherTools_0._0._1.classes
                             {
                                 this.ContainerStatus = "Empty";
                                 this.OnPropertyChanged(nameof(ContainerStatus));
+                                SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
                                 return;
                             }
                         }
                         else if (this.ReleasesAndItems[release].Count >= this.ExpectedSize)
                         {
-                            if (this.ContainerStatus != "Complete")
+                            if (!string.Equals(this.ContainerStatus, "Complete", StringComparison.CurrentCultureIgnoreCase))
                             {
                                 this.ContainerStatus = "Complete";
                                 this.OnPropertyChanged(nameof(ContainerStatus));
+                                SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
                                 return;
                             }
                         }
                         else
                         {
-                            if (this.ContainerStatus != "Incomplete")
+                            if (!string.Equals(this.ContainerStatus, "Incomplete",StringComparison.CurrentCultureIgnoreCase))
                             {
                                 this.ContainerStatus = "Incomplete";
                                 this.OnPropertyChanged(nameof(ContainerStatus));
+                                SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
                                 return;
                             }
                         }
@@ -342,6 +346,9 @@ namespace ArcherTools_0._0._1.classes
                 case 103:
                     stringRelease = "IMA";
                     break;
+                case 104:
+                    stringRelease = "BIO";
+                    break;
                 default:
                     stringRelease = release.ToString();
                     break;
@@ -365,6 +372,9 @@ namespace ArcherTools_0._0._1.classes
                     break;
                 case "ima":
                     intRelease = 103;
+                    break;
+                case "bio":
+                    intRelease = 104;
                     break;
                 default:
                     intRelease = int.Parse(release);
@@ -391,14 +401,16 @@ namespace ArcherTools_0._0._1.classes
 
         public void CalculateExpectedSize(int release)
         {
-            Debug.WriteLine("attempting calculation");
             if (this.AttachedConfigurations != null)
             {
                 try
                 {
-                    Debug.WriteLine("calculating");
                     var expectedSize = !this.AttachedConfigurations.ContainsKey(release) || this.AttachedConfigurations[release].Count == 0 ? 0 : this.AttachedConfigurations[release].Count;
-                    this.ExpectedSize = expectedSize;
+                    if (this.ExpectedSize != expectedSize)
+                    {
+                        this.ExpectedSize = expectedSize;
+                        SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -410,11 +422,11 @@ namespace ArcherTools_0._0._1.classes
         public void AddItem(int release, int line, Item value)
         {
             if (this.ReleasesAndItems[release].TryAdd(line, value))
-            {
-                this.OnPropertyChanged(nameof(ReleasesAndItems));
+            {                
                 Debug.WriteLine("Adding item");
+                this.OnPropertyChanged(nameof(ReleasesAndItems));
                 SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
-                
+
             }           
         }
         public static void AddContainer(Container container)
@@ -436,6 +448,7 @@ namespace ArcherTools_0._0._1.classes
                         }
                         var newRelease = new ConcurrentDictionary<int, Item>();
                         cont.ReleasesAndItems.TryAdd(container.ReleasesAndItems.Keys.ToArray()[0], newRelease);
+                        OnStaticPropertyChanged(nameof(AllContainers));
                         return;
                     }
                     
@@ -552,6 +565,7 @@ namespace ArcherTools_0._0._1.classes
             };
 
             string json = JsonSerializer.Serialize(this, options);
+            Debug.WriteLine($"Serializing {Path.GetFileName(FilePath)}");
             await File.WriteAllTextAsync(FilePath + ".json", json);
         }
 

@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using ArcherTools_0._0._1.excel;
 using NPOI.OpenXmlFormats.Dml.Chart;
 
 namespace ArcherTools_0._0._1.forms
@@ -97,8 +100,54 @@ namespace ArcherTools_0._0._1.forms
                 filePath = openFileDialog.FileName;
                 string status = imaFile_lbl.Text.Split(':')[0] + $": {Path.GetFileName(filePath)}";
                 imaFilePath = filePath;
-                imaFile_lbl.Text = status ;
+                imaFile_lbl.Text = status;
+            }
+        }
+
+        internal string CheckForIMAPL(string FilePath)
+        {
+            if (!string.IsNullOrEmpty(FilePath))
+            {
+                ExcelHandler exHandler = new ExcelHandler(FilePath);
+                var worksheets = exHandler.GetWorksheets();
+                if (worksheets != null)
+                {
+                    if (worksheets.Count > 0)
+                    {
+                        foreach (var worksheet in worksheets)
+                        {
+                            if (methods.strings.StringMatching.CosineSimilarity(worksheet.Name.ToLower(), "detail pl") >= 70)
+                            {
+                                Debug.WriteLine($"there is detail pl or similar.\nsimilarity: {methods.strings.StringMatching.CosineSimilarity(worksheet.Name.ToLower(), "detail pl")}");
+                                return worksheet.Name;
+                            }
+                        }
+                    }
+                }
+            }
+            return string.Empty;
+        }
+        private void imaprercv_Btn_Click(object sender, EventArgs e)
+        {
+            if (imaFilePath != null)
+            {
+                ExcelHandler exHandler = new ExcelHandler(imaFilePath);
+                var worksheetName = CheckForIMAPL(imaFilePath);
+                if (!string.IsNullOrEmpty(worksheetName))
+                {
+                    ConcurrentBag<string> listToLook = ["Style", "P.O. NO"];
+                    var help = exHandler.SearchWorksheetFor(worksheetName, listToLook);
+                    var rowList = new List<int>();
+                    foreach (var helpless in help)
+                    {
+                        Debug.WriteLine(helpless.Value["row"]);
+                        rowList.Add(helpless.Value["row"]);
+                    }
+                    int minRow = rowList.Count == 0 ? 1 : rowList.Min();
+                    Debug.WriteLine(minRow);
+                }
             }
         }
     }
 }
+

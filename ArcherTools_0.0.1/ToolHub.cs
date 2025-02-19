@@ -191,14 +191,7 @@ namespace ArcherTools_0._0._1
 
         private void testbutton_Click(object sender, EventArgs e)
         {
-            Point mouseto = new Point();
-            Task findDefault = Task.Run(() =>
-            {
-                mouseto = ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\defaultcfg.png", 0.99);
-            });
-            Task.WaitAll(findDefault);
-
-            MouseHandler.MouseMoveTo(mouseto);
+            Debug.WriteLine(methods.strings.StringMatching.CosineSimilarity("P.O", "P.O No."));
         }
 
         private void prercv_Btn_Click(object sender, EventArgs e)

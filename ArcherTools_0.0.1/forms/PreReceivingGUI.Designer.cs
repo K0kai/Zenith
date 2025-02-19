@@ -31,13 +31,13 @@
             description_Label = new Label();
             title_Label = new Label();
             panel1 = new Panel();
+            button1 = new Button();
+            miscManifest_lbl = new Label();
             imaFile_lbl = new Label();
             viewCtn_btn = new Button();
             status_Label = new Label();
             imaprercv_Btn = new Button();
             close_Btn = new Button();
-            miscManifest_lbl = new Label();
-            button1 = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -78,6 +78,38 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(433, 265);
             panel1.TabIndex = 11;
+            // 
+            // button1
+            // 
+            button1.BackColor = SystemColors.ControlDarkDark;
+            button1.BackgroundImageLayout = ImageLayout.None;
+            button1.Cursor = Cursors.Hand;
+            button1.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
+            button1.FlatStyle = FlatStyle.Flat;
+            button1.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button1.ForeColor = SystemColors.ButtonFace;
+            button1.Location = new Point(278, 18);
+            button1.Margin = new Padding(25, 3, 25, 3);
+            button1.Name = "button1";
+            button1.Size = new Size(90, 44);
+            button1.TabIndex = 13;
+            button1.Text = "Manifest CFG Creation";
+            button1.UseVisualStyleBackColor = false;
+            // 
+            // miscManifest_lbl
+            // 
+            miscManifest_lbl.BackColor = Color.Transparent;
+            miscManifest_lbl.Cursor = Cursors.Hand;
+            miscManifest_lbl.Font = new Font("Segoe UI Semibold", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            miscManifest_lbl.ForeColor = Color.WhiteSmoke;
+            miscManifest_lbl.Location = new Point(213, 0);
+            miscManifest_lbl.Name = "miscManifest_lbl";
+            miscManifest_lbl.Size = new Size(217, 15);
+            miscManifest_lbl.TabIndex = 12;
+            miscManifest_lbl.Text = "Misc. Manifest:";
+            miscManifest_lbl.TextAlign = ContentAlignment.BottomCenter;
             // 
             // imaFile_lbl
             // 
@@ -140,6 +172,7 @@
             imaprercv_Btn.TabIndex = 5;
             imaprercv_Btn.Text = "Intermarket Container Creation";
             imaprercv_Btn.UseVisualStyleBackColor = false;
+            imaprercv_Btn.Click += imaprercv_Btn_Click;
             // 
             // close_Btn
             // 
@@ -156,38 +189,6 @@
             close_Btn.TabIndex = 12;
             close_Btn.Text = "X";
             close_Btn.UseVisualStyleBackColor = false;
-            // 
-            // miscManifest_lbl
-            // 
-            miscManifest_lbl.BackColor = Color.Transparent;
-            miscManifest_lbl.Cursor = Cursors.Hand;
-            miscManifest_lbl.Font = new Font("Segoe UI Semibold", 8.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            miscManifest_lbl.ForeColor = Color.WhiteSmoke;
-            miscManifest_lbl.Location = new Point(213, 0);
-            miscManifest_lbl.Name = "miscManifest_lbl";
-            miscManifest_lbl.Size = new Size(217, 15);
-            miscManifest_lbl.TabIndex = 12;
-            miscManifest_lbl.Text = "Misc. Manifest:";
-            miscManifest_lbl.TextAlign = ContentAlignment.BottomCenter;
-            // 
-            // button1
-            // 
-            button1.BackColor = SystemColors.ControlDarkDark;
-            button1.BackgroundImageLayout = ImageLayout.None;
-            button1.Cursor = Cursors.Hand;
-            button1.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button1.ForeColor = SystemColors.ButtonFace;
-            button1.Location = new Point(278, 18);
-            button1.Margin = new Padding(25, 3, 25, 3);
-            button1.Name = "button1";
-            button1.Size = new Size(90, 44);
-            button1.TabIndex = 13;
-            button1.Text = "Manifest CFG Creation";
-            button1.UseVisualStyleBackColor = false;
             // 
             // PreReceivingGUI
             // 
