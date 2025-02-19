@@ -16,7 +16,7 @@ namespace ArcherTools_0._0._1.methods
     {
 
         public static int PwhMonitor;
-        public static ErrorEnum.ErrorCode SetInventoryCfg()
+        public static ReturnCodeEnum.ReturnCode SetInventoryCfg()
         {
             var processes = Process.GetProcessesByName("mstsc");
             if (processes.Length > 0)
@@ -25,8 +25,8 @@ namespace ArcherTools_0._0._1.methods
             }
             else
             {
-                MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return ErrorEnum.ErrorCode.WindowNotFound;
+                MessageBox.Show("Please open the RDP first, then try again.", ReturnCodeEnum.ReturnCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return ReturnCodeEnum.ReturnCode.WindowNotFound;
             }
             switch (WindowHandler.GetWindowPosition(processes[0].ProcessName).Value.X)
             {
@@ -45,12 +45,12 @@ namespace ArcherTools_0._0._1.methods
 
             if (rcvConfig == null)
             {
-                MessageBox.Show("Receiving Config data is null. Possibly corrupted.", ErrorEnum.ErrorCode.InvalidCfgData.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Receiving Config data is null. Possibly corrupted.", ReturnCodeEnum.ReturnCode.InvalidCfgData.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 rcvConfig = new ReceivingConfig();
             }
             ConfigData.setReceivingConfig(rcvConfig);
 
-            return ErrorEnum.ErrorCode.UnknownError;
+            return ReturnCodeEnum.ReturnCode.UnknownError;
         }
     }
 }

@@ -114,15 +114,14 @@ namespace ArcherTools_0._0._1.forms
             {
                 UpdateSelectedContainerStatus();
                 UpdateSelectedRelease();
-            }
-            if (e.PropertyName == "SelectedRelease")
-            {
-                UpdateSelectedRelease();
-                classes.Container.SelectedContainer.UpdateContainerStatus();
-            }
+            }            
             if (e.PropertyName == "ExpectedSize")
             {
                 UpdateExpectedSize();
+            }
+            if (e.PropertyName == "ReleasesAndItems")
+            {
+                UpdateContainerProgress();
             }
         }
 
@@ -145,6 +144,12 @@ namespace ArcherTools_0._0._1.forms
                     }
                 }
             }
+            if (e.PropertyName == "SelectedRelease")
+            {
+                UpdateSelectedRelease();
+                classes.Container.SelectedContainer?.UpdateContainerStatus(classes.Container.SelectedRelease);
+                UpdateSelectedContainerStatus();
+            }
         }
 
         private void _instanceForm_FormClosed(object? sender, FormClosedEventArgs e)
@@ -166,7 +171,7 @@ namespace ArcherTools_0._0._1.forms
             if (_instanceForm != null)
             {
                 if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
-                {
+                { 
                     _instance.status_lbl.Text = _instance.status_lbl.Text.Split(':')[0] + $": {classes.Container.SelectedContainer.ContainerStatus}";
                 }
             }
@@ -188,7 +193,7 @@ namespace ArcherTools_0._0._1.forms
         {
             if (_instanceForm != null)
             {
-                if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
+                if (classes.Container.SelectedContainer.ValidateContainerAndRelease(classes.Container.SelectedRelease) == 0)
                 {
                     var releasesAndItems = classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease];
                     var attachedConfigs = classes.Container.SelectedContainer.AttachedConfigurations.ContainsKey(classes.Container.SelectedRelease) ? classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Count : 0; ;
@@ -351,7 +356,7 @@ namespace ArcherTools_0._0._1.forms
 
         private void generateReport_Btn_Click(object sender, EventArgs e)
         {
-            if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
+            if (classes.Container.SelectedContainer.ValidateContainerAndRelease(classes.Container.SelectedRelease) == 0)
             {
                 ContainerReport ctnReport = new ContainerReport(classes.Container.SelectedContainer, classes.Container.SelectedRelease);
                 ctnReport.GenerateReport();
@@ -401,26 +406,24 @@ namespace ArcherTools_0._0._1.forms
             if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
             {
                 classes.Container.SelectedContainer.ReleasesAndItems[classes.Container.SelectedRelease].Clear();
-                classes.Container.SelectedContainer.CalculateExpectedSize();
-                classes.Container.SelectedContainer.UpdateContainerStatus();
+                classes.Container.SelectedContainer.UpdateContainerStatus(classes.Container.SelectedRelease);
                 classes.Container.SelectedContainer?.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, classes.Container.SelectedContainer.ContainerId));
             }
         }
 
         private void configurationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
+            if (classes.Container.SelectedContainer.ValidateContainerAndRelease(classes.Container.SelectedRelease) == 0)
             {
                 classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Clear();
-                classes.Container.SelectedContainer.CalculateExpectedSize();
-                classes.Container.SelectedContainer.UpdateContainerStatus();
+                classes.Container.SelectedContainer.UpdateContainerStatus(classes.Container.SelectedRelease);
                 classes.Container.SelectedContainer?.SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, classes.Container.SelectedContainer.ContainerId));
             }
         }
 
         private void toExcelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
+            if (classes.Container.SelectedContainer.ValidateContainerAndRelease(classes.Container.SelectedRelease) == 0)
             {
                 List<int> lines;
                 List<string> values;

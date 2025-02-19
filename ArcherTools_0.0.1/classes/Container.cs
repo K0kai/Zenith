@@ -124,7 +124,7 @@ namespace ArcherTools_0._0._1.classes
                         {
                             if (releases == convSelectedRelease)
                             {
-                                SelectedRelease = convSelectedRelease;                                
+                                SelectedRelease = convSelectedRelease;
                             }
                         }
                     }
@@ -185,6 +185,21 @@ namespace ArcherTools_0._0._1.classes
             AllContainers.Clear();
         }
 
+        internal byte ValidateContainerAndRelease(int release)
+        {
+            if (this != null)
+            {
+                if (release != 0)
+                {
+                    if (this.ReleasesAndItems.ContainsKey(release))
+                    {
+                        return (byte)ReturnCodeEnum.ReturnCode.Success;
+                    }
+                }
+            }
+            Debug.WriteLine($"Error validating: {this.ToString()}'s release: {release}");
+            return (byte)ReturnCodeEnum.ReturnCode.UnknownError;
+        }
         internal static byte ValidateSelectedContainerAndRelease()
         {
             if (SelectedContainer != null)
@@ -195,39 +210,57 @@ namespace ArcherTools_0._0._1.classes
                     {
                         if (releases == SelectedRelease)
                         {
-                            return (byte) ErrorEnum.ErrorCode.Success;
+                            return (byte) ReturnCodeEnum.ReturnCode.Success;
                         }
                     }
                 }
             }
-            Debug.WriteLine($"Error validating: {SelectedContainer}'s release: {selectedRelease}");
-            return (byte) ErrorEnum.ErrorCode.UnknownError;
+            Debug.WriteLine($"Error validating selected container: {SelectedContainer?.ToString()}'s release: {selectedRelease}");
+            return (byte) ReturnCodeEnum.ReturnCode.UnknownError;
         }
 
         public void UpdateContainerStatus(int release)
         {
-            if (this.ContainerId != null && string.IsNullOrWhiteSpace(this.ContainerId))
-            {                
-                if (this.AttachedConfigurations[release].Keys.Contains(release) && this.ReleasesAndItems[release].Keys.Contains(release))
+            if (this.ValidateContainerAndRelease(release) == 0)
+            {
+                if (this.ContainerId != null && !string.IsNullOrWhiteSpace(this.ContainerId))
                 {
-                    this.CalculateExpectedSize(release);
-                    if (this.ReleasesAndItems[release].Count == 0)
+                    if (this.ReleasesAndItems.Keys.Contains(release))
                     {
-                        this.ContainerStatus = "Empty";
-                        this.OnPropertyChanged(nameof(ContainerStatus));
+                        this.CalculateExpectedSize(release);
+                        if (this.ReleasesAndItems[release].Count == 0)
+                        {
+                            if (this.ContainerStatus != "Empty")
+                            {
+                                this.ContainerStatus = "Empty";
+                                this.OnPropertyChanged(nameof(ContainerStatus));
+                                return;
+                            }
+                        }
+                        else if (this.ReleasesAndItems[release].Count >= this.ExpectedSize)
+                        {
+                            if (this.ContainerStatus != "Complete")
+                            {
+                                this.ContainerStatus = "Complete";
+                                this.OnPropertyChanged(nameof(ContainerStatus));
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            if (this.ContainerStatus != "Incomplete")
+                            {
+                                this.ContainerStatus = "Incomplete";
+                                this.OnPropertyChanged(nameof(ContainerStatus));
+                                return;
+                            }
+                        }
                     }
-                    else if (this.ReleasesAndItems[release].Count >= this.ExpectedSize)
-                    {
-                        this.ContainerStatus = "Complete";
-                        this.OnPropertyChanged(nameof(ContainerStatus));
-                    }
-                    else
-                    {
-                        this.ContainerStatus = "Incomplete";
-                        this.OnPropertyChanged(nameof(ContainerStatus));
-                    }
-                }
-                
+                }                
+            }
+            else
+            {
+                //throw new InvalidOperationException($"Unable to validate {this.ToString()} and release {release}.");
             }
         }
         public void UpdateContainerStatus()
@@ -248,19 +281,30 @@ namespace ArcherTools_0._0._1.classes
                         {
                             if (ReleasesAndItems[SelectedRelease].Count == 0)
                             {
-                                ContainerStatus = "Empty";
-                                this.OnPropertyChanged(nameof(ContainerStatus));
+                                if (ContainerStatus != "Empty")
+                                {
+                                    ContainerStatus = "Empty";
+                                    this.OnPropertyChanged(nameof(ContainerStatus));
+                                }
                                 return;
                             }
                             else if (ReleasesAndItems[SelectedRelease].Count >= ExpectedSize)
                             {
-                                ContainerStatus = "Complete";
-                                this.OnPropertyChanged(nameof(ContainerStatus));
+                                if (ContainerStatus != "Complete")
+                                {
+                                    ContainerStatus = "Complete";
+                                    this.OnPropertyChanged(nameof(ContainerStatus));
+                                    return;
+                                }
                             }
                             else
                             {
-                                ContainerStatus = "Incomplete";
-                                this.OnPropertyChanged(nameof(ContainerStatus));
+                                if (ContainerStatus != "Incomplete")
+                                {
+                                    ContainerStatus = "Incomplete";
+                                    this.OnPropertyChanged(nameof(ContainerStatus));
+                                }
+                                return;
                             }
                         }
                     }
@@ -336,7 +380,7 @@ namespace ArcherTools_0._0._1.classes
             {
                 try
                 {
-                    var expectedSize = !this.AttachedConfigurations.ContainsKey(selectedRelease) || this.AttachedConfigurations[SelectedRelease].Count == null ? 0 : this.AttachedConfigurations[SelectedRelease].Count;
+                    var expectedSize = !this.AttachedConfigurations.ContainsKey(selectedRelease) || this.AttachedConfigurations[SelectedRelease].Count == 0 ? 0 : this.AttachedConfigurations[SelectedRelease].Count;
                     this.ExpectedSize = expectedSize;
                 }
                 catch (Exception ex)
@@ -347,11 +391,14 @@ namespace ArcherTools_0._0._1.classes
 
         public void CalculateExpectedSize(int release)
         {
+            Debug.WriteLine("attempting calculation");
             if (this.AttachedConfigurations != null)
             {
                 try
                 {
-                    var expectedSize = !this.AttachedConfigurations.ContainsKey(release) || this.AttachedConfigurations[release].Count == null ? 0 : this.AttachedConfigurations[release].Count;
+                    Debug.WriteLine("calculating");
+                    var expectedSize = !this.AttachedConfigurations.ContainsKey(release) || this.AttachedConfigurations[release].Count == 0 ? 0 : this.AttachedConfigurations[release].Count;
+                    this.ExpectedSize = expectedSize;
                 }
                 catch(Exception ex)
                 {
@@ -364,7 +411,6 @@ namespace ArcherTools_0._0._1.classes
         {
             if (this.ReleasesAndItems[release].TryAdd(line, value))
             {
-                this.UpdateContainerStatus(release);
                 this.OnPropertyChanged(nameof(ReleasesAndItems));
                 Debug.WriteLine("Adding item");
                 SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
@@ -434,7 +480,7 @@ namespace ArcherTools_0._0._1.classes
                 }
                 try
                 {
-                    ReceivingGUI.containerListForm.Invalidate();
+                    ReceivingGUI.containerListForm.Invalidate(false);
                 }
                 catch { }
             }
@@ -467,6 +513,7 @@ namespace ArcherTools_0._0._1.classes
             {
                 if (SelectedContainer.ReleasesAndItems.Count > 0)
                 {
+                    Debug.WriteLine("setting default");
                     SetSelectedRelease(SelectedRelease = SelectedContainer.ReleasesAndItems.Keys.ToArray()[0]);
                 }
             }

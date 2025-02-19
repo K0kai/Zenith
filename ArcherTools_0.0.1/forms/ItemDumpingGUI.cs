@@ -298,7 +298,6 @@ namespace ArcherTools_0._0._1.forms
                 {
                     ConfigData.EnsureFolderExists();
                     var configs = new ConcurrentDictionary<int, string>();
-                    var exHandler = new ExcelHandler(ConfigData._receivingConfig.ExcelFilePath);
                     var Configs = itemSeparation();
                     var Lines = createListFromCount(Configs);
                     

@@ -1,4 +1,4 @@
-﻿using static ArcherTools_0._0._1.enums.ErrorEnum;
+﻿using static ArcherTools_0._0._1.enums.ReturnCodeEnum;
 
 namespace ArcherTools_0._0._1.forms
 {
@@ -9,9 +9,9 @@ namespace ArcherTools_0._0._1.forms
         internal Label notifDescription;
         internal PictureBox notifIcon;
         internal string notifType;
-        internal ErrorCode errorCode;
+        internal ReturnCode errorCode;
 
-        public NotificationPopup(string title, string description, string type, Image icon = null, ErrorCode error = ErrorCode.None)
+        public NotificationPopup(string title, string description, string type, Image icon = null, ReturnCode error = ReturnCode.None)
         {
             notifTitle.Text = title;
             notifDescription.Text = description;

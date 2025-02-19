@@ -30,9 +30,9 @@ namespace ArcherTools_0._0._1.methods
                     return false;
                 }
                 var returnCode = SetUpVPNConfig();
-                if (returnCode != (byte)ErrorEnum.ErrorCode.Success)
+                if (returnCode != (byte)ReturnCodeEnum.ReturnCode.Success)
                 {
-                    MessageBox.Show("There was an error setting up your VPN, please try again.", $"{ (ErrorEnum.ErrorCode) returnCode}", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("There was an error setting up your VPN, please try again.", $"{ (ReturnCodeEnum.ReturnCode) returnCode}", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
             }
@@ -134,7 +134,7 @@ namespace ArcherTools_0._0._1.methods
                     {
                         if (data.Equals("VPN Username") || data.Equals("VPN Password"))
                         {
-                            return (byte)ErrorEnum.ErrorCode.InvalidInput;
+                            return (byte)ReturnCodeEnum.ReturnCode.InvalidInput;
                         }
                     }
                 }
@@ -147,20 +147,20 @@ namespace ArcherTools_0._0._1.methods
                         ConfigData configData = new ConfigData(ConfigData._userConfig, ConfigData._receivingConfig, ConfigData._toolConfig);
                         configData.PrepareForSerialization();
                         ConfigData.SerializeConfigData();
-                        return (byte)ErrorEnum.ErrorCode.Success;
+                        return (byte)ReturnCodeEnum.ReturnCode.Success;
                     }
                     catch (Exception ex)
                     {
                         Debug.WriteLine("An error ocurred while setting up VPN Connections...");
                         Debug.WriteLine(ex.Message);
-                        return (byte)ErrorEnum.ErrorCode.UnknownError;
+                        return (byte)ReturnCodeEnum.ReturnCode.UnknownError;
 
 
                     }
                 }
 
             }
-            return (byte)ErrorEnum.ErrorCode.InvalidInput;
+            return (byte)ReturnCodeEnum.ReturnCode.InvalidInput;
         }
     }
 }

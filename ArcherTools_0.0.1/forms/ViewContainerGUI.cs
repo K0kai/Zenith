@@ -76,7 +76,7 @@ namespace ArcherTools_0._0._1.forms
 
         private static List<int>? GetLines()
         {
-            if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
+            if (classes.Container.SelectedContainer.ValidateContainerAndRelease(classes.Container.SelectedRelease) == 0)
             {
                 List<int> Lines = classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Keys.ToList();
                 return Lines;
@@ -89,7 +89,7 @@ namespace ArcherTools_0._0._1.forms
 
         private static List<string>? GetConfigurations()
         {
-            if (classes.Container.ValidateSelectedContainerAndRelease() == 0)
+            if (classes.Container.SelectedContainer.ValidateContainerAndRelease(classes.Container.SelectedRelease) == 0)
             {
                 List<string> Configs = classes.Container.SelectedContainer.AttachedConfigurations[classes.Container.SelectedRelease].Values.ToList();
                 return Configs;

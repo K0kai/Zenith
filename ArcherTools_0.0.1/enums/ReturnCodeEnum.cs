@@ -1,8 +1,8 @@
 ﻿namespace ArcherTools_0._0._1.enums
 {
-    public class ErrorEnum
+    public class ReturnCodeEnum
     {
-        public enum ErrorCode
+        public enum ReturnCode
         {
             Success = 0,
             FileNotFound = 1,

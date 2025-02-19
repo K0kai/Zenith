@@ -40,7 +40,7 @@ namespace ArcherTools_0._0._1.methods
         internal static bool endProcess = false;
         internal static int iteration = 0;
 
-        private static ErrorEnum.ErrorCode PrepareToReceive(ExcelHandler exHandler, string worksheetName)
+        private static ReturnCodeEnum.ReturnCode PrepareToReceive(ExcelHandler exHandler, string worksheetName)
         {
             try
             {                
@@ -49,12 +49,12 @@ namespace ArcherTools_0._0._1.methods
                 listLine = lineCol.Select(int.Parse).ToList();
                 listLine.Sort();
                 linesFromExcel = listLine;
-                return ErrorEnum.ErrorCode.Success;
+                return ReturnCodeEnum.ReturnCode.Success;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.StackTrace);
-                return ErrorEnum.ErrorCode.UnknownError;
+                return ReturnCodeEnum.ReturnCode.UnknownError;
             }
         }
 
@@ -93,7 +93,7 @@ namespace ArcherTools_0._0._1.methods
                 }
                 else
                 {
-                    MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please open the RDP first, then try again.", ReturnCodeEnum.ReturnCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     rcvGui?.updateStatusLabel("Receiving Status: Discontinued.");
                     return;
                 }
@@ -154,7 +154,8 @@ namespace ArcherTools_0._0._1.methods
                     }
                     catch (Exception e)
                     {
-                        rcvGui.updateStatusLabel(e.Message);
+                        rcvGui?.updateStatusLabel(e.Message);
+                        Debug.WriteLine(e.Message);
                         return;
                     }
                         excelHandler.SetCell(mainWorkSheet, 10, 3, 1);
@@ -820,7 +821,7 @@ namespace ArcherTools_0._0._1.methods
             }
             else
             {
-                MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please open the RDP first, then try again.", ReturnCodeEnum.ReturnCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -843,7 +844,7 @@ namespace ArcherTools_0._0._1.methods
 
             if (rcvConfig == null)
             {
-                MessageBox.Show("Receiving Config data is null. Possibly corrupted.", ErrorEnum.ErrorCode.InvalidCfgData.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Receiving Config data is null. Possibly corrupted.", ReturnCodeEnum.ReturnCode.InvalidCfgData.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 rcvConfig = new ReceivingConfig();
             }
             ConfigData.setReceivingConfig(rcvConfig);
@@ -901,7 +902,7 @@ namespace ArcherTools_0._0._1.methods
             }
             else
             {
-                MessageBox.Show("Please open the RDP first, then try again.", ErrorEnum.ErrorCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please open the RDP first, then try again.", ReturnCodeEnum.ReturnCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             Task rectsPt2 = Task.Run(() =>
