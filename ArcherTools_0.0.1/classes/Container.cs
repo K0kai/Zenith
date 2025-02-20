@@ -399,7 +399,7 @@ namespace ArcherTools_0._0._1.classes
             }
         }
 
-        public void CalculateExpectedSize(int release)
+        public async void CalculateExpectedSize(int release)
         {
             if (this.AttachedConfigurations != null)
             {
@@ -409,7 +409,8 @@ namespace ArcherTools_0._0._1.classes
                     if (this.ExpectedSize != expectedSize)
                     {
                         this.ExpectedSize = expectedSize;
-                        SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
+                        this.UpdateContainerStatus(release);
+                        await SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
                     }
                 }
                 catch(Exception ex)
@@ -419,13 +420,14 @@ namespace ArcherTools_0._0._1.classes
             }
         }
 
-        public void AddItem(int release, int line, Item value)
+        public async void AddItem(int release, int line, Item value)
         {
             if (this.ReleasesAndItems[release].TryAdd(line, value))
             {                
                 Debug.WriteLine("Adding item");
                 this.OnPropertyChanged(nameof(ReleasesAndItems));
-                SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
+                this.UpdateContainerStatus(release);
+                await SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
 
             }           
         }

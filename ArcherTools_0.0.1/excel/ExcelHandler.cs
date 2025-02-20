@@ -66,7 +66,72 @@ namespace ArcherTools_0._0._1.excel
                                         if (StringMatching.CosineSimilarity(item?.ToString(), cell.Text) > 40)
                                         {
                                             Debug.WriteLine($"found item: {item}");
-                                            locationsOfItems.TryAdd(item.ToString(), new Dictionary<string, int> { { "row", row }, { "column", col } });
+                                            if (!locationsOfItems.TryAdd(item.ToString(), new Dictionary<string, int> { { "row", row }, { "column", col } }))
+                                            {
+                                                locationsOfItems.Remove(item.ToString());
+                                                locationsOfItems.TryAdd(item.ToString(), new Dictionary<string, int> { { "row", row }, { "column", col } });
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                            }
+                            return locationsOfItems;
+                        }
+                    }
+                }
+                return locationsOfItems;
+            }
+        }
+
+        internal Dictionary<string, Dictionary<string, int>> SearchWorksheetFor(string worksheetName, ConcurrentDictionary<string, int> itemsToSearch)
+        {
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(_filePath)))
+            {
+                Dictionary<string, Dictionary<string, int>> locationsOfItems = new Dictionary<string, Dictionary<string, int>>();
+                if (WorksheetExists(worksheetName))
+                {
+                    Debug.WriteLine($"worksheet ({worksheetName}) to search for exists");
+                    var workbook = package.Workbook;
+                    if (workbook != null)
+                    {
+                        var worksheet = workbook.Worksheets.FirstOrDefault(ws => ws.Name == worksheetName);
+                        if (worksheet != null)
+                        {
+                            int totalColumns = worksheet.Dimension?.Columns ?? 0;
+                            int totalRows = worksheet.Dimension?.Rows ?? 0;
+                            for (int col = 1; col <= totalColumns; col++)
+                            {
+                                for (int row = 1; row <= totalRows; row++)
+                                {
+                                    var cell = worksheet.Cells[row, col];
+                                    /*Parallel.ForEach(itemsToSearch, item =>
+                                    {
+                                        Debug.WriteLine(StringMatching.CosineSimilarity(item?.ToString(), cell.Text));
+                                        if (StringMatching.CosineSimilarity(item?.ToString(), cell.Text) > 70)
+                                        {
+                                            lock(locationsOfItems)
+                                            {
+                                                Debug.WriteLine("found item");
+                                                locationsOfItems.Add(item.ToString(), new Dictionary<string, int> { { "row", row }, { "column", col } });
+                                            }
+                                        }
+                                    });*/
+                                    foreach (var item in itemsToSearch)
+                                    {
+                                        var matching = StringMatching.CosineSimilarity(item.Key.ToString(), cell.Text);
+                                        if (matching > 0)
+                                        {
+                                            Debug.WriteLine(matching);
+                                        }
+                                        if (StringMatching.CosineSimilarity(item.Key.ToString(), cell.Text) > item.Value)
+                                        {
+                                            Debug.WriteLine($"found item: {item}");
+                                            if (!locationsOfItems.TryAdd(item.Key.ToString(), new Dictionary<string, int> { { "row", row }, { "column", col } }))
+                                            {
+                                                
+                                            }
+
                                         }
                                     }
                                 }

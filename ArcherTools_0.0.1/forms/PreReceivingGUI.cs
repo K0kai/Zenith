@@ -135,16 +135,27 @@ namespace ArcherTools_0._0._1.forms
                 var worksheetName = CheckForIMAPL(imaFilePath);
                 if (!string.IsNullOrEmpty(worksheetName))
                 {
-                    ConcurrentBag<string> listToLook = ["Style", "P.O. NO"];
-                    var help = exHandler.SearchWorksheetFor(worksheetName, listToLook);
+                    ConcurrentBag<string> listToLook = ["Style", "P.O. No", "Description", "Color", "Quantity", "Total PC"];
+                    ConcurrentDictionary<string, int> listToLookV2 = new ConcurrentDictionary<string, int>
+                    {
+                        ["Style"] = 50,
+                        ["P.O. No"] = 40,
+                        ["Description"] = 40,
+                        ["Color"] = 40,
+                        ["Quantity"] = 40,
+                        ["Total PC"] = 95
+                    };
+                    var help = exHandler.SearchWorksheetFor(worksheetName, listToLookV2 );
                     var rowList = new List<int>();
                     foreach (var helpless in help)
                     {
-                        Debug.WriteLine(helpless.Value["row"]);
+                        Debug.WriteLine(helpless.Key +" "+ helpless.Value["row"].ToString());
                         rowList.Add(helpless.Value["row"]);
                     }
                     int minRow = rowList.Count == 0 ? 1 : rowList.Min();
                     Debug.WriteLine(minRow);
+                    PreReceivingGUI_prestart preReceivingGUI_Prestart = new PreReceivingGUI_prestart(help);
+                    preReceivingGUI_Prestart.ShowDialog(this);
                 }
             }
         }

@@ -181,7 +181,17 @@ namespace ArcherTools_0._0._1.forms
             {
                 if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
                 {
-                    _instance.status_lbl.Text = _instance.status_lbl.Text.Split(':')[0] + $": {classes.Container.SelectedContainer.ContainerStatus}";
+                    if (!_instance.status_lbl.InvokeRequired)
+                    {
+                        _instance.status_lbl.Text = _instance.status_lbl.Text.Split(':')[0] + $": {classes.Container.SelectedContainer.ContainerStatus}";
+                    }
+                    else
+                    {
+                        _instance.status_lbl.Invoke((MethodInvoker)delegate
+                        {                        
+                            _instance.status_lbl.Text = _instance.status_lbl.Text.Split(':')[0] + $": {classes.Container.SelectedContainer.ContainerStatus}";
+                        });
+                    }
                 }
             }
         }
@@ -192,7 +202,17 @@ namespace ArcherTools_0._0._1.forms
             {
                 if (classes.Container.SelectedContainer != null && classes.Container.SelectedRelease != 0)
                 {
-                    _instance.release_cbbox.SelectedIndex = _instance.release_cbbox.Items.IndexOf(classes.Container.SelectedRelease);
+                    if (!_instance.release_cbbox.InvokeRequired)
+                    {
+                        _instance.release_cbbox.SelectedIndex = _instance.release_cbbox.Items.IndexOf(classes.Container.SelectedRelease);
+                    }
+                    else
+                    {
+                        _instance.release_cbbox.Invoke((MethodInvoker)delegate
+                        {
+                            _instance.release_cbbox.SelectedIndex = _instance.release_cbbox.Items.IndexOf(classes.Container.SelectedRelease);
+                        });
+                    }
                     UpdateContainerProgress();
                 }
             }
