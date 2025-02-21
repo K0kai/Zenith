@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using ArcherTools_0._0._1.excel;
+using ArcherTools_0._0._1.methods;
 using NPOI.OpenXmlFormats.Dml.Chart;
 
 namespace ArcherTools_0._0._1.forms
@@ -135,7 +136,7 @@ namespace ArcherTools_0._0._1.forms
                 var worksheetName = CheckForIMAPL(imaFilePath);
                 if (!string.IsNullOrEmpty(worksheetName))
                 {
-                    ConcurrentBag<string> listToLook = ["Style", "P.O. No", "Description", "Color", "Quantity", "Total PC"];
+                    //ConcurrentBag<string> listToLook = ["Style", "P.O. No", "Description", "Color", "Quantity", "Total PC"];
                     ConcurrentDictionary<string, int> listToLookV2 = new ConcurrentDictionary<string, int>
                     {
                         ["Style"] = 50,
@@ -145,19 +146,22 @@ namespace ArcherTools_0._0._1.forms
                         ["Quantity"] = 40,
                         ["Total PC"] = 95
                     };
-                    var help = exHandler.SearchWorksheetFor(worksheetName, listToLookV2 );
+                    var help = exHandler.SearchWorksheetFor(worksheetName, listToLookV2);
                     var rowList = new List<int>();
                     foreach (var helpless in help)
                     {
-                        Debug.WriteLine(helpless.Key +" "+ helpless.Value["row"].ToString());
                         rowList.Add(helpless.Value["row"]);
                     }
                     int minRow = rowList.Count == 0 ? 1 : rowList.Min();
-                    Debug.WriteLine(minRow);
                     PreReceivingGUI_prestart preReceivingGUI_Prestart = new PreReceivingGUI_prestart(help);
                     preReceivingGUI_Prestart.ShowDialog(this);
                 }
             }
+        }
+
+        private async void test_btn_Click(object sender, EventArgs e)
+        {
+            await ContainerCreation.CreateContainer("IMA");
         }
     }
 }

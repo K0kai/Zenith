@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,16 +10,20 @@ namespace ArcherTools_0._0._1.classes
     {
     public class Item
     {
-        public string owner {  get; set; }
-        public string style {  get; set; }
-        public string itemCode { get; set; }
-        public string color {  get; set; }
-        public string colorCode { get; set; }
-        public string size { get; set; }
-        public string description { get; set; }
+        public int pieces { get; set; }
+        public int total_pieces { get; set; }
+        public int po { get; set; }
+        public string? owner {  get; set; }
+        public string? style {  get; set; }
+        public string? itemCode { get; set; }
+        public string? color {  get; set; }
+        public string? colorCode { get; set; }
+        public string? size { get; set; }
+        public string? description { get; set; }
 
-        public Item(string itemCode, string style = "", string color = "", string colorCode = "", string size = "", string description = "", string owner = "") 
+        public Item(string itemCode, int po = 0, string style = "", string color = "", string colorCode = "", string size = "", string description = "", string owner = "") 
         {
+            this.po = po;
             this.owner = owner;
             this.style = style;
             this.itemCode = itemCode;
@@ -27,6 +32,21 @@ namespace ArcherTools_0._0._1.classes
             this.size = size;
             this.description = description;
 
+        }
+
+        public Item()
+        {
+        }
+
+        public Item(string owner, string itemCode)
+        {
+            this.owner = owner;
+            this.itemCode = itemCode;
+        }
+
+        public Item(string itemCode)
+        {
+            this.itemCode = itemCode;
         }
 
         public string getStyleFromCode(string code)
@@ -48,6 +68,16 @@ namespace ArcherTools_0._0._1.classes
                 Debug.WriteLine(e.Message);                
             }
             return false;
+        }
+
+        public string GetItemInformation()
+        {
+            var bodyString = "";
+            foreach (PropertyInfo propertyInfo in this.GetType().GetProperties())
+            {
+                bodyString += $"{propertyInfo.Name} : {propertyInfo.GetValue(this)}\n";
+            }
+            return bodyString;
         }
     }
 }

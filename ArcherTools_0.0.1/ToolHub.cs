@@ -9,7 +9,7 @@ namespace ArcherTools_0._0._1
     public partial class ToolHub : UserControl
     {
         private MessageManager messageManager;
-        public static string programVersion = "0.1.2";
+        public static string programVersion = "0.1.3";
         private PageHandler _pageHandler = PageHandler.GetInstance();
         internal ToolHub instance;
         public static Form _mainForm;

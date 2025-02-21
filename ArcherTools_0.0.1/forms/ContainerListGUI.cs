@@ -115,7 +115,7 @@ namespace ArcherTools_0._0._1.forms
             {
                 UpdateSelectedContainerStatus();
                 UpdateSelectedRelease();
-                refreshFilteredList();
+                RefreshFilteredList();
             }
             if (e.PropertyName == "ExpectedSize")
             {
@@ -157,7 +157,7 @@ namespace ArcherTools_0._0._1.forms
             }
             if (e.PropertyName == "AllContainers")
             {
-                refreshFilteredList();
+                RefreshFilteredList();
             }
         }
 
@@ -523,7 +523,7 @@ namespace ArcherTools_0._0._1.forms
             containerBs.ResetBindings(true);
         }
 
-        private void refreshFilteredList()
+        private void RefreshFilteredList()
         {
             List<RadioButton> radioButtons = new List<RadioButton>();
             radioButtons = filter_panel.Controls.OfType<RadioButton>().ToList();

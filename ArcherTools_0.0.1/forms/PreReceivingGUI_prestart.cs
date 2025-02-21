@@ -53,11 +53,8 @@ namespace ArcherTools_0._0._1.forms
             {
                 foreach (var txtbox in this.textbox_panel.Controls.OfType<TextBox>())
                 {
-                    Debug.WriteLine("looping txtbox");
                     foreach (var column in ColumnList)
                     {
-                        Debug.WriteLine($"looping column: {column.Key}");
-
                         switch (column.Key)
                         {
                             case "Style":
@@ -85,7 +82,6 @@ namespace ArcherTools_0._0._1.forms
                                 AsyncControlTextUpdate(txtbox, string.Empty);
                                 break;
                         }
-                        Debug.WriteLine(StringMatching.CosineSimilarity(txtbox.Name.Split('_')[0], column.Key.Trim('.').ToLower()));
 
                     }
                 }
@@ -129,6 +125,8 @@ namespace ArcherTools_0._0._1.forms
                 };
                 ContainerCreation.MinimumRow = int.Parse(row_txtbox.Text);
                 ContainerCreation.ExcelValueColumns = new ConcurrentDictionary<string, int>(ValueColumnPairs);
+                ContainerCreation.FilePath = PreReceivingGUI.imaFilePath;
+                this.Close();
             }
         }
     }

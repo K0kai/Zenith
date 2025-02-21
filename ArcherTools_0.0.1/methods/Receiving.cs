@@ -7,6 +7,7 @@ using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.enums;
 using ArcherTools_0._0._1.excel;
 using ArcherTools_0._0._1.forms;
+using ArcherTools_0._0._1.navigation;
 using InputSimulatorEx;
 
 namespace ArcherTools_0._0._1.methods
@@ -260,7 +261,7 @@ namespace ArcherTools_0._0._1.methods
                                 {
                                     if (itemInfoValue.Value == "#VALUE!" || itemInfoValue.Value == "#VALOR!" || itemInfoValue.Value == "#N/D")
                                     {
-                                        var newFailedItem = new Item(copiedItem, "", "", "", "", "", classes.Container.SelectedContainer?.Owner);
+                                        var newFailedItem = new Item(classes.Container.SelectedContainer?.Owner, copiedItem);
                                         UpdateReceivedItems(line, newFailedItem, true);
                                         skipItem = true;
                                         Debug.WriteLine("Invalid Item.");
@@ -303,7 +304,7 @@ namespace ArcherTools_0._0._1.methods
                                     {
 
                                         //Tabbing
-                                        tabBetween(3);
+                                        TabBetween(3);
                                         ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                         KeystrokeHandler.TypeText(currentItemInfo["cases_per_pallet"]);
@@ -313,21 +314,21 @@ namespace ArcherTools_0._0._1.methods
                                         Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                         KeystrokeHandler.TypeText(currentItemInfo["cases_per_tier"]);
                                         if (endProcess) { AfterEndProcess(rcvGui, line); return; }
-                                        tabBetween(7);
+                                        TabBetween(7);
                                         KeystrokeHandler.TypeText(currentItemInfo["pallet_weight"]);
-                                        tabBetween(2);
+                                        TabBetween(2);
                                         KeystrokeHandler.TypeText(currentItemInfo["pallet_height"]);
-                                        tabBetween(2);
+                                        TabBetween(2);
                                         KeystrokeHandler.TypeText(currentItemInfo["pallet_width"]);
-                                        tabBetween(2);
+                                        TabBetween(2);
                                         KeystrokeHandler.TypeText(currentItemInfo["pallet_depth"]);
-                                        tabBetween(4);
+                                        TabBetween(4);
                                         KeystrokeHandler.TypeText(currentItemInfo["case_weight"]);
-                                        tabBetween(2);
+                                        TabBetween(2);
                                         KeystrokeHandler.TypeText(currentItemInfo["case_height"]);
-                                        tabBetween(2);
+                                        TabBetween(2);
                                         KeystrokeHandler.TypeText(currentItemInfo["case_width"]);
-                                        tabBetween(2);
+                                        TabBetween(2);
                                         KeystrokeHandler.TypeText(currentItemInfo["case_depth"]);
                                         if (endProcess) { AfterEndProcess(rcvGui, line); return; }
 
@@ -336,7 +337,7 @@ namespace ArcherTools_0._0._1.methods
                                     {
                                         if (!autoCreateCfg)
                                         {
-                                            var newItem = new Item(copiedItem, "","","","","", Container.SelectedContainer?.Owner);
+                                            var newItem = new Item(Container.SelectedContainer?.Owner, copiedItem);
                                             UpdateReceivedItems(line, newItem, true);
                                             rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {line}");
                                         }
@@ -345,7 +346,7 @@ namespace ArcherTools_0._0._1.methods
                                             if (endProcess) { AfterEndProcess(rcvGui, line); return; }
                                             CreateNewConfig(int.Parse(currentItemInfo["number_pieces"]), ips);
                                             if (endProcess) { AfterEndProcess(rcvGui, line); return; }
-                                            tabBetween(3);
+                                            TabBetween(3);
                                             ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                             KeystrokeHandler.TypeText(currentItemInfo["cases_per_pallet"]);
@@ -359,21 +360,21 @@ namespace ArcherTools_0._0._1.methods
                                             ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.BACK);
                                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
                                             KeystrokeHandler.TypeText(currentItemInfo["number_pieces"]);
-                                            tabBetween(6);
+                                            TabBetween(6);
                                             KeystrokeHandler.TypeText(currentItemInfo["pallet_weight"]);
-                                            tabBetween(2);
+                                            TabBetween(2);
                                             KeystrokeHandler.TypeText(currentItemInfo["pallet_height"]);
-                                            tabBetween(2);
+                                            TabBetween(2);
                                             KeystrokeHandler.TypeText(currentItemInfo["pallet_width"]);
-                                            tabBetween(2);
+                                            TabBetween(2);
                                             KeystrokeHandler.TypeText(currentItemInfo["pallet_depth"]);
-                                            tabBetween(4);
+                                            TabBetween(4);
                                             KeystrokeHandler.TypeText(currentItemInfo["case_weight"]);
-                                            tabBetween(2);
+                                            TabBetween(2);
                                             KeystrokeHandler.TypeText(currentItemInfo["case_height"]);
-                                            tabBetween(2);
+                                            TabBetween(2);
                                             KeystrokeHandler.TypeText(currentItemInfo["case_width"]);
-                                            tabBetween(2);
+                                            TabBetween(2);
                                             KeystrokeHandler.TypeText(currentItemInfo["case_depth"]);
                                             if (endProcess) { AfterEndProcess(rcvGui, line); return; }
                                         }
@@ -389,7 +390,7 @@ namespace ArcherTools_0._0._1.methods
                                 ips.Keyboard.KeyUp(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
                                 */
                                 ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
-                                var newIt = new Item(copiedItem, "", "", "", "", "", Container.SelectedContainer?.Owner);
+                                var newIt = new Item(Container.SelectedContainer?.Owner, copiedItem);
                                     UpdateReceivedItems(line, newIt);
                                     iteration++;
                                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
@@ -579,7 +580,7 @@ namespace ArcherTools_0._0._1.methods
             
         }
 
-        private static void tabBetween(int times, int start = 1)
+        private static void TabBetween(int times, int start = 1)
         {
             var inputSim = new InputSimulator();
             for (int i = start; i <= times; i++)
@@ -621,7 +622,7 @@ namespace ArcherTools_0._0._1.methods
             Thread.Sleep((int)Math.Ceiling(baseDelay * 2.2));
             InputSimulator ips = new InputSimulator();
             int intPcs = int.Parse(pcs);
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 7; i++)
             {
                 try
                 {

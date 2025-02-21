@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.classes;
 using ArcherTools_0._0._1.enums;
+using ArcherTools_0._0._1.navigation;
 
 namespace ArcherTools_0._0._1.methods
 {

@@ -51,7 +51,6 @@ namespace ArcherTools_0._0._1.boxes
 
         private static async Task MonitorKeyPress(InputSimulator inputSimulator)
         {
-            inputSimulator.Keyboard.KeyUp(VirtualKeyCode.END);
             while (true)
             {
                 if (inputSimulator.InputDeviceState.IsKeyDown(VirtualKeyCode.END))

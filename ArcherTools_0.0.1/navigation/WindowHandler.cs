@@ -7,31 +7,31 @@ using System.Text;
 using System.Threading.Tasks;
 using NPOI.SS.Formula.Functions;
 
-namespace ArcherTools_0._0._1
+namespace ArcherTools_0._0._1.navigation
 {
     public class WindowHandler
     {
         [DllImport("user32.dll")]
-        public static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
+        public static extern bool EnumWindows(EnumWindowsProc enumProc, nint lParam);
         [DllImport("user32.dll")]
-        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+        public static extern bool GetWindowRect(nint hWnd, out RECT lpRect);
         [DllImport("user32.dll")]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        public static extern nint FindWindow(string lpClassName, string lpWindowName);
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(nint hWnd);
         [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        private static extern bool ShowWindow(nint hWnd, int nCmdShow);
         [DllImport("user32.dll")]
-        internal static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
+        internal static extern int SetWindowLong(nint hWnd, int nIndex, uint dwNewLong);
         [DllImport("user32.dll")]
-        internal static extern uint GetWindowLong(IntPtr hWnd, int nIndex);
+        internal static extern uint GetWindowLong(nint hWnd, int nIndex);
 
         internal const int GWL_EXSTYLE = -20;
         internal const uint WS_EX_TOPMOST = 0x00000008;
         private const int SW_RESTORE = 9;
 
         // Delegate for EnumWindowsProc
-        public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+        public delegate bool EnumWindowsProc(nint hWnd, nint lParam);
 
         public struct RECT
         {
@@ -48,8 +48,8 @@ namespace ArcherTools_0._0._1
 
         public static Rectangle GetWindowRectFromName(string windowTitle)
         {
-            IntPtr hWnd = FindWindow(null, windowTitle);
-            if (hWnd != IntPtr.Zero)
+            nint hWnd = FindWindow(null, windowTitle);
+            if (hWnd != nint.Zero)
             {
                 GetWindowRect(hWnd, out RECT rect);
                 return rect.toRect();
@@ -59,8 +59,8 @@ namespace ArcherTools_0._0._1
 
         public static Rectangle GetWindowRectFromProcess(Process process)
         {
-            IntPtr hWnd = process.MainWindowHandle;
-            if (hWnd != IntPtr.Zero)
+            nint hWnd = process.MainWindowHandle;
+            if (hWnd != nint.Zero)
             {
                 RECT rect;
                 GetWindowRect(hWnd, out rect);
@@ -69,9 +69,9 @@ namespace ArcherTools_0._0._1
             return Rectangle.Empty;
         }
 
-        public static Rectangle GetWindowRectFromHandle(IntPtr hWnd)
+        public static Rectangle GetWindowRectFromHandle(nint hWnd)
         {
-            if (hWnd != IntPtr.Zero)
+            if (hWnd != nint.Zero)
             {
                 GetWindowRect(hWnd, out RECT rect);
                 return rect.toRect();
@@ -86,9 +86,9 @@ namespace ArcherTools_0._0._1
 
             foreach (Process process in processes)
             {
-                IntPtr hWnd = process.MainWindowHandle;
+                nint hWnd = process.MainWindowHandle;
 
-                if (hWnd != IntPtr.Zero)
+                if (hWnd != nint.Zero)
                 {
                     if (GetWindowRect(hWnd, out RECT rect))
                     {
@@ -108,9 +108,9 @@ namespace ArcherTools_0._0._1
             {
                 foreach (Process process in processes)
                 {
-                    IntPtr hWnd = process.MainWindowHandle;
+                    nint hWnd = process.MainWindowHandle;
 
-                    if (hWnd != IntPtr.Zero)
+                    if (hWnd != nint.Zero)
                     {
                         ShowWindow(hWnd, SW_RESTORE); // Restore if minimized
                         SetForegroundWindow(hWnd);    // Bring to front
@@ -130,7 +130,7 @@ namespace ArcherTools_0._0._1
             var hwnd = FindWindow(null, windowName);
             ShowWindow(hwnd, 1);
             SetForegroundWindow(hwnd);
-            if (hwnd == IntPtr.Zero)
+            if (hwnd == nint.Zero)
             {
                 var processList = Process.GetProcessesByName(windowName);
                 if (processList.Length > 0)
