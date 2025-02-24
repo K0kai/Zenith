@@ -425,9 +425,10 @@ namespace ArcherTools_0._0._1.classes
             if (this.ReleasesAndItems[release].TryAdd(line, value))
             {                
                 Debug.WriteLine("Adding item");
+                await SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
                 this.OnPropertyChanged(nameof(ReleasesAndItems));
                 this.UpdateContainerStatus(release);
-                await SerializeToFileAsync(Path.Combine(ConfigData.appContainersFolder, this.ContainerId));
+                
 
             }           
         }
@@ -565,10 +566,16 @@ namespace ArcherTools_0._0._1.classes
             {
                 WriteIndented = true,
             };
-
-            string json = JsonSerializer.Serialize(this, options);
-            Debug.WriteLine($"Serializing {Path.GetFileName(FilePath)}");
-            await File.WriteAllTextAsync(FilePath + ".json", json);
+            try
+            {
+                string json = JsonSerializer.Serialize(this, options);
+                Debug.WriteLine($"Serializing {Path.GetFileName(FilePath)}");
+                await File.WriteAllTextAsync(FilePath + ".json", json);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to serialize {Path.GetFileName(FilePath)}\n{ex.StackTrace}\n{ex.Message}");
+            }
         }
 
         public static async Task<Container> DeserializeFromFileAsync(string filePath)

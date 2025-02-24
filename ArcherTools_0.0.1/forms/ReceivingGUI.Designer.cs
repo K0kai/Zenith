@@ -41,6 +41,7 @@
             description_Label = new Label();
             title_Label = new Label();
             rcvProgress_pgBar = new ProgressBar();
+            receivingClock = new System.Windows.Forms.Timer(components);
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -208,6 +209,10 @@
             rcvProgress_pgBar.Style = ProgressBarStyle.Continuous;
             rcvProgress_pgBar.TabIndex = 31;
             // 
+            // receivingClock
+            // 
+            receivingClock.Interval = 500;
+            // 
             // ReceivingGUI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -245,5 +250,6 @@
         private Label description_Label;
         private Label title_Label;
         private ProgressBar rcvProgress_pgBar;
+        private System.Windows.Forms.Timer receivingClock;
     }
 }

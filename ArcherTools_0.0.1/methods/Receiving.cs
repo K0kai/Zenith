@@ -86,6 +86,12 @@ namespace ArcherTools_0._0._1.methods
                     
                 }
 
+                if (!PowerHouseNavigation.Initialize())
+                {
+                    rcvGui?.updateStatusLabel("Failed to initialize PowerHouse Navigator, ending receiving.");
+                    receivingCleanUp(true);
+                    return;
+                }
 
                 var processes = Process.GetProcessesByName("mstsc");
                 if (processes.Length > 0)
@@ -182,7 +188,7 @@ namespace ArcherTools_0._0._1.methods
                         var owner = classes.Container.SelectedContainer.Owner != null ? classes.Container.SelectedContainer.Owner : string.Empty;
                         if (owner != string.Empty)
                         {
-                            MouseHandler.MouseMoveTo(rlOwnerInputBox);
+                            PowerHouseNavigation.PWHMoveTo(PowerHouseNavigation.rlItemSearch_OwnerInputBox);
                             MouseHandler.MouseClick();
                             ips.Keyboard.TextEntry(owner);
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.15));
@@ -190,23 +196,21 @@ namespace ArcherTools_0._0._1.methods
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
                         }
                     }
-                    int cntSize = containerSize();
-                        int cntRawSize = containerSize(true);
-                        rcvGui?.setProgressBarMaximum(cntRawSize);
-                        rcvGui?.setProgressBar(0);
-                        MouseHandler.MouseMoveTo(new Point(rlReceiptLnFirstLn.X + 30, rlReceiptLnFirstLn.Y));
-                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                        MouseHandler.MouseClick();
-                        EnsureUnstuckKeys();
+                    int cntSize = containerSize();                       
+                    int cntRawSize = containerSize(true);                        
+                    rcvGui?.setProgressBarMaximum(cntRawSize);                        
+                    rcvGui?.setProgressBar(0);
+                    PowerHouseNavigation.PWHMoveTo(new Point(PowerHouseNavigation.rlReceiptLnFirstLn.X + 30, rlReceiptLnFirstLn.Y));                                               
+                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));                       
+                    MouseHandler.MouseClick();                       
+                    EnsureUnstuckKeys();
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         var tsk1 = Task.Run(async () =>
                         {
-                            Debug.WriteLine("running task 1");
                             checkForEnd();
                         });
                         var tsk2 = Task.Run(async () =>
                         {
-                            Debug.WriteLine("running task 2");
                             UpdateProgressBar();
                         });
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -222,11 +226,12 @@ namespace ArcherTools_0._0._1.methods
                                 iteration++;
                                 continue;
                             }
-                                rcvGui?.updateVisibility(rcvGui.overlayTip_lbl, true);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                MouseHandler.MouseMoveTo(rlReceiptLnFirstLn);
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));
-                                MouseHandler.MouseClick();
+                                
+                            rcvGui?.updateVisibility(rcvGui.overlayTip_lbl, true);                                
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                            PowerHouseNavigation.PWHMoveTo(PowerHouseNavigation.rlReceiptLnFirstLn);                                
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.35));                               
+                            MouseHandler.MouseClick();
                             /*
                             ips.Keyboard.KeyDown(InputSimulatorEx.Native.VirtualKeyCode.CONTROL);
                             Thread.Sleep(100);
@@ -277,18 +282,17 @@ namespace ArcherTools_0._0._1.methods
                                 if (endProcess) { AfterEndProcess(rcvGui, line); return; }
                                 if (checkItem)
                                 {
-                                    MouseHandler.MouseMoveTo(rlItemSearchBox); MouseHandler.MouseClick();
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                                    string currentItemCode = Clipboard.GetText();
-                                    KeystrokeHandler.TypeText(currentItemCode);
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));
-                                    ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                    MouseHandler.MouseMoveTo(rlItemMtnIcon); MouseHandler.MouseClick();
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                    MouseHandler.MouseMoveTo(rlItemCfgIcon); MouseHandler.MouseClick();
-
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                PowerHouseNavigation.PWHMoveTo(PowerHouseNavigation.rlItemSearchBox); MouseHandler.MouseClick();                                    
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));                                    
+                                string currentItemCode = Clipboard.GetText();                                    
+                                KeystrokeHandler.TypeText(currentItemCode);                                    
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.25));                                    
+                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);                                    
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                PowerHouseNavigation.PWHMoveTo(PowerHouseNavigation.rlItemMtnIcon); MouseHandler.MouseClick();                                   
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                PowerHouseNavigation.PWHMoveTo(PowerHouseNavigation.rlItemCfgIcon); MouseHandler.MouseClick();                                
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                                     if (endProcess) { AfterEndProcess(rcvGui, line); return; }
                                     bool pcCheck;
                                     if (findDefaultCfg)
@@ -338,8 +342,8 @@ namespace ArcherTools_0._0._1.methods
                                         if (!autoCreateCfg)
                                         {
                                             var newItem = new Item(Container.SelectedContainer?.Owner, copiedItem);
-                                            UpdateReceivedItems(line, newItem, true);
-                                            rcvGui.updateStatusLabel($"Status: No pieces matching the config was found. Line: {line}");
+                                            await UpdateReceivedItems(line, newItem, true);
+                                            rcvGui?.updateStatusLabel($"Status: No pieces matching the config was found. Line: {line}");
                                         }
                                         else
                                         {
@@ -391,13 +395,15 @@ namespace ArcherTools_0._0._1.methods
                                 */
                                 ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
                                 var newIt = new Item(Container.SelectedContainer?.Owner, copiedItem);
+                                if (pcCheck || !pcCheck && autoCreateCfg)
+                                {
                                     UpdateReceivedItems(line, newIt);
-                                    iteration++;
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                    MouseHandler.MouseMoveTo(rlItemCfgClose); MouseHandler.MouseClick();
-                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                    MouseHandler.MouseMoveTo(rlItemMtnClose); MouseHandler.MouseClick();
-
+                                }
+                                iteration++;                                    
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));                                    
+                                MouseHandler.MouseMoveTo(rlItemCfgClose); MouseHandler.MouseClick();                                   
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));                                    
+                                MouseHandler.MouseMoveTo(rlItemMtnClose); MouseHandler.MouseClick();
                                 }
                             }
                             catch (Exception ex)
@@ -548,7 +554,7 @@ namespace ArcherTools_0._0._1.methods
 
         private static async Task<bool> checkForEnd(){
             InputSimulator ips = new InputSimulator();            
-            while (true)
+            while (!endProcess)
             {
                 
                 if (ips.InputDeviceState.IsHardwareKeyDown(InputSimulatorEx.Native.VirtualKeyCode.END))
@@ -560,17 +566,15 @@ namespace ArcherTools_0._0._1.methods
                 Thread.Sleep(25);
 
             }
+            endProcess = true;
+            return true;
             
         }
 
         private static async Task UpdateProgressBar()
         {
-            while (true)
-            {
-                if (endProcess)
-                {
-                    break;
-                }
+            while (!endProcess)
+            {               
                 if (ReceivingGUI._instance != null)
                 {
                     ReceivingGUI._instance.setProgressBar(iteration);
@@ -622,35 +626,48 @@ namespace ArcherTools_0._0._1.methods
             Thread.Sleep((int)Math.Ceiling(baseDelay * 2.2));
             InputSimulator ips = new InputSimulator();
             int intPcs = int.Parse(pcs);
+            var FailsInARow = 0;
             for (int i = 0; i < 7; i++)
             {
-                try
+                if (endProcess)
                 {
-                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.8));
-                    ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);
-                    var charsToRemove = new string[] { "P", "C", "S", "p", "c", "s" };
-                    string copiedPcs = Clipboard.GetText();
-                    foreach (string c in charsToRemove)
-                    {
-                        copiedPcs = copiedPcs.Replace(c, string.Empty);
-                    }
-                    int intCopiedPcs = int.Parse(copiedPcs);
+                    break;
+                }
+                try
+                {                  
+                    Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));                        
+                    ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_C);                        
+                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.8));                   
+                    var charsToRemove = new string[] { "P", "C", "S", "p", "c", "s" };                       
+                    string copiedPcs = Clipboard.GetText();                     
+                    foreach (string c in charsToRemove)                       
+                    {                        
+                        copiedPcs = copiedPcs.Replace(c, string.Empty);                      
+                    }                       
+                    int intCopiedPcs = int.Parse(copiedPcs);                       
                     Debug.WriteLine($"Cfg pcs: {intPcs} vs Copied pcs: {intCopiedPcs}");
-                    if (intPcs == intCopiedPcs)
-                    {
-                        Debug.WriteLine("Matched");
-                        return true;
-
-                    }
-                    else
+                    FailsInARow = 0;
+                    if (intPcs == intCopiedPcs)                       
+                    {                           
+                        Debug.WriteLine("Matched");                         
+                        return true;                       
+                    }                       
+                    else                       
                     {
                         ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.DOWN);
-                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                    }
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));                       
+                    }                  
+                
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Caught {ex.Message} at pieces matching.", ex);
+                    Debug.WriteLine($"Exception at matching pieces: {ex.Message}", ex);
+                    FailsInARow++;
+                    if (FailsInARow >= 3)
+                    {
+                        endProcess = true;
+                        return false;
+                    }
                 }
             }
             return false;

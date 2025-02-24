@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ArcherTools_0._0._1.cfg;
+using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.enums;
 using ArcherTools_0._0._1.methods;
 
@@ -36,9 +38,9 @@ namespace ArcherTools_0._0._1.navigation
 
         //ITEM SEARCH
         internal static Point itemSearchBox = new Point(190, 90);
-        internal static Point ownerInputBox = new Point(160, 70);
+        internal static Point itemSearch_OwnerInputBox = new Point(160, 70);
         internal static Point rlItemSearchBox = new Point();
-        internal static Point rlOwnerInputBox = new Point();
+        internal static Point rlItemSearch_OwnerInputBox = new Point();
         //ITEM SEARCH
 
         //ITEM MAINTENANCE
@@ -46,6 +48,42 @@ namespace ArcherTools_0._0._1.navigation
         internal static Point rlItemMtnApparelButton = new Point();
         //ITEM MAINTENANCE
 
+        internal static bool IsGoodToGo = false;
+        internal static int Delay = 150;
+
+        public static bool PWHMoveTo(Point location)
+        {
+            if (IsGoodToGo)
+            {
+                if (location == new Point(0, 0) || location.IsEmpty)
+                {
+                    throw new InvalidDataException("Location was an empty or 0,0 point");
+                }
+                MouseHandler.MouseMoveTo(location);                   
+                Thread.Sleep(Delay);                   
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool Initialize()
+        {
+            try
+            {
+                DetectPwHMonitor();
+                SetUpRelativePositions();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failure to initialize PowerHouseNavigation class due to: {ex}\n{ex.StackTrace}\n{ex.Message}");
+                return false;
+            }
+            
+        }
         public static void DetectPwHMonitor()
         {
             var processes = Process.GetProcessesByName("mstsc");
@@ -55,6 +93,7 @@ namespace ArcherTools_0._0._1.navigation
             }
             else
             {
+                IsGoodToGo = false;
                 MessageBox.Show("Please open the RDP first, then try again.", ReturnCodeEnum.ReturnCode.WindowNotFound.ToString(), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -80,14 +119,19 @@ namespace ArcherTools_0._0._1.navigation
             var validExcel = Receiving.validateExcel();
             if (validConfig && validRect && validExcel)
             {
+                IsGoodToGo = true;
                 var rcvCfg = ConfigData._receivingConfig;
                 rlReceiptLineBorder = ToRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLineBorder);
                 rlReceiptLnFirstLn = ToRelativePoint(rcvCfg.getRectByType(ControlType.ReceiptLineWindow), receiptLnFirstLn);
                 rlItemSearchBox = ToRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), itemSearchBox);
-                rlOwnerInputBox = ToRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), ownerInputBox);
+                rlItemSearch_OwnerInputBox = ToRelativePoint(rcvCfg.getRectByType(ControlType.ItemSearchWindow), itemSearch_OwnerInputBox);
                 rlItemMtnIcon = ToRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemMtnIcon);
                 rlItemCfgIcon = ToRelativePoint(rcvCfg.getRectByType(ControlType.PowerHouseUpperTab), itemCfgIcon);
                 rlItemCfgPcsBox = ToRelativePoint(rcvCfg.getRectByType(ControlType.ItemConfigurationWindow), itemCfgPcsBox);
+            }
+            else
+            {
+                IsGoodToGo = false;
             }
         }
         private static Point ToRelativePoint(PowerHouseRectangles rect, Point relative)
@@ -95,6 +139,7 @@ namespace ArcherTools_0._0._1.navigation
             DetectPwHMonitor();
             if (!Receiving.validateConfigData() && Receiving.validateRectanglePositions())
             {
+                IsGoodToGo = false;
                 throw new InvalidDataException("Incorrect config set up for this operation.");
             }
             ReceivingConfig rcvCfg = ConfigData._receivingConfig;

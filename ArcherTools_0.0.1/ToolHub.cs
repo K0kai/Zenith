@@ -3,6 +3,7 @@ using ArcherTools_0._0._1.cfg;
 using ArcherTools_0._0._1.controllers;
 using ArcherTools_0._0._1.forms;
 using ArcherTools_0._0._1.methods;
+using ArcherTools_0._0._1.navigation;
 
 namespace ArcherTools_0._0._1
 {
