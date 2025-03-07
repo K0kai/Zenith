@@ -9,21 +9,12 @@ namespace ArcherTools_0._0._1
     {
 
 
-        public static Point SearchImageOnScreen(string targetImagePath, double threshold)
+        public static Task<Point> SearchImageOnScreen(string targetImagePath, double threshold)
         {
             Point screenPoint = new Point(0, 0);
-            var taskFirstScreen = Task.Run(() =>
-            {
-                screenPoint = DetectImage(targetImagePath, threshold);
-            });
-            var taskSecondScreen = Task.Run(() =>
-            {
-                screenPoint = DetectImageOther(targetImagePath, threshold);
-            });
-            Task.WhenAll(taskFirstScreen, taskSecondScreen).Wait();
-            taskFirstScreen.Dispose();
-            taskSecondScreen.Dispose();
-            return screenPoint;
+            screenPoint = DetectImage(targetImagePath, threshold).Result;
+            screenPoint = screenPoint == new Point(0, 0) ? DetectImageOther(targetImagePath, threshold).Result : screenPoint;
+            return Task.FromResult(screenPoint);
 
 
         }
@@ -75,7 +66,7 @@ namespace ArcherTools_0._0._1
 
 
 
-        private static Point DetectImage(string targetImagePath, double threshold)
+        private static Task<Point> DetectImage(string targetImagePath, double threshold)
         {
             using (var screenshotFirst = CaptureFirstScreen())
             using (var screenshotFirstMat = BitmapToMat(screenshotFirst))
@@ -98,22 +89,22 @@ namespace ArcherTools_0._0._1
 #if DEBUG
                     Debug.WriteLine($"Target image found at location: {maxLoc.X}, {maxLoc.Y}");
 #endif
-                    return new Point(maxLoc.X, maxLoc.Y);
+                    return Task.FromResult(new Point(maxLoc.X, maxLoc.Y));
                 }
                 else
                 {
-                    return new Point(0, 0);
+                    return Task.FromResult(new Point(0, 0));
 
                 }
             }
         }
 
-        private static Point DetectImageOther(string targetImagePath, double threshold)
+        private static Task<Point> DetectImageOther(string targetImagePath, double threshold)
         {
             {
                 if (CaptureSecondScreen() == null)
                 {
-                    return Point.Empty;
+                    return Task.FromResult(Point.Empty);
                 }
                 using (var screenshot = CaptureSecondScreen())
                 using (var screenshotMat = BitmapToMat(screenshot))
@@ -136,11 +127,11 @@ namespace ArcherTools_0._0._1
 #if DEBUG
                         Debug.WriteLine($"Target image found at location: {maxLoc.X + Screen.PrimaryScreen.Bounds.Width}, {maxLoc.Y}");
 #endif
-                        return new Point(maxLoc.X + Screen.PrimaryScreen.Bounds.Width, maxLoc.Y);
+                        return Task.FromResult(new Point(maxLoc.X + Screen.PrimaryScreen.Bounds.Width, maxLoc.Y));
                     }
                     else
                     {
-                        return new Point(0, 0);
+                        return Task.FromResult(new Point(0, 0));
                     }
 
                 }

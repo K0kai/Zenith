@@ -8,6 +8,7 @@ using ArcherTools_0._0._1.enums;
 using ArcherTools_0._0._1.excel;
 using ArcherTools_0._0._1.navigation;
 using InputSimulatorEx;
+using NPOI.XWPF.UserModel;
 
 namespace ArcherTools_0._0._1.methods
 {
@@ -17,6 +18,7 @@ namespace ArcherTools_0._0._1.methods
         public static int MinimumRow { get; set; } = 1;
 
         internal static string FilePath;
+        internal static string WorksheetName;
 
         internal static Point itemMtnIcon = Receiving.itemMtnIcon;
         internal static Point itemCfgIcon = Receiving.itemCfgIcon;
@@ -48,6 +50,11 @@ namespace ArcherTools_0._0._1.methods
             var validExcel = Receiving.validateExcel();
             if (validConfig && validRect && validExcel)
             {
+                if (!PowerHouseNavigation.Initialize())
+                {
+                    Debug.WriteLine("Failed to initialize the PowerHouse navigator");
+                    return false;
+                }
                 endProcess = false;
                 ReceivingConfig rcvCfg = ConfigData._receivingConfig;
 
@@ -88,8 +95,15 @@ namespace ArcherTools_0._0._1.methods
                 var ItemMtnBoxRect = rcvCfg.getRectByType(ControlType.ItemMaintenanceWindow);
                 rlItemMtnApparelButton = toRelativePoint(ItemMtnBoxRect, itemMtnApparelButton);
                 Point rlLowerItemMtnBox = toRelativePoint(ItemMtnBoxRect, new Point(ItemMtnBoxRect.rect.Width / 2, (int)Math.Floor(ItemMtnBoxRect.rect.Height * 0.8)));
-
-                ExcelHandler ExHandler = new ExcelHandler(FilePath);
+                ExcelHandler ExHandler = new ExcelHandler();
+                try
+                {
+                    ExHandler = new ExcelHandler(FilePath);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
                 var ips = new InputSimulator();
 
                 MouseHandler.MouseMoveTo(rlOwnerInputBox);
@@ -125,14 +139,21 @@ namespace ArcherTools_0._0._1.methods
                 });
                 if (endProcess) { return false; }
                 
-                var ExcelSize = ExHandler.GetColumn(ExHandler.GetWorksheets()[0].Name, ExcelValueColumns["Item Code"], MinimumRow).Count;
+                var ExcelSize = ExHandler.GetColumn(WorksheetName, ExcelValueColumns["Item Code"], MinimumRow).Count + 1;
+                Debug.WriteLine($"item code col: {ExcelValueColumns["Item Code"]}" + $"\nexcel name: {ExHandler.GetWorksheets()[0].Name}" + $"\nexcel file: {FilePath}");
 
                 for (int x = 1; x <= ExcelSize; x++)
                 {
                     if (endProcess) { return false; }
                     try
                     {
+                        
                         var CurrentItem = GetItem(MinimumRow + x).Result;
+                        if (string.IsNullOrEmpty(CurrentItem.itemCode))
+                        {
+                            continue;
+                        }
+                        Debug.WriteLine($"sum of:{MinimumRow + x}");
                         MouseHandler.MouseMoveTo(rlLowerItemMtnBox);
                         Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
                         MouseHandler.MouseClick();
@@ -146,15 +167,101 @@ namespace ArcherTools_0._0._1.methods
                         MouseHandler.MouseMoveTo(rlCloneItemIcon);
                         Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
                         MouseHandler.MouseClick();
-                        Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 3.0));
+                        Debug.WriteLine(CurrentItem.itemCode);
+                        if (string.IsNullOrEmpty(CurrentItem.itemCode)) { return false; }
+                        TabBetween(1);
+                        ips.Keyboard.TextEntry(CurrentItem.itemCode);                        
+                        TabBetween(1);
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 2.25));
+                        if (await CheckIfItemExists())
+                        {
+                            if (endProcess) { return false; }
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 3.0));
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
+                            if (await CheckIfItemExists())
+                            {
+                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
+                            }
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
+                            TabBetween(3);                            
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
 
-                        TabBetween(1);
-                        ips.Keyboard.TextEntry(CurrentItem.itemCode);
-                        TabBetween(1);
-                        ips.Keyboard.TextEntry(CurrentItem.description);
+                            PowerHouseNavigation.PWHMoveTo(PowerHouseNavigation.rlItemSearch_OwnerInputBox);
+                            MouseHandler.MouseClick();
+
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                            ips.Keyboard.TextEntry(owner);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 2.5));
+                            PowerHouseNavigation.PWHMoveTo(PowerHouseNavigation.rlItemSearchBox);
+                            MouseHandler.MouseClick();
+                            ips.Keyboard.TextEntry(CurrentItem.itemCode);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                            ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
+                            PowerHouseNavigation.PWHMoveTo(PowerHouseNavigation.rlItemMtnIcon);
+                            MouseHandler.MouseClick();
+                            Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
+                            PowerHouseNavigation.PWHMoveTo(PowerHouseNavigation.rlItemCfgIcon);
+                            MouseHandler.MouseClick();
+                            if (endProcess) { return false; }
+                            if (checkPCsForDefault())
+                            {
+                                if (endProcess) { return false; }
+                                ips.Keyboard.TextEntry(CurrentItem.pieces + "PC");
+                                TabBetween(3);
+                                ips.Keyboard.TextEntry("1000");
+                                TabBetween(2);
+                                ips.Keyboard.TextEntry(CurrentItem.pieces.ToString());
+                                if (x < 2)
+                                {
+                                    TabBetween(6);
+                                    for (int i = 1; i <= 4; i++)
+                                    {
+                                        if (endProcess) { return false; }
+                                        ips.Keyboard.TextEntry("0.0000");
+                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                        TabBetween(2);
+                                    }
+                                    TabBetween(2);
+                                    for (int i = 1; i <= 4; i++)
+                                    {
+                                        if (endProcess) { return false; }
+                                        ips.Keyboard.TextEntry("0.0000");
+                                        Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                        TabBetween(2);
+                                    }
+                                }
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                MouseHandler.MouseMoveTo(rlItemCfgClose);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                MouseHandler.MouseClick();
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
+                                MouseHandler.MouseMoveTo(rlReceiptLnBorder);
+
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                MouseHandler.MouseClick();
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 3.0));
+                                ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.INSERT);
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                ips.Keyboard.TextEntry(CurrentItem.itemCode);
+                                TabBetween(4);
+                                ips.Keyboard.TextEntry(CurrentItem.total_pieces.ToString());
+                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
+                            }
+                            continue;
+                        }
+                        ips.Keyboard.TextEntry(CurrentItem.description);                   
                         TabBetween(1);
                         ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
-                        Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
+                        Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));                        
                         ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.RETURN);
                         Thread.Sleep((int)Math.Ceiling(baseDelay * 1.5));
                         MouseHandler.MouseMoveTo(rlItemMtnApparelButton);
@@ -171,6 +278,7 @@ namespace ArcherTools_0._0._1.methods
                         Thread.Sleep((int)Math.Ceiling(baseDelay * 2.0));
                         MouseHandler.MouseMoveTo(rlItemCfgIcon);
                         MouseHandler.MouseClick();
+                        Debug.WriteLine($"Initiating PC Check for: {x}");
                         if (checkPCsForDefault())
                         {
                             if (endProcess) { return false; }
@@ -179,21 +287,24 @@ namespace ArcherTools_0._0._1.methods
                             ips.Keyboard.TextEntry("1000");
                             TabBetween(2);
                             ips.Keyboard.TextEntry(CurrentItem.pieces.ToString());
-                            TabBetween(6);
-                            for (int i = 1; i <= 4; i++)
+                            if (x < 2)
                             {
-                                if (endProcess) { return false; }
-                                ips.Keyboard.TextEntry("0.0000");                                
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                TabBetween(6);
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    if (endProcess) { return false; }
+                                    ips.Keyboard.TextEntry("0.0000");
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                    TabBetween(2);
+                                }
                                 TabBetween(2);
-                            }
-                            TabBetween(2);
-                            for (int i = 1; i <= 4; i++)
-                            {
-                                if (endProcess) { return false; }
-                                ips.Keyboard.TextEntry("0.0000");
-                                Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
-                                TabBetween(2);
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    if (endProcess) { return false; }
+                                    ips.Keyboard.TextEntry("0.0000");
+                                    Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                                    TabBetween(2);
+                                }
                             }
                             Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
                             ips.Keyboard.ModifiedKeyStroke(InputSimulatorEx.Native.VirtualKeyCode.CONTROL, InputSimulatorEx.Native.VirtualKeyCode.VK_S);
@@ -225,6 +336,7 @@ namespace ArcherTools_0._0._1.methods
                     }
                     catch(Exception ex)
                     {
+                       // Debug.WriteLine(ex.Source);
                     }
 
                 }
@@ -232,29 +344,37 @@ namespace ArcherTools_0._0._1.methods
             }
             endProcess = true;
             return await Task.FromResult(true);
-        }        
+        } 
+        
         private static bool checkPCsForDefault()
         {
             InputSimulator ips = new InputSimulator();
-            Thread.Sleep((int)Math.Ceiling(baseDelay * 4.0));
+            Thread.Sleep((int)Math.Ceiling(baseDelay * 6.0));
             for (int i = 0; i < 5; i++)
             {
-                Point mouseto = new Point(0, 0);
-                Task findDefault = Task.Run(() =>
-                {
-                    mouseto = ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\defaultcfg.png", 0.99);
-                });
-                Task.WaitAll(findDefault);
+                Point mouseto = ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\defaultcfg.png", 0.99).Result;
                 if (mouseto == new Point(0, 0))
                 {
                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.4));
                     ips.Keyboard.KeyPress(InputSimulatorEx.Native.VirtualKeyCode.DOWN);
                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.5));
+                    Debug.WriteLine("Nothing");
                 }
                 else
                 {
+                    Debug.WriteLine("Found the default config");
                     return true;
                 }
+            }
+            return false;
+        }
+
+        private async static Task<bool> CheckIfItemExists()
+        {
+            Point mouseto = ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\Source\\Repos\\Zenith\\ArcherTools_0.0.1\\img\\find\\errors\\item-exists.png", 0.90).Result;
+            if (mouseto != new Point(0,0))
+            {
+                return true;
             }
             return false;
         }
@@ -264,25 +384,36 @@ namespace ArcherTools_0._0._1.methods
             ExcelHandler ExHandler = new ExcelHandler(FilePath);
             foreach(var values in ExcelValueColumns)
             {
-                var itemPart = ExHandler.GetCell(ExHandler.GetWorksheets()[0].Name, row, values.Value);
+                var itemPart = ExHandler.GetCell(WorksheetName, row, values.Value);
                 var nameOfItemPart = values.Key;
                 if (nameOfItemPart == "Description" && string.IsNullOrEmpty(itemPart))
                 {
-                    itemPart = ExHandler.GetCell(ExHandler.GetWorksheets()[0].Name, row, ExcelValueColumns["P.O"]);
+                    itemPart = ExHandler.GetCell(WorksheetName, row, ExcelValueColumns["P.O"]);
                 }
+                
                 ItemParts.TryAdd(nameOfItemPart, itemPart);
+                Debug.WriteLine(nameOfItemPart + " : " + ItemParts[nameOfItemPart]);
+                
             }
             Item FinalItem = new Item(ItemParts["Item Code"]);
+            
             foreach (var itemPart in ItemParts)
             {
                 if (string.IsNullOrEmpty(itemPart.Value))
-                {                   
+                {
                     throw new MissingFieldException("Missing required item property."); 
                 }
                 switch (itemPart.Key)
                 {
                     case "P.O":
-                        FinalItem.po = int.Parse(itemPart.Value);
+                        try
+                        {
+                            FinalItem.po = int.Parse(itemPart.Value);
+                        }
+                        catch (Exception)
+                        {
+                            FinalItem.po = int.Parse(itemPart.Value.Split('/')[0]);
+                        }
                         break;
                     case "Style":
                         FinalItem.style = itemPart.Value;

@@ -17,11 +17,13 @@ namespace ArcherTools_0._0._1.excel
 
             if (!File.Exists(filePath))
             {
-                throw new FileNotFoundException("The Excel file does not exist in the specified path.");
+                throw new FileNotFoundException($"The Excel file does not exist in the specified path: {filePath} ");
             }
             this._filePath = filePath;
             FileInfo fileInfo = new FileInfo(_filePath);
         }
+
+        public ExcelHandler() { }
 
         internal Dictionary<string,Dictionary<string ,int>> SearchWorksheetFor<T>(string worksheetName, ConcurrentBag<T> itemsToSearch)
         {

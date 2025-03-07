@@ -601,12 +601,8 @@ namespace ArcherTools_0._0._1.methods
             Thread.Sleep((int)Math.Ceiling(baseDelay * 4.0));
             for (int i = 0; i < 5; i++)
             {
-                Point mouseto = new Point(0, 0);
-                Task findDefault = Task.Run(() =>
-                {
-                    mouseto = ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\defaultcfg.png", 0.99);
-                });
-                Task.WaitAll(findDefault);
+                Point mouseto = ScreenImageHandler.SearchImageOnScreen("C:\\Users\\Archer\\source\\repos\\ArcherTools_0.0.1\\ArcherTools_0.0.1\\img\\find\\defaultcfg.png", 0.99).Result;
+                MouseHandler.MouseMoveTo(mouseto);
                 if (mouseto == new Point(0, 0))
                 {
                     Thread.Sleep((int)Math.Ceiling(baseDelay * 0.4));

@@ -117,7 +117,8 @@ namespace ArcherTools_0._0._1.forms
                     {
                         foreach (var worksheet in worksheets)
                         {
-                            if (methods.strings.StringMatching.CosineSimilarity(worksheet.Name.ToLower(), "detail pl") >= 70)
+                            Debug.WriteLine(methods.strings.StringMatching.CosineSimilarity(worksheet.Name.ToLower(), "detail pl"));
+                            if (methods.strings.StringMatching.CosineSimilarity(worksheet.Name.ToLower(), "detail pl") >= 49)
                             {
                                 Debug.WriteLine($"there is detail pl or similar.\nsimilarity: {methods.strings.StringMatching.CosineSimilarity(worksheet.Name.ToLower(), "detail pl")}");
                                 return worksheet.Name;
@@ -136,6 +137,7 @@ namespace ArcherTools_0._0._1.forms
                 var worksheetName = CheckForIMAPL(imaFilePath);
                 if (!string.IsNullOrEmpty(worksheetName))
                 {
+                    ContainerCreation.WorksheetName = worksheetName;
                     //ConcurrentBag<string> listToLook = ["Style", "P.O. No", "Description", "Color", "Quantity", "Total PC"];
                     ConcurrentDictionary<string, int> listToLookV2 = new ConcurrentDictionary<string, int>
                     {
@@ -162,6 +164,15 @@ namespace ArcherTools_0._0._1.forms
         private async void test_btn_Click(object sender, EventArgs e)
         {
             await ContainerCreation.CreateContainer("IMA");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (imaFilePath != null)
+            {
+                ExcelHandler exHandler = new ExcelHandler(imaFilePath);
+                Debug.WriteLine(exHandler.GetCell(exHandler.GetWorksheets()[0].Name, 14, 25));
+            }
         }
     }
 }

@@ -30,7 +30,7 @@ namespace ArcherTools_0._0._1
             InitializeComponent();
             messageManager = new MessageManager();
             copyrights.LinkClicked += copyrights_LinkClicked_1;
-            this.Load += userControlLoad;
+           this.Load += userControlLoad;
             this.Invalidated += OnInvalidated;
             this.instance = this;
 
@@ -44,15 +44,15 @@ namespace ArcherTools_0._0._1
             _mainForm.FormBorderStyle = FormBorderStyle.Sizable;
             _mainForm.FormClosing += OnFormClosed;
             this.pagelabel.Text = $"Zenith v{programVersion}";
-            if (Properties.Settings.Default.ToolHubLocation != new Point(0, 0))
+            /*if (Properties.Settings.Default.ToolHubLocation != new Point(0, 0))
             {
                 _mainForm.Location = Properties.Settings.Default.ToolHubLocation;
             }
-            _mainForm.Size = Properties.Settings.Default.ToolHubSize;
-
+            _mainForm.Size = Properties.Settings.Default.ToolHubSize;*/
 
 
             ucSize = _mainForm.Size;
+            Debug.WriteLine(_mainForm.Size);
             this.Cursor = Cursors.Default;
             connectToVpn_Btn.SetToolTip(vpnConnect_btn, "Obsolete function as of December 2024.");
             preRcv_tooltip.SetToolTip(prercv_Btn, "Session under construction and currently unusable.");

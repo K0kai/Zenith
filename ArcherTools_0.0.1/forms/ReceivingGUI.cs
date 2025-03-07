@@ -115,6 +115,7 @@ namespace ArcherTools_0._0._1.forms
             var boxNames = new List<string> { "Container", "Release", "Owner" };
             if (cfgdata && excel && rects)
             {
+                Thread.Sleep(3500);
                 var thread = new Thread(() =>
                 {
                     Receiving.MainCall();

@@ -39,6 +39,7 @@
             status_Label = new Label();
             imaprercv_Btn = new Button();
             close_Btn = new Button();
+            button2 = new Button();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -69,6 +70,7 @@
             // panel1
             // 
             panel1.AutoSize = true;
+            panel1.Controls.Add(button2);
             panel1.Controls.Add(test_btn);
             panel1.Controls.Add(button1);
             panel1.Controls.Add(miscManifest_lbl);
@@ -211,6 +213,25 @@
             close_Btn.Text = "X";
             close_Btn.UseVisualStyleBackColor = false;
             // 
+            // button2
+            // 
+            button2.BackColor = SystemColors.ControlDarkDark;
+            button2.BackgroundImageLayout = ImageLayout.None;
+            button2.Cursor = Cursors.Hand;
+            button2.FlatAppearance.BorderColor = SystemColors.GradientInactiveCaption;
+            button2.FlatAppearance.BorderSize = 0;
+            button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(184, 44, 95);
+            button2.FlatStyle = FlatStyle.Flat;
+            button2.ForeColor = SystemColors.ButtonFace;
+            button2.Location = new Point(208, 59);
+            button2.Margin = new Padding(25, 3, 25, 3);
+            button2.Name = "button2";
+            button2.Size = new Size(99, 24);
+            button2.TabIndex = 15;
+            button2.Text = "test btn";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
             // PreReceivingGUI
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -244,5 +265,6 @@
         private Label miscManifest_lbl;
         private Button button1;
         private Button test_btn;
+        private Button button2;
     }
 }
